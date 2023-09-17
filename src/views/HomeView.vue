@@ -3,6 +3,6 @@
 
 <template>
 <div>
-  <h2>Butti Grocery Store</h2>
+  <p>Home View</p>
 </div>
 </template>
