@@ -7,8 +7,7 @@ import Homeview from '@/views/HomeView.vue'
 
 <template>
     <Header />
-    <Homeview />
-    <Footer />
+    <!-- <Footer /> -->
 </template>
 
 <style scoped></style>
