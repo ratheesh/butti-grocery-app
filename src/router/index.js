@@ -5,7 +5,7 @@ import HomeView from '../views/HomeView.vue'
     {
       path: '/',
       name: 'home',
-      component: HomeView
+      component: () => import('@/views/HomeView.vue')
     },
     {
       path: '/signup',
@@ -16,7 +16,12 @@ import HomeView from '../views/HomeView.vue'
       path: '/login',
       name: 'login',
       component: () => import('@/views/LoginView.vue')
-    }
+    },
+    {
+      path: '/cart',
+      name: 'cart',
+      component: () => import('@/views/CartView.vue')
+    },
   ]
 
 const router = createRouter({

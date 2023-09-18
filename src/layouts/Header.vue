@@ -1,6 +1,6 @@
 <template>
   <nav class="navbar sticky-top navbar-expand-lg bg-body-tertiary">
-    <div class="container">
+    <div class="container-fluid">
       <router-link to="/" class="navbar-brand">Butti</router-link>
       <div>
         <button
@@ -33,12 +33,7 @@
               </router-link>
             </li>
             <li class="nav-item mx-1">
-              <router-link to="/login" class="nav-link">
-                <mdicon name="login" :size="30" />
-              </router-link>
-            </li>
-            <li class="nav-item mx-1">
-              <router-link to="/signup" class="nav-link" data-bs-toggle="tooltip">
+              <router-link to="/signup" class="nav-link">
                 <mdicon name="account-plus" :size="30" />
               </router-link>
             </li>
@@ -50,6 +45,11 @@
                 class="nav-link"
               >
                 <mdicon name="cart" :size="30" />
+              </router-link>
+            </li>
+            <li class="nav-item mx-1">
+              <router-link to="/login" class="nav-link">
+                <mdicon name="login" :size="30" />
               </router-link>
             </li>
           </ul>

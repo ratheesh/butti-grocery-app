@@ -10,7 +10,9 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@mdi/js": "^7.2.96",
     "bootstrap": "^5.3.2",
+    "mdi-vue": "^3.0.13",
     "pinia": "^2.1.6",
     "volar-service-vetur": "^0.0.13",
     "vue": "^3.3.4",
