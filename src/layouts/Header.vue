@@ -1,50 +1,67 @@
 <template>
-<nav class="navbar sticky-top navbar-expand-lg bg-body-tertiary">
+  <nav class="navbar sticky-top navbar-expand-lg bg-body-tertiary">
     <div class="container">
-        <router-link to="/" class="navbar-brand">Butti</router-link>
-        <div>
+      <router-link to="/" class="navbar-brand">Butti</router-link>
+      <div>
         <button
-        class="navbar-toggler"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
         >
-        <span class="navbar-toggler-icon"></span>
+          <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <form class="d-flex" role="search">
-                <input
-                class="form-control me-2 border-2"
-                type="search"
-                placeholder="Search"
-                aria-label="Search"
-                />
-                <button class="btn btn-outline-success" type="submit">Search</button>
-            </form>
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item mx-1">
-                    <router-link to="/" class="nav-link">Home</router-link>
-                </li>
-                <li class="nav-item mx-1">
-                    <router-link to="/login" class="nav-link">Login</router-link>
-                </li>
-                <li class="nav-item mx-1">
-                    <router-link to="/signup" class="nav-link">SignUp</router-link>
-                </li>
-            </ul>
+          <form class="d-flex" role="search">
+            <input
+              class="form-control me-2 border-2"
+              type="search"
+              placeholder="Search"
+              aria-label="Search"
+            />
+            <button class="btn btn-outline-success" type="submit">
+              <mdicon name="magnify" :size="30" />
+            </button>
+          </form>
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item mx-1">
+              <router-link to="/" class="nav-link">
+                <mdicon name="home" :size="30" />
+              </router-link>
+            </li>
+            <li class="nav-item mx-1">
+              <router-link to="/login" class="nav-link">
+                <mdicon name="login" :size="30" />
+              </router-link>
+            </li>
+            <li class="nav-item mx-1">
+              <router-link to="/signup" class="nav-link" data-bs-toggle="tooltip">
+                <mdicon name="account-plus" :size="30" />
+              </router-link>
+            </li>
+            <li class="nav-item mx-1">
+              <router-link
+                to="/cart"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasRight"
+                class="nav-link"
+              >
+                <mdicon name="cart" :size="30" />
+              </router-link>
+            </li>
+          </ul>
         </div>
-    </div></div>
-</nav>
-<router-view></router-view>
+      </div>
+    </div>
+  </nav>
+  <router-view></router-view>
 </template>
 
 <script setup>
 import { RouterLink, RouterView } from "vue-router";
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
