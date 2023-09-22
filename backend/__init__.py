@@ -36,7 +36,6 @@ def create_app():
     db.init_app(app)
     app.app_context().push()
     cache = Cache(app, config={'CACHE_TYPE': 'simple'})
-    jwt = JWTManager(app)
 
     dbfile = os.path.join(basedir, DB_FILE)
     if not os.path.exists(dbfile):
@@ -46,6 +45,15 @@ def create_app():
         print("==== CREATING ADMIN USER =====")
         create_admin_user(db)
 
+    jwt = JWTManager(app)
+    @jwt.user_identity_loader
+    def user_identity_lookup(user):
+        return user.id
+
+    @jwt.user_lookup_loader
+    def user_lookup_callback(_jwt_header, jwt_data):
+        identity = jwt_data["sub"]
+        return User.query.filter_by(id=identity).one_or_none()
 
     app.register_blueprint(routes, url_prefix="/")
     app.register_blueprint(api, url_prefix="/api")

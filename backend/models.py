@@ -33,7 +33,7 @@ class Token(db.Model):
     '''Token Model'''
     __tablename__ = "token"
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    token = db.Column(db.String(256), nullable=False)
+    access_token = db.Column(db.String(256), nullable=False)
     refresh_token = db.Column(db.String(256), nullable=False)
 
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)

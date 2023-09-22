@@ -6,7 +6,7 @@ from functools import wraps
 from flask import Blueprint
 # from sqlalchemy import desc, func, or_, and_
 from werkzeug.security import check_password_hash, generate_password_hash
-from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_required)
+from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_required, get_jwt_identity)
 from .models import User, Token
 
 from .db import db
@@ -26,16 +26,32 @@ def login():
         return {"error": 404, "error_msg": "User not found"}
     if not check_password_hash(user.password, password):
         return {"error": 401, "error_msg": "Invalid Password"}
-    access_token = create_access_token(identity=username)
-    if access_token:
-        token = Token(access_token=access_token, user_id=user.id)
-        try:
-            db.session.add(token)
-            db.session.commit()
-        except:
-            return "Error Storing Token", 500
-    return jsonify(access_token=access_token)
+    
+    token = Token.query.filter_by(user_id=user.id).first()
+    if not token:
+        access_token = create_access_token(identity=username)
+        refresh_token = create_refresh_token(identity=username)
+        if access_token and refresh_token:
+            token = Token(access_token=access_token, refresh_token=refresh_token, user_id=user.id)
+            try:
+                db.session.add(token)
+                db.session.commit()
+            except:
+                return "Error Storing Token", 500
+        else:
+            return "Error Generating Token", 500
+        return jsonify(username=user.username, access_token=access_token)
+    else:
+        return jsonify(user=user.username, access_token=token.access_token,
+        refresh_token=token.refresh_token)
 
 @routes.route("/logout", methods=['POST'])
 def logout():
     return "logged out"
+
+@routes.route("/refresh", methods=["POST"])
+@jwt_required(refresh=True)
+def refresh():
+    identity = get_jwt_identity()
+    access_token = create_access_token(identity=identity, fresh=False)
+    return jsonify(access_token=access_token)
