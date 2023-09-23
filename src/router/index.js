@@ -19,7 +19,7 @@ import { createRouter, createWebHashHistory } from 'vue-router'
     {
       path: '/cart',
       name: 'cart',
-      component: () => import('@/pages/CartView.vue')
+      component: () => import('@/pages/CartPage.vue')
     },
   ]
 

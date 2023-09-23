@@ -1,7 +1,12 @@
 <template>
   <nav class="navbar sticky-top navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid text-white" style="background-color: #34495e">
-      <router-link to="/" class="navbar-brand text-white">Butti</router-link>
+      <router-link to="/" class="navbar-brand text-white">
+        <div class="align-items-center">
+          <mdicon name="basket" class="text-white color-success" :size="30" />
+          <span class="fs-3">Butti</span>
+        </div>
+      </router-link>
       <div>
         <button
           class="navbar-toggler"
@@ -45,6 +50,7 @@
                 class="nav-link"
               >
                 <mdicon name="cart" class="text-white" :size="30" />
+                <span class="badge text-bg-warning">4</span>
               </router-link>
             </li>
             <li class="nav-item mx-1">
@@ -57,11 +63,10 @@
       </div>
     </div>
   </nav>
-  <router-view></router-view>
 </template>
 
 <script setup>
-import { RouterLink, RouterView } from "vue-router";
+import { RouterLink } from "vue-router";
 </script>
 
 <style scoped></style>

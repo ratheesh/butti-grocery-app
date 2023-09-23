@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="row justify-content-md-center mt-5">
+    <div class="row justify-content-md-center vh-auto">
       <div class="col-md-5">
         <div class="card m-auto">
           <h2 class="text-center my-3">Login</h2>
@@ -32,7 +32,7 @@
                   @click.prevent="handleLogin"
                   class="btn btn-success btn-sm"
                 >
-                  Login
+                  <mdicon name="login" :size="18" />&nbsp;Login
                 </button>
                 &nbsp;
                 <span class="text-muted">Not a Member?</span>
