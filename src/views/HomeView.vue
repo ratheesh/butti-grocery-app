@@ -25,6 +25,36 @@
       <div class="col">
         <ProductCard />
       </div>
+      <div class="col">
+        <ProductCard />
+      </div>
+      <div class="col">
+        <ProductCard />
+      </div>
+      <div class="col">
+        <ProductCard />
+      </div>
+      <div class="col">
+        <ProductCard />
+      </div>
+      <div class="col">
+        <ProductCard />
+      </div>
+      <div class="col">
+        <ProductCard />
+      </div>
+      <div class="col">
+        <ProductCard />
+      </div>
+      <div class="col">
+        <ProductCard />
+      </div>
+      <div class="col">
+        <ProductCard />
+      </div>
+      <div class="col">
+        <ProductCard />
+      </div>
     </div>
   </div>
 </template>

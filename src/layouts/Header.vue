@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar sticky-top navbar-expand-lg bg-body-tertiary">
-    <div class="container-fluid">
-      <router-link to="/" class="navbar-brand">Butti</router-link>
+    <div class="container-fluid text-white" style="background-color: #34495e">
+      <router-link to="/" class="navbar-brand text-white">Butti</router-link>
       <div>
         <button
           class="navbar-toggler"
@@ -29,12 +29,12 @@
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item mx-1">
               <router-link to="/" class="nav-link">
-                <mdicon name="home" :size="30" />
+                <mdicon class="text-white" name="home" :size="30" />
               </router-link>
             </li>
             <li class="nav-item mx-1">
               <router-link to="/signup" class="nav-link">
-                <mdicon name="account-plus" :size="30" />
+                <mdicon class="text-white" name="account-plus" :size="30" />
               </router-link>
             </li>
             <li class="nav-item mx-1">
@@ -44,12 +44,12 @@
                 data-bs-target="#offcanvasRight"
                 class="nav-link"
               >
-                <mdicon name="cart" :size="30" />
+                <mdicon name="cart" class="text-white" :size="30" />
               </router-link>
             </li>
             <li class="nav-item mx-1">
               <router-link to="/login" class="nav-link">
-                <mdicon name="login" :size="30" />
+                <mdicon name="login" class="text-white" :size="30" />
               </router-link>
             </li>
           </ul>
