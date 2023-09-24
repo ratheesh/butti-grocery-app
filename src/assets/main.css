@@ -1,7 +1,8 @@
 @import '@/assets/base.css';
 
 #app {
-  margin: 0 auto;
+  font-family: Avenir, Arial, Helvetica, sans-serif;
+  min-height: 100vh;
   padding: 0rem;
   font-weight: normal;
 }
