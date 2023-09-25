@@ -24,7 +24,7 @@ class User(db.Model):
     # bookmarks = db.relationship("Bookmark", backref="user", cascade="all, delete-orphan")
     orders = db.relationship("Order", backref="user", cascade="all, delete-orphan")
     bookmarks = db.relationship("Bookmark", backref="user", cascade="all, delete-orphan")
-    token = db.relationship("Token",backref=backref("user", uselist=False), cascade="all, delete-orphan")
+    # token = db.relationship("Token",backref=backref("user", uselist=False), cascade="all, delete-orphan")
 
     def __repr__(self) -> str:
         return self.username
@@ -37,7 +37,7 @@ class Token(db.Model):
     access_token = db.Column(db.String(256), nullable=False)
     refresh_token = db.Column(db.String(256), nullable=False)
 
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    # user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 
 
 class Category(db.Model):
