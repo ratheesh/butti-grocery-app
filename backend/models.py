@@ -22,6 +22,7 @@ class User(db.Model):
         db.DateTime, nullable=False, default=datetime.now())
 
     # bookmarks = db.relationship("Bookmark", backref="user", cascade="all, delete-orphan")
+    orders = db.relationship("Order", backref="user", cascade="all, delete-orphan")
     bookmarks = db.relationship("Bookmark", backref="user", cascade="all, delete-orphan")
     token = db.relationship("Token",backref=backref("user", uselist=False), cascade="all, delete-orphan")
 
