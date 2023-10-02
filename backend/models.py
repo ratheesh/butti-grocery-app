@@ -26,6 +26,20 @@ class User(db.Model):
     bookmarks = db.relationship("Bookmark", backref="user", cascade="all, delete-orphan")
     # token = db.relationship("Token",backref=backref("user", uselist=False), cascade="all, delete-orphan")
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "username": self.username,
+            "admin_approved": self.admin_approved,
+            "role": self.role,
+            "image": self.image,
+            "created_timestamp": self.created_timestamp,
+            "updated_timestamp": self.updated_timestamp,
+            "orders": [order.to_dict() for order in self.orders],
+            "bookmarks": [bookmark.to_dict() for bookmark in self.bookmarks],
+        }
+
     def __repr__(self) -> str:
         return self.username
 
@@ -39,6 +53,13 @@ class Token(db.Model):
 
     # user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "access_token": self.access_token,
+            "refresh_token": self.refresh_token,
+        }
+
 
 class Category(db.Model):
     '''Category Model'''
@@ -47,6 +68,13 @@ class Category(db.Model):
     name = db.Column(db.String(32), nullable=False)
 
     products = db.relationship("Product", backref="category", cascade="all, delete-orphan")
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "products": [product.to_dict() for product in self.products],
+        }
 
 
 class Product(db.Model):
@@ -69,6 +97,23 @@ class Product(db.Model):
     category_id = db.Column(db.Integer, db.ForeignKey("category.id"), nullable=False)
     bookmark_id = db.Column(db.Integer, db.ForeignKey("bookmark.id"), nullable=False)
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "unit": self.unit,
+            "price": self.price,
+            "stock": self.stock,
+            "expiry_date": self.expiry_date,
+            "image": self.image,
+            "created_timestamp": self.created_timestamp,
+            "updated_timestamp": self.updated_timestamp,
+            "item_id": self.item_id,
+            "category_id": self.category_id,
+            "bookmark_id": self.bookmark_id,
+        }
+
 
 class Item(db.Model):
     '''Item Model'''
@@ -85,6 +130,17 @@ class Item(db.Model):
     category_id = db.Column(db.Integer, db.ForeignKey("category.id"), nullable=False)
     order_id = db.Column(db.Integer, db.ForeignKey("order.id"), nullable=False)
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "count": self.count,
+            "created_timestamp": self.created_timestamp,
+            "updated_timestamp": self.updated_timestamp,
+            "products": [product.to_dict() for product in self.products],
+            "category_id": self.category_id,
+            "order_id": self.order_id,
+        }
+
 
 class Bookmark(db.Model):
     '''Bookmark Model'''
@@ -93,6 +149,13 @@ class Bookmark(db.Model):
     products = db.relationship("Product", backref="bookmark", cascade="all, delete-orphan")
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "products": [product.to_dict() for product in self.products],
+            "user_id": self.user_id,
+        }
+
 class Order(db.Model):
     '''Order Model'''
     __tablename__ = "order"
@@ -100,6 +163,12 @@ class Order(db.Model):
     items = db.relationship("Item", backref="order",  cascade="all,delete-orphan")
 
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+        }
 
 
 def create_admin_user(db):
