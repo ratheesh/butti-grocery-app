@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div>
     <div class="card mb-3 h-100" style="width: 16rem">
       <img
         class="card-img-top object-fit-cover"
@@ -9,7 +9,8 @@
       />
       <div class="card-body">
         <b>Apples</b>
-        <p class="text-muted my-1">Price: ${{ data.price }}</p>
+        <br />
+        <span class="badge rounded-pill text-bg-success">${{ data.price }}</span>
         <p class="card-text">{{ data.description }}</p>
         <div class="inline-flex">
           <div class="row text-center">

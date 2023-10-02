@@ -1,7 +1,9 @@
 <template>
-  <Header />
-  <RouterView />
-  <Footer />
+  <div class="container-fluid vh-90 mb-5">
+    <Header />
+    <RouterView />
+    <Footer />
+  </div>
 </template>
 
 <script setup>

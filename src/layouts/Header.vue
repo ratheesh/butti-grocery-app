@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar sticky-top navbar-expand-lg bg-body-tertiary">
+  <nav class="navbar sticky-top navbar-expand-md bg-body-tertiary">
     <div class="container-fluid text-white" style="background-color: #34495e">
       <router-link to="/" class="navbar-brand text-white">
         <div class="align-items-center">
@@ -33,29 +33,29 @@
           </form>
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item mx-1">
-              <router-link to="/" class="nav-link">
+              <router-link :to="{ name: 'home' }" class="nav-link">
                 <mdicon class="text-white" name="home" :size="30" />
               </router-link>
             </li>
             <li class="nav-item mx-1">
-              <router-link to="/signup" class="nav-link">
+              <router-link :to="{ name: 'signup' }" class="nav-link">
                 <mdicon class="text-white" name="account-plus" :size="30" />
               </router-link>
             </li>
             <li class="nav-item mx-1">
-              <router-link
-                to="/cart"
-                data-bs-toggle="offcanvas"
-                data-bs-target="#offcanvasRight"
-                class="nav-link"
-              >
+              <router-link :to="{ name: 'cart' }" class="nav-link">
                 <mdicon name="cart" class="text-white" :size="30" />
                 <span class="badge text-bg-warning">4</span>
               </router-link>
             </li>
-            <li class="nav-item mx-1">
-              <router-link to="/login" class="nav-link">
+            <li class="nav-item mx-1" v-if="!authenticated">
+              <router-link :to="{ name: 'login' }" class="nav-link">
                 <mdicon name="login" class="text-white" :size="30" />
+              </router-link>
+            </li>
+            <li class="nav-item mx-1" v-else>
+              <router-link :to="{ name: 'logout' }" class="nav-link">
+                <mdicon name="logout" class="text-white" :size="30" />
               </router-link>
             </li>
           </ul>
@@ -67,6 +67,12 @@
 
 <script setup>
 import { RouterLink } from "vue-router";
+import { useAuthStore } from "../stores/authstore";
+import { storeToRefs } from "pinia";
+
+const auth = useAuthStore();
+const { authenticated } = storeToRefs(auth);
+console.log(authenticated);
 </script>
 
 <style scoped></style>

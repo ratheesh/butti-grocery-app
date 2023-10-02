@@ -17,9 +17,25 @@ import { createRouter, createWebHashHistory } from 'vue-router'
       component: () => import('@/pages/LoginPage.vue')
     },
     {
+      path: '/logout',
+      name: 'logout',
+      component: () => import('@/pages/LogoutPage.vue')
+    },
+    {
       path: '/cart',
       name: 'cart',
       component: () => import('@/pages/CartPage.vue')
+    },
+    {
+      path: '/product/:id',
+      name: 'product',
+      component: () => import('@/pages/ProductPage.vue'),
+      props: true,
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'error',
+      component: () => import('@/pages/ErrorPage.vue'),
     },
   ]
 
