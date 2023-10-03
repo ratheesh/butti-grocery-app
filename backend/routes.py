@@ -45,3 +45,10 @@ def refresh():
     identity = get_jwt_identity()
     access_token = create_access_token(identity=identity, fresh=False)
     return jsonify(access_token=access_token)
+
+@routes.route("/test", methods=["GET"])
+@jwt_required()
+@access(["admin"])
+def test():
+    '''test route'''
+    return jsonify("user"),200
