@@ -9,6 +9,7 @@ import json
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_required, get_jwt_identity)
 from .models import User
+from .jwt import access
 
 routes = Blueprint("controller", __name__)
 
@@ -25,8 +26,8 @@ def login():
     if not check_password_hash(user.password, password):
         return make_response('invalid password', 401)
     
-    access_token = create_access_token(identity=username)
-    refresh_token = create_refresh_token(identity=username)
+    access_token = create_access_token(identity=user)
+    refresh_token = create_refresh_token(identity=user)
     if not access_token or  not refresh_token:
         return "Error Generating Token", 500
     else:

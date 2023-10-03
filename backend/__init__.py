@@ -28,7 +28,7 @@ def create_app():
     app.config["SECRET_KEY"] = "butti-booking-app"
     app.config["SQLALCHEMY_DATABASE_URI"] = db_file
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=5)
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=30)
     app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=10)
 
     # CORS(app, resources={r"/api/*": {"origins": "http://localhost:9000"}})
@@ -47,14 +47,14 @@ def create_app():
         create_admin_user(db)
 
     jwt = JWTManager(app)
-    # @jwt.user_identity_loader
-    # def user_identity_lookup(user):
-    #     return user.id
+    @jwt.user_identity_loader
+    def user_identity_lookup(user):
+        return user.id
 
-    # @jwt.user_lookup_loader
-    # def user_lookup_callback(_jwt_header, jwt_data):
-    #     identity = jwt_data["sub"]
-    #     return User.query.filter_by(id=identity).one_or_none()
+    @jwt.user_lookup_loader
+    def user_lookup_callback(_jwt_header, jwt_data):
+        identity = jwt_data["sub"]
+        return User.query.filter_by(id=identity).one_or_none()
 
     app.register_blueprint(routes, url_prefix="/")
     app.register_blueprint(api, url_prefix="/api")
