@@ -14,7 +14,7 @@ class User(db.Model):
     username = db.Column(db.String(32), unique=True, nullable=False)
     email = db.Column(db.String(64), unique=True, nullable=False)
     password = db.Column(db.String(256), nullable=False)
-    admin_approved = db.Column(db.Boolean, nullable=False, default=False)
+    approved = db.Column(db.Boolean, nullable=False, default=False)
     role = db.Column(db.String(32), nullable=False, default="user")
     image = db.Column(db.String(32), default="default.jpg")
     created_timestamp = db.Column(
@@ -32,13 +32,14 @@ class User(db.Model):
             "id": self.id,
             "name": self.name,
             "username": self.username,
-            "admin_approved": self.admin_approved,
+            "email": self.email,
+            "approved": self.approved,
             "role": self.role,
             "image": self.image,
             "created_timestamp": self.created_timestamp,
             "updated_timestamp": self.updated_timestamp,
-            "orders": [order.to_dict() for order in self.orders],
-            "bookmarks": [bookmark.to_dict() for bookmark in self.bookmarks],
+            # "orders": [order.to_dict() for order in self.orders],
+            # "bookmarks": [bookmark.to_dict() for bookmark in self.bookmarks],
         }
 
     def __repr__(self) -> str:
@@ -74,7 +75,7 @@ class Category(db.Model):
         return {
             "id": self.id,
             "name": self.name,
-            "products": [product.to_dict() for product in self.products],
+            # "products": [product.to_dict() for product in self.products],
         }
 
 
@@ -137,7 +138,7 @@ class Item(db.Model):
             "count": self.count,
             "created_timestamp": self.created_timestamp,
             "updated_timestamp": self.updated_timestamp,
-            "products": [product.to_dict() for product in self.products],
+            # "products": [product.to_dict() for product in self.products],
             "category_id": self.category_id,
             "order_id": self.order_id,
         }
@@ -151,6 +152,7 @@ class Bookmark(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 
     def to_dict(self):
+        '''to_dict'''
         return {
             "id": self.id,
             "products": [product.to_dict() for product in self.products],
@@ -166,6 +168,7 @@ class Order(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 
     def to_dict(self):
+        '''to_dict'''
         return {
             "id": self.id,
             "user_id": self.user_id,
@@ -180,7 +183,7 @@ def create_admin_user(db):
         email="admin@butti.com",
         password=generate_password_hash("admin"),
         role="admin",
-        admin_approved = True,
+        approved = True,
         image = "admin.png",
         created_timestamp=datetime.now(),
         updated_timestamp=datetime.now(),
