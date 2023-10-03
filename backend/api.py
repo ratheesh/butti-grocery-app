@@ -42,6 +42,8 @@ class InternalError(HTTPException):
 user_request_parse = reqparse.RequestParser(bundle_errors=True)
 user_request_parse.add_argument("name", type=str)
 user_request_parse.add_argument("username", type=str)
+user_request_parse.add_argument("email", type=str)
+user_request_parse.add_argument("role", type=str)
 user_request_parse.add_argument("password", type=str)
 user_request_parse.add_argument("image", type=str)
 # user_request_parse.add_argument("image", type=werkzeug.datastructures.FileStorage)
@@ -50,7 +52,9 @@ user_response_fields = {
     "id": fields.Integer,
     "name": fields.String,
     "username": fields.String,
+    "email": fields.String,
     "password": fields.String,
+    "approved": fields.String,
     "role": fields.String,
     "image": fields.String,
     "created_timestamp": fields.DateTime,
@@ -77,20 +81,28 @@ class UserAPI(Resource):
 
     @marshal_with(user_response_fields)
     def post(self):
+        '''Create a new user'''
         args = user_request_parse.parse_args(strict=True)
+        print(args)
         name = args.get("name", None)
         username = args.get("username", None)
+        email = args.get("email", None)
+        role = args.get("role", None)
         password = args.get("password", None)
 
         # if args is None or name is None or username is None or password is None:
         if name is None:
-            raise BadRequest("Name not provided")
+            raise BadRequest("name not provided")
         if username is None:
-            raise BadRequest("Username not provided")
+            raise BadRequest("username not provided")
+        if email is None:
+            raise BadRequest("email not provided")
+        if role is None:
+            raise BadRequest("role not provided")
         if password is None:
-            raise BadRequest("Password not provided")
+            raise BadRequest("password not provided")
         if len(password) < 4:
-            raise BadRequest("Password length is less than 4 chars")
+            raise BadRequest("password length is less than 4 chars")
 
         # check if the user already exists based on username
         user = User.query.filter_by(username=username).first()
@@ -101,8 +113,10 @@ class UserAPI(Resource):
         user = User(
             name=name,
             username=username,
+            email=email,
             password=generate_password_hash(password),
-            role="user",
+            role=role,
+            approved=False,
             image="default.jpg",
             created_timestamp=datetime.now(),
             updated_timestamp=datetime.now(),

@@ -12,6 +12,7 @@ class User(db.Model):
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     name = db.Column(db.String(32), nullable=False)
     username = db.Column(db.String(32), unique=True, nullable=False)
+    email = db.Column(db.String(64), unique=True, nullable=False)
     password = db.Column(db.String(256), nullable=False)
     admin_approved = db.Column(db.Boolean, nullable=False, default=False)
     role = db.Column(db.String(32), nullable=False, default="user")
@@ -176,6 +177,7 @@ def create_admin_user(db):
     admin = User(
         name="Admin",
         username="admin",
+        email="admin@butti.com",
         password=generate_password_hash("admin"),
         role="admin",
         admin_approved = True,
