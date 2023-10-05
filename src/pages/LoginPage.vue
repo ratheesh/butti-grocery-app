@@ -71,7 +71,8 @@ const login = async () => {
   try {
     const res = await auth.login(username.value, password.value);
     loading.value = false;
-    if (res.status === 200) router.push("/");
+    if (res.status === 200)
+     router.push("/");
     else {
       console.log("Login Page Error");
       console.log(res);

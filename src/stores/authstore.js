@@ -57,5 +57,23 @@ export const useAuthStore = defineStore('authStore', () => {
     }
   }
 
-  return { authenticated, role, user, setUser, getUser, login, logout }
+  async function signup(user_data) {
+    try {
+      const res = await axiosClient.post('/api/user',{
+        name: user_data.name,
+        username: user_data.username,
+        email: user_data.email,
+        role: user_data.role,
+        password: user_data.password,
+        image : user_data.image
+      })
+      console.log(res)
+      console.log(`user ${user_data.username} signed up!`)
+      return res
+    } catch (err) {
+      console.log(err)
+      return err
+    }
+  }
+  return { authenticated, role, user, setUser, getUser, login, logout, signup }
 })
