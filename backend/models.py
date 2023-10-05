@@ -121,7 +121,7 @@ class Item(db.Model):
     '''Item Model'''
     __tablename__ = "item"
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    count = db.Column(db.Integer, nullable=False)
+    quantity = db.Column(db.Integer, nullable=False)
     created_timestamp = db.Column(
         db.DateTime, nullable=False, default=datetime.now())
     updated_timestamp = db.Column(
@@ -129,17 +129,15 @@ class Item(db.Model):
 
     products = db.relationship("Product",backref="product", cascade="all, delete-orphan")
 
-    category_id = db.Column(db.Integer, db.ForeignKey("category.id"), nullable=False)
     order_id = db.Column(db.Integer, db.ForeignKey("order.id"), nullable=False)
 
     def to_dict(self):
         return {
             "id": self.id,
-            "count": self.count,
+            "quantity": self.quantity,
             "created_timestamp": self.created_timestamp,
             "updated_timestamp": self.updated_timestamp,
             # "products": [product.to_dict() for product in self.products],
-            "category_id": self.category_id,
             "order_id": self.order_id,
         }
 
@@ -163,7 +161,10 @@ class Order(db.Model):
     '''Order Model'''
     __tablename__ = "order"
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    total_amount = db.Column(db.Float, nullable=False)
     items = db.relationship("Item", backref="order",  cascade="all,delete-orphan")
+    created_timestamp = db.Column(
+        db.DateTime, nullable=False, default=datetime.now())
 
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 
@@ -171,6 +172,7 @@ class Order(db.Model):
         '''to_dict'''
         return {
             "id": self.id,
+            "total_amount": self.total_amount,
             "user_id": self.user_id,
         }
 
