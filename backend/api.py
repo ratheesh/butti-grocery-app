@@ -99,6 +99,9 @@ class UserAPI(Resource):
             raise BadRequest("email not provided")
         if role is None:
             raise BadRequest("role not provided")
+        else:
+            if role == 'admin':
+                raise BadRequest("Admin role can not be created")
         if password is None:
             raise BadRequest("password not provided")
         if len(password) < 4:
