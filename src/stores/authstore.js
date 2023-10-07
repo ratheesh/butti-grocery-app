@@ -68,7 +68,9 @@ export const useAuthStore = defineStore('authStore', () => {
         image : user_data.image
       })
       console.log(res)
-      console.log(`user ${user_data.username} signed up!`)
+      if (res.data.status === 201)
+        console.log(`user ${user_data.username} signed up!`)
+
       return res
     } catch (err) {
       console.log(err)

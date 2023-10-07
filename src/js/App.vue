@@ -1,8 +1,8 @@
 <template>
   <div class="container-fluid vh-90 mb-5">
-    <Header />
+    <!-- <Header /> -->
     <RouterView />
-    <Footer />
+    <!-- <Footer /> -->
   </div>
 </template>
 

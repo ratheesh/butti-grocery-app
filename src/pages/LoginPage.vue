@@ -1,4 +1,5 @@
 <template>
+  <BasicLayout>
   <div class="container">
     <div class="row justify-content-md-center vh-auto">
       <pre>{{ username }}</pre>
@@ -50,13 +51,14 @@
       </div>
     </div>
   </div>
+  </BasicLayout>
 </template>
 
 <script setup>
 import { ref } from "vue";
 import router from "@/router";
 import { useAuthStore } from "@/stores/authstore.js";
-// import axiosClient from "../js/axios.js";
+import BasicLayout from "@/layouts/BasicLayout.vue"
 
 const username = ref("");
 const password = ref("");
