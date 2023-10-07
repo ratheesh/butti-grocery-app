@@ -1,10 +1,12 @@
 <template>
   <div class="container-fluid" >
   <Header />
-  <main class="align-items-center" style="margin-bottom=5%">
+  <main class="content align-items-center" style="margin-bottom=5%">
   <slot />
   </main>
+  <div class="footer">
   <Footer/>
+  </div>
   </div>
 </template>
 
@@ -14,4 +16,12 @@ import Footer from '@/layouts/Footer.vue'
 
 </script>
 
-<style scoped></style>
+<style scoped>
+.content {
+    min-height: 90vh;
+}
+
+.footer {
+  min-height: 5vh;
+}
+</style>
