@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid" >
   <Header />
-  <main class="content align-items-center" style="margin-bottom=5%">
+  <main class="d-flex content align-items-center" style="margin-bottom=5%">
   <slot />
   </main>
   <div class="footer">
