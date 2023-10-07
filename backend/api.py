@@ -104,8 +104,8 @@ class UserAPI(Resource):
                 raise BadRequest("Admin role can not be created")
         if password is None:
             raise BadRequest("password not provided")
-        if len(password) < 4:
-            raise BadRequest("password length is less than 4 chars")
+        # if len(password) < 4:
+        #     raise BadRequest("password length is less than 4 chars")
 
         # check if the user already exists based on username
         user = User.query.filter_by(username=username).first()
