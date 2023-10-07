@@ -1,6 +1,6 @@
 <template>
   <basic-layout>
-  <div class="main">
+  <div class="main text-center m-auto">
     <div class="container">
       <h1 class="text-center my-3">Products</h1>
       <div
