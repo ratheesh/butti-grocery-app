@@ -1,5 +1,5 @@
 <template>
-  <BasicLayout>
+  <form-layout>
   <div class="container">
     <div class="row justify-content-center vh-auto">
       <div class="col-md-5">
@@ -51,14 +51,14 @@
       </div>
     </div>
   </div>
-  </BasicLayout>
+  </form-layout>
 </template>
 
 <script setup>
 import { ref } from "vue";
 import router from "@/router";
 import { useAuthStore } from "@/stores/authstore.js";
-import BasicLayout from "@/layouts/BasicLayout.vue"
+import FormLayout from "@/layouts/FormLayout.vue"
 
 const username = ref("");
 const password = ref("");

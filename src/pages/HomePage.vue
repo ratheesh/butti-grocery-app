@@ -1,5 +1,5 @@
 <template>
-  <basic-layout>
+  <main-layout>
   <div class="main text-center m-auto">
     <div class="container">
       <h1 class="text-center my-3">Products</h1>
@@ -60,10 +60,10 @@
       </div>
     </div>
   </div>
-  </basic-layout>
+  </main-layout>
 </template>
 
 <script setup>
-import BasicLayout from "@/layouts/BasicLayout.vue";
+import MainLayout from "@/layouts/MainLayout.vue";
 import ProductCard from "@/components/ProductCard.vue";
 </script>

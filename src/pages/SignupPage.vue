@@ -1,11 +1,11 @@
 <template>
   <!-- <h1>signup view</h1> -->
-  <basic-layout>
+  <form-layout>
   <div class="container">
     <div class="row justify-content-md-center">
       <div class="col-md-6">
         <div class="card m-auto">
-          <h2 class="text-center my-3">Signup</h2>
+          <h2 class="text-center">Signup</h2>
           <hr />
           <div class="card-body m-0 p-0">
             <form m-0 @submit.prevent="handleSignup">
@@ -63,14 +63,14 @@
       </div>
     </div>
   </div>
-  </basic-layout>
+  </form-layout>
 </template>
 
 <script setup>
 import { ref, reactive } from "vue";
 import router from "@/router";
 import { useAuthStore } from "@/stores/authstore.js";
-import BasicLayout from "@/layouts/BasicLayout.vue"
+import FormLayout from "@/layouts/FormLayout.vue"
 
 const options=[ 'user', 'manager']
 

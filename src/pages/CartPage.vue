@@ -1,7 +1,11 @@
 <template>
-  <h2 class="text-center my-3">Cart Page</h2>
+  <main-layout>
+   <h2 class="text-center">Cart</h2> 
+  </main-layout>
 </template>
 
-<script setup></script>
+<script setup>
+import MainLayout from '@/layouts/MainLayout.vue';
+</script>
 
 <style scoped></style>
