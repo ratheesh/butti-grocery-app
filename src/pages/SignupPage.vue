@@ -1,45 +1,48 @@
 <template>
   <!-- <h1>signup view</h1> -->
   <basic-layout>
-  <div class="container mb-5 ">
-    <div class="row justify-content-md-center mt-5">
-      <div class="col-md-5">
+  <div class="container">
+    <div class="row justify-content-md-center">
+      <div class="col-md-6">
         <div class="card m-auto">
           <h2 class="text-center my-3">Signup</h2>
           <hr />
           <div class="card-body m-0 p-0">
             <form m-0 @submit.prevent="handleSignup">
-              <div class="mb-3 px-3">
-                <label for="user" class="form-label">Name</label>
-                <input type="text" id="user" class="form-control" placeholder="Name" v-model="userdata.name" />
+              <div class="p-3">
+                <div class="form-floating mb-3">
+                  <input type="text" id="user" class="form-control" placeholder="Name" v-model="userdata.name" />
+                  <label for="user">Name</label>
+                </div>
+                <div class="form-floating mb-3">
+                  <input type="text" id="username" class="form-control" placeholder="User Name"
+                    v-model="userdata.username" />
+                  <label for="username">User Name</label>
+                </div>
+                <div class="form-floating mb-3">
+                  <input type="text" id="email" class="form-control" placeholder="E-mail address"
+                    v-model="userdata.email" />
+                  <label for="email" class="form-label">E-Mail</label>
+                </div>
+                <div class="form-floating mb-3">
+                  <select name="role" id="role" class="form-control" required="yes" v-model="userdata.role">
+                    <option :value="options[0]" selected>user</option>
+                    <option v-for='option in options' :value='option'>{{ option }}</option>
+                  </select>
+                  <label for="role" class="form-label">Role</label>
+                </div>
+                <div class="form-floating mb-3">
+                  <input type="password" id="password" class="form-control" placeholder="Password"
+                    v-model="userdata.password" />
+                  <label for="password" class="form-label">Password</label>
+                </div>
+                <div class="form-floating mb-3">
+                  <input type="password" id="password2" class="form-control" placeholder="Password"
+                    v-model="userdata.password2" />
+                  <label for="password2" class="form-label">Re-enter Password</label>
+                </div>
               </div>
-              <div class="mb-3 px-3">
-                <label for="username" class="form-label">User Name</label>
-                <input type="text" id="username" class="form-control" placeholder="User Name"
-                  v-model="userdata.username" />
-              </div>
-              <div class="mb-3 px-3">
-                <label for="email" class="form-label">E-Mail</label>
-                <input type="text" id="email" class="form-control" placeholder="E-mail address"
-                  v-model="userdata.email" />
-              </div>
-              <div class="mb-3 px-3">
-                <label for="role" class="form-label">Role</label>
-                <select name="role" id="role" class="form-control" required="yes" v-model="userdata.role">
-                  <option v-for='option in options' :value='option'>{{ option }}</option>
-                </select>
-              </div>
-              <div class="mb-3 px-3">
-                <label for="password" class="form-label">Password</label>
-                <input type="password" id="password" class="form-control" placeholder="Password"
-                  v-model="userdata.password" />
-              </div>
-              <div class="mb-3 px-3">
-                <label for="password2" class="form-label">Re-enter Password</label>
-                <input type="password" id="password2" class="form-control" placeholder="Password"
-                  v-model="userdata.password2" />
-              </div>
-              <hr class="mt-3 mx-0" />
+              <hr class="mt-1 mx-0" />
               <div class="mb-3 text-center">
                 <button type="submit" class="btn btn-success">
                   <span v-if="loading" class="spinner-border spinner-border-sm"></span>
@@ -75,7 +78,7 @@ const userdata = reactive({
   name: "",
   username: "",
   email: "",
-  role: "",
+  role: "user",
   password: "",
   password2: "",
 });
@@ -87,8 +90,20 @@ const errmsg = ref("");
 const auth = useAuthStore();
 
 const handleSignup = async () => {
-  console.log("Handle Signup");
   console.log(userdata)
+  if (userdata.name == '' || userdata.email=='' || userdata.role == '' || userdata.password=='' ||
+  userdata.password2=='') {
+    iserr.value = true;
+    errmsg.value='Input data is not valid'
+    return
+  }  
+  if (userdata.password != userdata.password2) {
+    iserr.value=true;
+    errmsg.value='Password does not match'
+    userdata.password = userdata.password2=''
+    return
+  }
+
   try {
     loading.value = true;
     const res = await auth.signup(userdata);

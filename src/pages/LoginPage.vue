@@ -1,17 +1,15 @@
 <template>
   <BasicLayout>
   <div class="container">
-    <div class="row justify-content-md-center vh-auto">
-      <pre>{{ username }}</pre>
-      <pre>{{ password }}</pre>
+    <div class="row justify-content-center vh-auto">
       <div class="col-md-5">
         <div class="card m-auto">
           <h2 class="text-center my-3">Login</h2>
           <hr />
           <div class="card-body m-0 p-0">
             <form @submit.prevent="login">
-              <div class="mb-3 px-3">
-                <label for="username" class="form-label">User Name</label>
+              <div class="m-0 p-3">
+              <div class="form-floating mb-3">
                 <input
                   type="text"
                   v-model="username"
@@ -19,9 +17,9 @@
                   class="form-control"
                   placeholder="User Name"
                 />
+                <label class="ml-3" for="username">User Name</label>
               </div>
-              <div class="mb-3 px-3">
-                <label for="password" class="form-label">Password</label>
+              <div class="form-floating mb-3">
                 <input
                   type="password"
                   v-model="password"
@@ -29,8 +27,10 @@
                   class="form-control"
                   placeholder="Enter password"
                 />
+                <label for="password">Password</label>
               </div>
-              <hr class="mt-3 mx-0" />
+              </div>
+              <hr class="mt-1 mx-0" />
               <div class="mb-3 text-center">
                 <button type="submit" class="btn btn-success btn">
                   <span v-if="loading" class="spinner-border spinner-border-sm"></span>
