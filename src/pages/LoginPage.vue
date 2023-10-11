@@ -72,16 +72,20 @@ const login = async () => {
   loading.value = true;
   try {
     const res = await auth.login(username.value, password.value);
-    loading.value = false;
     if (res.status === 200)
      router.push("/");
     else {
-      console.log("Login Page Error");
+      console.log("Login Error");
       console.log(res);
       iserr.value = true;
       errmsg.value = res.data;
     }
   } catch (err) {
+      console.log("Login Error");
+      console.log(err);
+      iserr.value = true;
+      errmsg.value = err.data;
+  } finally {
     loading.value = false;
   }
 };
