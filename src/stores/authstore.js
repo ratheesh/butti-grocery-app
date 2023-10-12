@@ -1,4 +1,4 @@
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { defineStore } from 'pinia'
 import axiosClient from '../js/axios';
 
@@ -20,7 +20,32 @@ export const useAuthStore = defineStore('authStore', () => {
     }
   }
 
+  // onMounted(async() => {
+  //   if (localStorage.getItem('access_token') && localStorage.getItem('username')) {
+  //     await fetchUser(localStorage.getItem('username'));
+  //     if (authenticated.value === false) {
+  //       console.log('User not logged in')
+  //     }
+  //   }
+  // })
+
   const getUser = computed(() => user.value)
+
+  const fetchUser = async(username) => {
+    try {
+      const res = await axiosClient.post(`/api/user/${username}`)
+      if (res.status === 200) {
+        authenticated.value = true
+        role.value = res.data.user.role
+        user.value = res.data.user
+        return res
+      } else {
+        return res
+      }
+    } catch (err) {
+      return err.response
+    }
+  }
 
   async function login(username, password) {
     try {
@@ -31,6 +56,7 @@ export const useAuthStore = defineStore('authStore', () => {
         role.value = res.data.user.role
         user.value = res.data.user
         localStorage.setItem('access_token', JSON.stringify(res.data.access_token))
+        localStorage.setItem('username', JSON.stringify(res.data.user.username))
         console.log('Logged in!')
         return res
       } else {
@@ -77,5 +103,5 @@ export const useAuthStore = defineStore('authStore', () => {
       return err
     }
   }
-  return { authenticated, role, user, setUser, getUser, login, logout, signup }
+  return { authenticated, role, user, setUser, getUser, login, logout, signup, fetchUser }
 })

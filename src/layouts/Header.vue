@@ -48,7 +48,9 @@
                 <mdicon class="text-white" name="account" :size="29" />
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
-                <li><span class="dropdown-item">Profile</span></li>
+                <router-link :to="{ name: 'profile' }" class="dropdown-item">
+                  Profile
+                </router-link>
                 <li><span class="dropdown-item">Orders</span></li>
                 <li><hr class="dropdown-divider"></li>
                 <li class="nav-item mx-2" v-if="!auth.authenticated">
