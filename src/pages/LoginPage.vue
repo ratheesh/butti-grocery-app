@@ -72,8 +72,17 @@ const login = async () => {
   loading.value = true;
   try {
     const res = await auth.login(username.value, password.value);
-    if (res.status === 200)
-     router.push("/");
+    if (res.status === 200) { 
+      if (auth.role === "admin") {
+        router.push("/admin");
+      }
+      else if (auth.user.role === "manager") {
+        router.push("/manager");
+      }
+      else {
+        router.push("/");
+      }
+    }
     else {
       console.log("Login Error");
       console.log(res);

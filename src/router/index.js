@@ -27,6 +27,16 @@ import { createRouter, createWebHashHistory } from 'vue-router'
       component: () => import('@/pages/ProfilePage.vue')
     },
     {
+      path: '/admin',
+      name: 'admin',
+      component: () => import('@/pages/AdminPage.vue')
+    },
+    {
+      path: '/manager',
+      name: 'manager',
+      component: () => import('@/pages/ManagerPage.vue')
+    },
+    {
       path: '/cart',
       name: 'cart',
       component: () => import('@/pages/CartPage.vue')
