@@ -1,7 +1,72 @@
 <template>
-  <h2 class="text-center">Admin Dash Board!</h2>
+  <main-layout>
+    <h2 class="text-center">Admin Dash Board!</h2>
+    <div>
+      <button class="btn btn-outline-success"
+      data-bs-toggle="modal" data-bs-target="#modalAddCategory">
+      Add Category</button>
+      &nbsp;
+      <button class="btn btn-outline-success"
+      data-bs-toggle="modal" data-bs-target="#modalAddProduct">Add product</button>
+    </div>
+
+    <!-- category Modal -->
+    <div class="modal fade" id="modalAddCategory" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="staticBackdropLabel">Add Category</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="form-floating mb-3">
+              <input type="text" class="form-control" id="floatingInput" placeholder="Fruits/Vegetables">
+              <label for="floatingInput">Category</label>
+            </div> 
+          </div>
+          <div class="modal-footer text-center">
+            <button type="button" class="btn btn-sm btn-outline-success" @click="addCategory">Add</button>
+            <button type="button" class="btn btn-sm btn-outline-danger" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add product Modal -->
+    <div class="modal fade" id="modalAddProduct" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="staticBackdropLabel">Add Product</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="form-floating mb-3">
+              <input type="text" class="form-control" id="floatingInput" placeholder="Apples/Oranges...">
+              <label for="floatingInput">Product</label>
+            </div> 
+          </div>
+          <div class="modal-footer text-center">
+            <button type="button" class="btn btn-sm btn-outline-success" @click="addProduct">Add</button>
+            <button type="button" class="btn btn-sm btn-outline-danger" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main-layout>
 </template>
 
-<script setup></script>
+<script setup>
+import MainLayout from "@/layouts/MainLayout.vue";
+
+const addCategory = () => {
+  console.log("add category");
+};
+
+const addProduct = () => {
+  console.log("add product");
+};
+
+</script>
 
 <style scoped></style>

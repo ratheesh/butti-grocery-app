@@ -1,6 +1,6 @@
 <template>
   <nav class="navbar sticky-top navbar-expand-md bg-body-tertiary">
-    <div class="container-fluid text-white" style="background-color: #34494e">
+    <div class="container-fluid text-white px-0" style="background-color: #34494e">
       <router-link to="/" class="navbar-brand text-white">
         <div class="align-items-center">
           <mdicon name="basket" class="text-white color-success" :size="29" />
@@ -59,7 +59,7 @@
                   </router-link>
                 </li>
                 <li class="nav-item mx-2" v-else>
-                  <span class="nav-link" @click="auth.logout">
+                  <span class="dropdown-item" @click="auth.logout">
                     Logout
                   </span>
                 </li>

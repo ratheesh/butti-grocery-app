@@ -2,7 +2,7 @@
 <footer >
   <div class="footer fixed-bottom" style="color: #fff; background-color: #34495e">
     <p class="text-center footer-text">
-      © <span class="logo">Butti</span> Groceries By Ratheesh
+      © <span class="logo">Butti</span> Groceries by Ratheesh
     </p>
   </div>
 </footer>
