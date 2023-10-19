@@ -68,6 +68,10 @@ class Category(db.Model):
     __tablename__ = "category"
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     name = db.Column(db.String(32), nullable=False)
+    created_timestamp = db.Column(
+        db.DateTime, nullable=False, default=datetime.now())
+    updated_timestamp = db.Column(
+        db.DateTime, nullable=False, default=datetime.now())
 
     products = db.relationship("Product", backref="category", cascade="all, delete-orphan")
 
