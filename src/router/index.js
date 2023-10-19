@@ -1,62 +1,72 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 
-  const routes = [
-    {
-      path: '/',
-      name: 'home',
-      component: () => import('@/pages/HomePage.vue')
-    },
-    {
-      path: '/signup',
-      name: 'signup',
-      component: () => import('@/pages/SignupPage.vue')
-    },
-    {
-      path: '/login',
-      name: 'login',
-      component: () => import('@/pages/LoginPage.vue')
-    },
-    {
-      path: '/logout',
-      name: 'logout',
-      component: () => import('@/pages/LogoutPage.vue')
-    },
-    {
-      path: '/profile',
-      name: 'profile',
-      component: () => import('@/pages/ProfilePage.vue')
-    },
-    {
-      path: '/admin',
-      name: 'admin',
-      component: () => import('@/pages/AdminPage.vue')
-    },
-    {
-      path: '/manager',
-      name: 'manager',
-      component: () => import('@/pages/ManagerPage.vue')
-    },
-    {
-      path: '/cart',
-      name: 'cart',
-      component: () => import('@/pages/CartPage.vue')
-    },
-    {
-      path: '/product/:id',
-      name: 'product',
-      component: () => import('@/pages/ProductPage.vue'),
-      props: true,
-    },
-    {
-      path: '/:pathMatch(.*)*',
-      name: 'error',
-      component: () => import('@/pages/ErrorPage.vue'),
-    },
-  ]
+import AdminPage from '@/pages/AdminPage.vue'
+import ManagerPage from '@/pages/ManagerPage.vue'
+import HomePage from '@/pages/HomePage.vue'
+import SignupPage from '@/pages/SignupPage.vue'
+import LoginPage from '@/pages/LoginPage.vue'
+import LogoutPage from '@/pages/LogoutPage.vue'
+import ProfilePage from '@/pages/ProfilePage.vue'
+import CartPage from '@/pages/CartPage.vue'
+import ProductPage from '@/pages/ProductPage.vue'
+
+const routes = [
+  {
+    path: '/',
+    name: 'home',
+    component: HomePage,
+  },
+  {
+    path: '/signup',
+    name: 'signup',
+    component: SignupPage,
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: LoginPage,
+  },
+  {
+    path: '/logout',
+    name: 'logout',
+    component: LogoutPage,
+  },
+  {
+    path: '/profile',
+    name: 'profile',
+    component: ProfilePage,
+  },
+  {
+    path: '/admin',
+    name: 'admin',
+    component: AdminPage,
+  },
+  {
+    path: '/manager',
+    name: 'manager',
+    component: ManagerPage,
+  },
+  {
+    path: '/cart',
+    name: 'cart',
+    component: CartPage,
+  },
+  {
+    path: '/product/:id',
+    name: 'product',
+    component: ProductPage,
+    props: true
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'error',
+    component: () => import('@/pages/ErrorPage.vue')
+  }
+]
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
-  routes,
+  routes
 })
 
 export default router
