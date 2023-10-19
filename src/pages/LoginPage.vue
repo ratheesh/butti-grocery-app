@@ -56,7 +56,8 @@
 
 <script setup>
 import { ref } from "vue";
-import router from "@/router";
+// import { router } from "@/router";
+import router from '../router/index.js';
 import { useAuthStore } from "@/stores/authstore.js";
 import FormLayout from "@/layouts/FormLayout.vue"
 

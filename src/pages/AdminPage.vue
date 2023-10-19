@@ -20,7 +20,7 @@
           </div>
           <div class="modal-body">
             <div class="form-floating mb-3">
-              <input type="text" class="form-control" id="floatingInput" placeholder="Fruits/Vegetables">
+              <input type="text" class="form-control" id="floatingInput" v-model="category" placeholder="Fruits/Vegetables">
               <label for="floatingInput">Category</label>
             </div> 
           </div>
@@ -32,39 +32,26 @@
       </div>
     </div>
 
-    <!-- Add product Modal -->
-    <div class="modal fade" id="modalAddProduct" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="staticBackdropLabel">Add Product</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <div class="form-floating mb-3">
-              <input type="text" class="form-control" id="floatingInput" placeholder="Apples/Oranges...">
-              <label for="floatingInput">Product</label>
-            </div> 
-          </div>
-          <div class="modal-footer text-center">
-            <button type="button" class="btn btn-sm btn-outline-success" @click="addProduct">Add</button>
-            <button type="button" class="btn btn-sm btn-outline-danger" data-bs-dismiss="modal">Close</button>
-          </div>
-        </div>
-      </div>
-    </div>
   </main-layout>
 </template>
 
 <script setup>
+import { ref } from "vue";
+import axiosClient from "@/js/axios.js";
 import MainLayout from "@/layouts/MainLayout.vue";
 
-const addCategory = () => {
-  console.log("add category");
-};
+const category = ref("");
 
-const addProduct = () => {
-  console.log("add product");
+const addCategory = async () => {
+  console.log("add category");
+  try {
+    const resp = await axiosClient.post("/api/category", {
+      name: category.value,
+    });
+    console.log(resp);
+  } catch (err) {
+    console.log("error");
+  }
 };
 
 </script>
