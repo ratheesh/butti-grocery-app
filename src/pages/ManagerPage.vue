@@ -11,6 +11,7 @@
       data-bs-toggle="modal" data-bs-target="#modalAddProduct">
       Add Product
       </button>
+      <pre>{{ categories }}</pre>
     </div>
 
     <!-- category Modal -->
@@ -23,7 +24,7 @@
           </div>
           <div class="modal-body">
             <div class="form-floating mb-3">
-              <input type="text" class="form-control" id="floatingInput" placeholder="Fruits/Vegetables">
+              <input type="text" class="form-control" id="floatingInput" placeholder="Fruits/Vegetables" v-model="category">
               <label for="floatingInput">Category</label>
             </div> 
           </div>
@@ -69,9 +70,33 @@
 
 <script setup>
 import MainLayout from "@/layouts/MainLayout.vue";
+import axiosClient from '@/js/axios.js';
+import { ref, onMounted } from 'vue';
 
-const addCategory = () => {
+const categories = ref([]);
+
+const category = ref("");
+
+onMounted(async() => {
+  try {
+    const res = await axiosClient.get("http://localhost:5000/api/category");
+    console.log(res)
+    categories.value = res.data
+  } catch (error) {
+    console.log('Error: ', error);
+  }
+})
+
+const addCategory = async() => {
   console.log("add category");
+  try {
+    const resp = await axiosClient.post("/api/category", {
+      name: category.value,
+    });
+    console.log(resp);
+  } catch (err) {
+    console.log("error");
+  }
 };
 
 const addProduct = () => {
