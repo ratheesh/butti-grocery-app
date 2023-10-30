@@ -22,31 +22,45 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <form class="d-flex" role="search">
             <input
-              class="form-control me-3 border-2"
+              class="form-control-sm me-3 border-2"
               type="search"
               placeholder="Search"
               aria-label="Search"
             />
-            <button class="btn btn-outline-success" type="submit">
-              <mdicon name="magnify" :size="29" />
+            <button class="btn btn-sm btn-outline-success" type="submit">
+              <mdicon name="magnify" :size="20" />
             </button>
           </form>
-          <ul class="navbar-nav me-auto mb-3 mb-lg-0">
-            <li class="nav-item mx-2">
+          <ul class="navbar-nav me-auto mb-3 mb-lg-0 my-auto align-items-center">
+            <li class="nav-item">
               <router-link :to="{ name: 'home' }" class="nav-link">
-                <mdicon class="text-white" name="home" :size="29" />
+                <button class="btn btn-sm btn-outline-light">
+                  <mdicon class="text-white" name="home" :size="20" />Home
+                </button>
               </router-link>
             </li>
-            <li class="nav-item mx-2">
+            <li class="nav-item">
               <router-link :to="{ name: 'cart' }" class="nav-link">
-                <mdicon name="cart" class="text-white" :size="29" />
-                <span class="badge text-bg-warning">{{  cart.items.length }}</span>
+                <button class="btn btn-sm btn-outline-primary">
+                  <mdicon name="cart" class="text-white" :size="20" />
+                  Cart
+                  <span class="badge text-bg-warning">{{  cart.items.length }}</span>
+                </button>
               </router-link>
             </li>
-            <li class="nav-item mx-2 dropdown">
-              <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <mdicon class="text-white" name="account" :size="29" />
-              </a>
+            <li v-if="!auth.authenticated" class="nav-link">
+              <router-link :to="{ name: 'login' }" class="nav-link">
+                <button class="btn btn-outline-success btn-sm">
+                <mdicon class="text-white" name="login" :size="20" />
+                  Login
+                </button>
+              </router-link>
+            </li>
+            <li v-else class="nav-link dropdown">
+                  <a class="nav-link dropdown-toggle text-white p-0" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <mdicon class="text-white" name="account" :size="20" />
+                    {{ auth.user.username }}
+                  </a>
               <ul class="dropdown-menu dropdown-menu-end">
                 <router-link :to="{ name: 'profile' }" class="dropdown-item">
                   Profile
