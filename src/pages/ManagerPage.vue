@@ -3,79 +3,32 @@
     <h2 class="text-center">Manager Dashboard</h2>
     <div>
       <button class="btn btn-outline-success"
-      data-bs-toggle="modal" data-bs-target="#modalAddCategory">
+      data-bs-toggle="modal" data-bs-target="#modalCategory">
       Add Category
       </button>
       &nbsp;
       <button class="btn btn-outline-success"
-      data-bs-toggle="modal" data-bs-target="#modalAddProduct">
+      data-bs-toggle="modal" data-bs-target="#modalProduct">
       Add Product
       </button>
-      <pre>{{ categories }}</pre>
-    </div>
-
-    <!-- category Modal -->
-    <div class="modal fade" id="modalAddCategory" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="staticBackdropLabel">Add Category</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <div class="form-floating mb-3">
-              <input type="text" class="form-control" id="floatingInput" placeholder="Fruits/Vegetables" v-model="category">
-              <label for="floatingInput">Category</label>
-            </div> 
-          </div>
-          <div class="modal-footer text-center">
-            <button type="button" class="btn btn-sm btn-outline-success" @click="addCategory">Add</button>
-            <button type="button" class="btn btn-sm btn-outline-danger" data-bs-dismiss="modal">Close</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Add product Modal -->
-    <div class="modal fade" id="modalAddProduct" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="staticBackdropLabel">Add Product</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <div class="form-floating mb-3">
-              <select name="category" id="category" class="form-control" required="yes" v-model="category">
-                <!-- <option v-for='option in options' :value='option'>{{ option }}</option> -->
-                <option value="test">test</option>
-                <option value="test1">test1</option>
-              </select>
-              <label for="category" class="form-label">Category</label>
-            </div>
-            <div class="form-floating mb-3">
-              <input type="text" class="form-control" id="floatingInput" placeholder="Apples/Oranges...">
-              <label for="floatingInput">Product</label>
-            </div> 
-          </div>
-          <div class="modal-footer text-center">
-            <button type="button" class="btn btn-sm btn-outline-success" @click="addProduct">Add</button>
-            <button type="button" class="btn btn-sm btn-outline-danger" data-bs-dismiss="modal">Close</button>
-          </div>
-        </div>
-      </div>
+      <category-modal @add-category="addCategory" ></category-modal>
+      <product-modal :categories="categories" @add-product="addProduct" ></product-modal>
+      <pre>Categories: {{ categories }}</pre>
+      <pre>Products: {{ products }}</pre>
     </div>
   </main-layout>
 </template>
 
 <script setup>
 import MainLayout from "@/layouts/MainLayout.vue";
+import CategoryModal from "@/components/CategoryModal.vue";
+import ProductModal from "@/components/ProductModal.vue";
 import axiosClient from '@/js/axios.js';
 import { ref, onMounted } from 'vue';
+// import bootstrap from "bootstrap";
 
 const categories = ref([]);
-
-const category = ref("");
+const products = ref([]);
 
 onMounted(async() => {
   try {
@@ -85,23 +38,52 @@ onMounted(async() => {
   } catch (error) {
     console.log('Error: ', error);
   }
+
+  try {
+    const res = await axiosClient.get("http://localhost:5000/api/product/1");
+    console.log(res)
+    products.value = res.data
+  } catch (error) {
+    console.log('Error: ', error);
+  }
 })
 
-const addCategory = async() => {
+function refreshCategories() {
+  console.log('refreshing categories')
+  axiosClient.get("http://localhost:5000/api/category")
+    .then((res) => {
+      console.log(res)
+      categories.value = res.data
+    })
+    .catch((err) => {
+      console.log('Error: ', err);
+    })
+}
+
+function refreshProducts() {
+  console.log('refreshing products')
+  axiosClient.get("http://localhost:5000/api/product/1")
+    .then((res) => {
+      console.log(res)
+      categories.value = res.data
+    })
+    .catch((err) => {
+      console.log('Error: ', err);
+    })
+}
+
+const addCategory = (category) => {
   console.log("add category");
-  try {
-    const resp = await axiosClient.post("/api/category", {
-      name: category.value,
-    });
-    console.log(resp);
-  } catch (err) {
-    console.log("error");
-  }
+  console.log(category)
+  refreshCategories()
 };
 
-const addProduct = () => {
+const addProduct = (product) => {
   console.log("add product");
+  console.log(product)
+  refreshProducts()
 };
+
 </script>
 
 <style scoped></style>

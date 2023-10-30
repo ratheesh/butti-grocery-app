@@ -2,7 +2,7 @@ from datetime import datetime
 
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import backref
+from sqlalchemy.orm import backref,relationship
 from werkzeug.security import generate_password_hash
 from .db import db
 
@@ -99,9 +99,9 @@ class Product(db.Model):
     updated_timestamp = db.Column(
         db.DateTime, nullable=False, default=datetime.now())
 
-    item_id = db.Column(db.Integer, db.ForeignKey("item.id"), nullable=False)
+    items = db.relationship("Item", backref="product", cascade="all, delete-orphan")
+    bookmarks = db.relationship("Bookmark", backref="product", cascade="all, delete-orphan")
     category_id = db.Column(db.Integer, db.ForeignKey("category.id"), nullable=False)
-    bookmark_id = db.Column(db.Integer, db.ForeignKey("bookmark.id"), nullable=False)
 
     def to_dict(self):
         return {
@@ -115,7 +115,7 @@ class Product(db.Model):
             "image": self.image,
             "created_timestamp": self.created_timestamp,
             "updated_timestamp": self.updated_timestamp,
-            "item_id": self.item_id,
+            # "item_id": self.item_id,
             "category_id": self.category_id,
             "bookmark_id": self.bookmark_id,
         }
@@ -131,8 +131,7 @@ class Item(db.Model):
     updated_timestamp = db.Column(
         db.DateTime, nullable=False, default=datetime.now())
 
-    products = db.relationship("Product",backref="product", cascade="all, delete-orphan")
-
+    product_id = db.Column(db.Integer, db.ForeignKey("product.id"), nullable=False)
     order_id = db.Column(db.Integer, db.ForeignKey("order.id"), nullable=False)
 
     def to_dict(self):
@@ -150,7 +149,8 @@ class Bookmark(db.Model):
     '''Bookmark Model'''
     __tablename__ = "bookmark"
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    products = db.relationship("Product", backref="bookmark", cascade="all, delete-orphan")
+    
+    bookmark_id = db.Column(db.Integer, db.ForeignKey("product.id"), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 
     def to_dict(self):

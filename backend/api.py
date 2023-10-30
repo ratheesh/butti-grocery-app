@@ -263,23 +263,25 @@ class CategoryAPI(Resource):
                 db.session.commit()
             except:
                 raise InternalError(message="Error deleting category")
+            
+def valid_date(s):
+    return datetime.strptime(s, "%Y-%m-%d %H:%M")
 
 product_request_parse = reqparse.RequestParser(bundle_errors=True)
-product_request_parse.add_argument("name", type=str)
-product_request_parse.add_argument("description", type=str)
-product_request_parse.add_argument("unit", type=str)
-product_request_parse.add_argument("price", type=int)
-product_request_parse.add_argument("stock", type=int)
+product_request_parse.add_argument("name", type=str, required=True)
+product_request_parse.add_argument("description", type=str, required=True)
+product_request_parse.add_argument("unit", type=str, required=True)
+product_request_parse.add_argument("price", type=int, required=True)
+product_request_parse.add_argument("stock", type=int, required=True)
 product_request_parse.add_argument("expiry_date", type=str)
-product_request_parse.add_argument("image", type=str)
-product_request_parse.add_argument("category_id", type=int)
+product_request_parse.add_argument("image", type=str, required=True)
 
 product_response_fields = {
     "id": fields.Integer,
     "name": fields.String,
     "description": fields.String,
     "unit": fields.String,
-    "price": fields.DateTime,
+    "price": fields.Integer,
     "stock": fields.Integer,
     "expiry_date": fields.DateTime,
     "image": fields.String,
@@ -289,6 +291,7 @@ product_response_fields = {
 }
 class ProductAPI(Resource):
     '''Product Object for managing products'''
+    @marshal_with(product_response_fields)
     def get(self, category_id, id=None):
         if category_id is None:
             raise BadRequest("Category id is missing")
@@ -307,6 +310,7 @@ class ProductAPI(Resource):
             else:
                 return product, 200
 
+    @marshal_with(product_response_fields)
     def post(self, category_id):
         if category_id is None:
             raise BadRequest("Category id is missing")
@@ -315,13 +319,14 @@ class ProductAPI(Resource):
             if category is None:
                 raise NotFound("Category not found")
 
-        args = user_request_parse.parse_args(strict=True)
+        args = product_request_parse.parse_args(strict=True)
         name = args.get("name", None)
         description = args.get("description", None)
         unit = args.get("unit", None)
         price = args.get("price", None)
         stock = args.get("stock", None)
         expiry_date = args.get("expiry_date", None)
+        print(expiry_date, datetime.now())
         image = args.get("image", None)
 
         if name is None:
@@ -337,7 +342,7 @@ class ProductAPI(Resource):
         if expiry_date is None:
             raise BadRequest("expiry_date not provided")
         if image is None:
-            raise BadRequest("image not provided")
+            image = '/product/default.jpg'
 
         product = Product(
             name=name,
@@ -345,7 +350,8 @@ class ProductAPI(Resource):
             unit=unit,
             price=price,
             stock=stock,
-            expiry_date=expiry_date,
+            # expiry_date=expiry_date, # FIXME
+            expiry_date=datetime.now(),
             image=image,
             category_id=category.id,
             created_timestamp=datetime.now(),
@@ -362,7 +368,7 @@ class ProductAPI(Resource):
 
         return product, 201
         
-    
+    @marshal_with(product_response_fields)
     def put(self, category_id, id):
         if category_id is None:
             raise BadRequest("Category id is missing")
