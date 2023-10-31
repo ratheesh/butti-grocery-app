@@ -22,7 +22,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <form class="d-flex" role="search">
             <input
-              class="form-control-sm me-3 border-2"
+              class="form-control-sm me-1 border-2"
               type="search"
               placeholder="Search"
               aria-label="Search"
