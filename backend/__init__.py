@@ -27,6 +27,7 @@ def create_app():
 
     app.config["SECRET_KEY"] = "butti-booking-app"
     app.config["SQLALCHEMY_DATABASE_URI"] = db_file
+    app.config["UPLOAD_FOLDER"] = basedir
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=30)
     app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=10)

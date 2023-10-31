@@ -1,6 +1,6 @@
 import os
 from flask import current_app as app
-from flask import request, jsonify,abort, make_response
+from flask import request, jsonify,abort, make_response, send_file
 from datetime import datetime, timedelta
 from functools import wraps
 from flask import Blueprint
@@ -45,6 +45,17 @@ def refresh():
     identity = get_jwt_identity()
     access_token = create_access_token(identity=identity, fresh=False)
     return jsonify(access_token=access_token)
+
+@routes.route("/<path:path>", methods=["GET"])
+# @jwt_required()
+# @access(["admin", "manager", "user"])
+def send_image(path):
+    '''serve images'''
+    img_path=os.path.join(app.config["UPLOAD_FOLDER"], path)
+    print(img_path)
+    if os.path.isfile(img_path):
+        return send_file(img_path, mimetype='image/jpg')
+    
 
 @routes.route("/test", methods=["GET"])
 @jwt_required()
