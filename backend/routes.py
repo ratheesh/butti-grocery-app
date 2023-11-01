@@ -55,6 +55,8 @@ def send_image(path):
     print(img_path)
     if os.path.isfile(img_path):
         return send_file(img_path, mimetype='image/jpg')
+    else:
+        return jsonify("image not found"), 404
     
 
 @routes.route("/test", methods=["GET"])

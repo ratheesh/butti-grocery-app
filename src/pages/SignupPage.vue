@@ -108,8 +108,14 @@ const handleSignup = async () => {
     loading.value = true;
     const res = await auth.signup(userdata);
     loading.value = false;
-    if (res.status === 201)
-     router.push("/");
+    if (res.data.status === 201) { 
+     if (auth.user.role == 'admin')
+      router.push('/admin');
+     else if (auth.user.role == 'manager')
+      router.push('/manager');
+     else router.push("/")
+
+    }
     else {
       console.log("Signup Error");
       console.log(res);

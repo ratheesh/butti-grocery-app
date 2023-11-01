@@ -8,9 +8,13 @@
           </div>
           <div class="modal-body">
             <div class="form-floating mb-3">
-              <input type="text" class="form-control" id="floatingInput" placeholder="Fruits/Vegetables" v-model="category" required>
+              <input type="text" class="form-control" id="floatingInput" placeholder="Fruits/Vegetables" v-model="category.name" required>
               <label for="floatingInput">Category</label>
             </div> 
+            <div class="mb-3">
+              <label for="imageFile mb-1">Category Image</label>
+              <input class="form-control" type="file" id="imageFile" accept="image/jpeg" @change='handleImage'>
+              </div>
           </div>
           <div class="modal-footer text-center">
             <button type="button" class="btn btn-sm btn-outline-success" @click="addCategory">
@@ -26,6 +30,7 @@
               </div>
             </div>
           </div>
+          <pre>{{ category }}</pre>
         </div>
       </div>
     </div>
@@ -38,19 +43,45 @@ import axiosClient from '@/js/axios.js';
 
 const loading = ref(false);
 const emit = defineEmits(["add-category"]);
-const category = ref("");
+const category = reactive({
+  name: "",
+  image: null,
+  file: null,
+});
+
 const errordata = reactive({
   isError: false,
   msg: "",
 })
 
+const handleImage = (e) => {
+  console.log("modal: handle Image");
+  category.file = e.target.files[0];
+  category.image = category.file.name;
+  createBase64Image(category.file);
+};
+
+function createBase64Image(fObj) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      category.file = e.target.result.split(",")[1];
+    };
+    reader.readAsDataURL(fObj);
+  }
+
 const addCategory = async() => {
   console.log("modal: add category");
+
+  const formData = new FormData();
+  formData.append("name", category.name);
+  formData.append("image", category.image);
+  formData.append("file", category.file);
+
+  console.log(formData.getAll('file'))
+
   loading.value = true;
   try {
-    const resp = await axiosClient.post("/api/category", {
-      name: category.value,
-    });
+    const resp = await axiosClient.post("/api/category", formData);
     console.log(resp);
     console.log('modal: closing modal')
     document.getElementById("categoryModalClose").click()
@@ -60,6 +91,10 @@ const addCategory = async() => {
     errordata.isError = true;
     errordata.msg = err.response.data.message;
   } finally {
+    category.name = "";
+    category.image = null;
+    category.file = null;
+    errordata.isError = false;
     loading.value = false;
   }
 

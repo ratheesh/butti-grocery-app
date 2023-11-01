@@ -1,5 +1,6 @@
 from datetime import datetime
-from nis import cat
+import os
+import base64
 
 from flask import Blueprint, make_response
 from flask_restful import NotFound, Resource, fields, marshal_with, reqparse, request
@@ -181,11 +182,15 @@ class UserAPI(Resource):
 
 
 category_request_parse = reqparse.RequestParser(bundle_errors=True)
-category_request_parse.add_argument("name", type=str)
+category_request_parse.add_argument("name", type=str, required=True)
+category_request_parse.add_argument("image", type=str)
+category_request_parse.add_argument("file", type=str)
 
 category_response_fields = {
     "id": fields.Integer,
     "name": fields.String,
+    "image": fields.String,
+    # "file": fields.String,
     "created_timestamp": fields.DateTime,
     "updated_timestamp": fields.DateTime,
 }
@@ -206,12 +211,16 @@ class CategoryAPI(Resource):
 
     @marshal_with(category_response_fields)
     def post(self):
-        args = user_request_parse.parse_args(strict=True)
-        print(args)
+        args = category_request_parse.parse_args(strict=True)
+        # print(args)
         name = args.get("name", None)
 
         if name is None:
             raise BadRequest("name not provided")
+
+        image = args.get("image", None)
+        if image is None:
+            image = 'default.jpg'
 
         category = Category.query.filter_by(name=name).first()
         if category is not None:
@@ -220,14 +229,35 @@ class CategoryAPI(Resource):
 
         category = Category(
             name=name,
+            image=image,
             created_timestamp=datetime.now(),
             updated_timestamp=datetime.now(),
         )
         if category is None:
             raise InternalError(message="error creating category")
 
+        db.session.add(category)
+        db.session.flush()
+
+        file = args.get("file", None)
+        if file is not None and image is None:
+            raise BadRequest("image name not provided")
+        
         try:
-            db.session.add(category)
+            image = image.split('.')[0] + '_' + str(category.id) + '.jpg'
+            print('Image name to write', image)
+            category.image = image
+
+            file_data = base64.b64decode(file)
+            basedir = os.path.abspath(os.path.dirname(__file__))
+            filename= basedir + '/images/category/' + image
+            with open(filename, 'wb') as f:
+                f.write(file_data)
+        except:
+            raise InternalError(message="Error in saving image")
+
+        try:
+            # db.session.add(category)
             db.session.commit()
         except:
             raise InternalError(message="error creating category")
@@ -254,6 +284,9 @@ class CategoryAPI(Resource):
             return category, 200
     
     def delete(self, id):
+        if id is None:
+            raise BadRequest("Category id is missing")
+
         category = Category.query.filter_by(id=id).first()
         if category is None:
             raise NotFound(message="Category not found")
