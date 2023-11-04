@@ -9,48 +9,49 @@ import LogoutPage from '@/pages/LogoutPage.vue'
 import ProfilePage from '@/pages/ProfilePage.vue'
 import CartPage from '@/pages/CartPage.vue'
 import CategoryManagement from '@/components/CategoryManagement.vue'
+import ProductManagement from '@/components/ProductManagement.vue'
 import ProductPage from '@/pages/ProductPage.vue'
 
 const routes = [
   {
     path: '/',
     name: 'home',
-    component: HomePage,
+    component: HomePage
   },
   {
     path: '/signup',
     name: 'signup',
-    component: SignupPage,
+    component: SignupPage
   },
   {
     path: '/login',
     name: 'login',
-    component: LoginPage,
+    component: LoginPage
   },
   {
     path: '/logout',
     name: 'logout',
-    component: LogoutPage,
+    component: LogoutPage
   },
   {
     path: '/profile',
     name: 'profile',
-    component: ProfilePage,
+    component: ProfilePage
   },
   {
     path: '/admin',
     name: 'admin',
-    component: AdminPage,
+    component: AdminPage
   },
   {
     path: '/manager',
     name: 'manager',
-    component: ManagerPage,
+    component: ManagerPage
   },
   {
     path: '/cart',
     name: 'cart',
-    component: CartPage,
+    component: CartPage
   },
   {
     path: '/category',
@@ -59,8 +60,14 @@ const routes = [
     props: true
   },
   {
-    path: '/product/:id',
+    path: '/product',
     name: 'product',
+    component: ProductManagement,
+    props: true
+  },
+  {
+    path: '/product/:id',
+    name: 'product_id',
     component: ProductPage,
     props: true
   },

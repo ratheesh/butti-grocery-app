@@ -283,11 +283,13 @@ def valid_date(s):
 product_request_parse = reqparse.RequestParser(bundle_errors=True)
 product_request_parse.add_argument("name", type=str, required=True)
 product_request_parse.add_argument("description", type=str, required=True)
-product_request_parse.add_argument("unit", type=str, required=True)
+product_request_parse.add_argument("unit", type=str, required=True, default="piece")
 product_request_parse.add_argument("price", type=int, required=True)
 product_request_parse.add_argument("stock", type=int, required=True)
-product_request_parse.add_argument("expiry_date", type=str)
-product_request_parse.add_argument("image", type=str, required=True)
+product_request_parse.add_argument("expiry_date", type=valid_date, required=True)
+product_request_parse.add_argument("image", type=str, default="default.jpg")
+product_request_parse.add_argument("image_file", type=str)
+# product_request_parse.add_argument("category_id", type=int)
 
 product_response_fields = {
     "id": fields.Integer,
@@ -298,6 +300,7 @@ product_response_fields = {
     "stock": fields.Integer,
     "expiry_date": fields.DateTime,
     "image": fields.String,
+    "image_file": fields.String,
     "created_timestamp": fields.DateTime,
     "updated_timestamp": fields.DateTime,
     "category_id": fields.Integer,
@@ -305,9 +308,16 @@ product_response_fields = {
 class ProductAPI(Resource):
     '''Product Object for managing products'''
     @marshal_with(product_response_fields)
-    def get(self, category_id, id=None):
+    def get(self, category_id=None, product_id=None):
         if category_id is None:
-            raise BadRequest("Category id is missing")
+            products = Product.query.all()
+            for product in products:
+                basedir = os.path.abspath(os.path.dirname(__file__))
+                image_file= basedir + '/images/product/' + product.image
+                if os.path.isfile(image_file):
+                    with open(image_file, 'rb') as f:
+                        product.image_file = base64.b64encode(f.read())
+            return products, 200
         else:
             category=Category.query.filter_by(id=category_id).first()
             if category is None:
@@ -317,7 +327,7 @@ class ProductAPI(Resource):
             products = Product.query.filter_by(category_id=category_id).all()
             return products, 200
         else:
-            product = Product.query.filter_by(category_id=category.id, id=id).first()
+            product = Product.query.filter_by(category_id=category.id, id=product_id).first()
             if product is None:
                 raise NotFound("Product not found")
             else:
@@ -354,8 +364,8 @@ class ProductAPI(Resource):
             raise BadRequest("stock not provided")
         if expiry_date is None:
             raise BadRequest("expiry_date not provided")
-        if image is None:
-            image = '/product/default.jpg'
+        if image is None or image == "":
+            image = 'default.jpg'
 
         product = Product(
             name=name,
@@ -366,7 +376,7 @@ class ProductAPI(Resource):
             # expiry_date=expiry_date, # FIXME
             expiry_date=datetime.now(),
             image=image,
-            category_id=category.id,
+            category_id=category_id,
             created_timestamp=datetime.now(),
             updated_timestamp=datetime.now(),
         )
@@ -382,21 +392,22 @@ class ProductAPI(Resource):
         return product, 201
         
     @marshal_with(product_response_fields)
-    def put(self, category_id, id):
+    def put(self, category_id, product_id):
         if category_id is None:
-            raise BadRequest("Category id is missing")
+            raise BadRequest("category id is missing")
         else:
             category=Category.query.filter_by(id=category_id).first()
             if category is None:
-                raise NotFound("Category not found")
+                raise NotFound("category not found")
 
-        if id is None:
-            raise BadRequest("Product id is missing")
+        if product_id is None:
+            raise BadRequest("product id is missing")
         else:
             args=product_request_parse.parse_args(strict=True)
-            product=Product.query.filter_by(category_id=category_id, id=id).first()
+            print(args)
+            product=Product.query.filter_by(category_id=category_id, id=product_id).first()
             if product is None:
-                raise NotFound("Product not found")
+                raise NotFound("product not found")
             else:
                 name = args.get("name", None)
                 description = args.get("description", None)
@@ -413,8 +424,8 @@ class ProductAPI(Resource):
                 product.stock = stock
                 product.expiry_date = expiry_date
                 product.image = image
-                product.category_id = category_id,
-                product.updated_timestamp = datetime.now()
+                product.category_id = category_id
+                product.updated_timestamp=datetime.now()
 
                 try:
                     db.session.add(product)
@@ -424,20 +435,22 @@ class ProductAPI(Resource):
 
                 return product, 200
     
-    def delete(self, id):
-        if id is None:
-            raise BadRequest("Product id is missing")
+    def delete(self, category_id, product_id):
+        if category_id is None:
+            raise BadRequest("category id is missing")
+        if product_id is None:
+            raise BadRequest("product id is missing")
         else:
-            product=Product.query.filter_by(id=id).first()
+            product=Product.query.filter_by(category_id=category_id, id=product_id).first()
             if product is None:
-                raise NotFound("Product not found")
+                raise NotFound("product not found")
             try:
                 db.session.delete(product)
                 db.session.commit()
             except:
-                raise InternalError(message="Error deleting product")
+                raise InternalError(message="error deleting product")
 
-        return "Product deleted successfully", 200
+        return "product deleted successfully", 200
 
 bookmark_request_parse = reqparse.RequestParser(bundle_errors=True)
 bookmark_request_parse.add_argument("name", type=str)

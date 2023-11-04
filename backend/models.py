@@ -90,10 +90,10 @@ class Product(db.Model):
     name = db.Column(db.String(32), nullable=False)
     description = db.Column(db.String(256), nullable=False)
     unit = db.Column(db.String(64), nullable=False)
-    price = db.Column(db.Float, nullable=False)
+    price = db.Column(db.Integer, nullable=False)
     stock = db.Column(db.Integer, nullable=False)
-    expiry_date = db.Column(db.DateTime, nullable=False)
-    image = db.Column(db.String(32), default="default.jpg")
+    expiry_date = db.Column(db.DateTime, nullable=False, default=datetime.now())
+    image = db.Column(db.String(64), default="default.jpg")
     created_timestamp = db.Column(
         db.DateTime, nullable=False, default=datetime.now())
     updated_timestamp = db.Column(
@@ -117,7 +117,7 @@ class Product(db.Model):
             "updated_timestamp": self.updated_timestamp,
             # "item_id": self.item_id,
             "category_id": self.category_id,
-            "bookmark_id": self.bookmark_id,
+            # "bookmark_id": self.bookmark_id,
         }
 
 
