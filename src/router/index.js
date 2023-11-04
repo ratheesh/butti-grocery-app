@@ -8,6 +8,7 @@ import LoginPage from '@/pages/LoginPage.vue'
 import LogoutPage from '@/pages/LogoutPage.vue'
 import ProfilePage from '@/pages/ProfilePage.vue'
 import CartPage from '@/pages/CartPage.vue'
+import CategoryManagement from '@/components/CategoryManagement.vue'
 import ProductPage from '@/pages/ProductPage.vue'
 
 const routes = [
@@ -50,6 +51,12 @@ const routes = [
     path: '/cart',
     name: 'cart',
     component: CartPage,
+  },
+  {
+    path: '/category',
+    name: 'category',
+    component: CategoryManagement,
+    props: true
   },
   {
     path: '/product/:id',
