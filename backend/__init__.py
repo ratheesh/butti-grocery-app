@@ -60,10 +60,10 @@ def create_app():
     app.register_blueprint(api, url_prefix="/api")
 
     hapi.add_resource(UserAPI, "/api/user", "/api/user/<username>")
-    hapi.add_resource(CategoryAPI, "/api/category", "/api/category/<category_id>")
-    hapi.add_resource(ProductAPI, "/api/product/<category_id>", "/api/product/<category_id>/<product_id>")
-    hapi.add_resource(BookmarkAPI, "/api/bookmark/<product_id>", "/api/bookmark/<product_id>/<bookmark_id>")
-    hapi.add_resource(OrderAPI, "/api/order", "/api/order/<order_id>")
+    hapi.add_resource(CategoryAPI, "/api/category", "/api/category/<int:category_id>")
+    hapi.add_resource(ProductAPI, "/api/product/<int:category_id>", "/api/product/<int:category_id>/<int:product_id>")
+    hapi.add_resource(BookmarkAPI, "/api/bookmark/<int:product_id>", "/api/bookmark/<int:product_id>/<int:bookmark_id>")
+    hapi.add_resource(OrderAPI, "/api/order", "/api/order/<int:order_id>")
 
     return app
 

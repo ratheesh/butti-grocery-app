@@ -183,28 +183,24 @@ class UserAPI(Resource):
 
 category_request_parse = reqparse.RequestParser(bundle_errors=True)
 category_request_parse.add_argument("name", type=str, required=True)
-category_request_parse.add_argument("image", type=str)
-category_request_parse.add_argument("file", type=str)
 
 category_response_fields = {
     "id": fields.Integer,
     "name": fields.String,
-    "image": fields.String,
-    # "file": fields.String,
     "created_timestamp": fields.DateTime,
     "updated_timestamp": fields.DateTime,
 }
 class CategoryAPI(Resource):
     '''Category Object for managing categories'''
     @marshal_with(category_response_fields)
-    def get(self, id=None):
-        if id is None:
+    def get(self, category_id=None):
+        if category_id is None:
             categories = Category.query.all()
             return categories, 200
         else:
-            category = Category.query.filter_by(id=id).one_or_none()
+            category = Category.query.filter_by(id=category_id).one_or_none()
             if category is None:
-                raise NotFound("Category not found")
+                raise NotFound("category not found")
             else:
                 return category, 200
 
@@ -212,15 +208,11 @@ class CategoryAPI(Resource):
     @marshal_with(category_response_fields)
     def post(self):
         args = category_request_parse.parse_args(strict=True)
-        # print(args)
+        
         name = args.get("name", None)
-
         if name is None:
             raise BadRequest("name not provided")
-
-        image = args.get("image", None)
-        if image is None:
-            image = 'default.jpg'
+        name = name.capitalize()
 
         category = Category.query.filter_by(name=name).first()
         if category is not None:
@@ -229,35 +221,14 @@ class CategoryAPI(Resource):
 
         category = Category(
             name=name,
-            image=image,
             created_timestamp=datetime.now(),
             updated_timestamp=datetime.now(),
         )
         if category is None:
             raise InternalError(message="error creating category")
 
-        db.session.add(category)
-        db.session.flush()
-
-        file = args.get("file", None)
-        if file is not None and image is None:
-            raise BadRequest("image name not provided")
-        
         try:
-            image = image.split('.')[0] + '_' + str(category.id) + '.jpg'
-            print('Image name to write', image)
-            category.image = image
-
-            file_data = base64.b64decode(file)
-            basedir = os.path.abspath(os.path.dirname(__file__))
-            filename= basedir + '/images/category/' + image
-            with open(filename, 'wb') as f:
-                f.write(file_data)
-        except:
-            raise InternalError(message="Error in saving image")
-
-        try:
-            # db.session.add(category)
+            db.session.add(category)
             db.session.commit()
         except:
             raise InternalError(message="error creating category")
@@ -265,13 +236,22 @@ class CategoryAPI(Resource):
         return category, 201
     
     @marshal_with(category_response_fields)
-    def put(self, id):
-        category = Category.query.filter_by(id=id).first()
+    def put(self, category_id):
+        if category_id is None:
+            raise NotFound("category id is missing")
+
+        category = Category.query.filter_by(id=category_id).first()
         if category is None:
-            return NotFound("Category not found")
+            return NotFound("category not found")
         else:
             args = category_request_parse.parse_args(strict=True)
+
             name = args.get("name", None)
+            if name == "" or name is None:
+                raise BadRequest("name is empty")
+            else:
+                name = name.capitalize()
+
             category.name = name
             category.updated_timestamp = datetime.now()
 
@@ -279,15 +259,15 @@ class CategoryAPI(Resource):
                 db.session.add(category)
                 db.session.commit()
             except:
-                raise InternalError(message="Error in updating category")
+                raise InternalError(message="error in updating category")
 
             return category, 200
     
-    def delete(self, id):
+    def delete(self, category_id):
         if id is None:
-            raise BadRequest("Category id is missing")
+            raise BadRequest("category id is missing")
 
-        category = Category.query.filter_by(id=id).first()
+        category = Category.query.filter_by(id=category_id).first()
         if category is None:
             raise NotFound(message="Category not found")
         else:
@@ -295,7 +275,7 @@ class CategoryAPI(Resource):
                 db.session.delete(category)
                 db.session.commit()
             except:
-                raise InternalError(message="Error deleting category")
+                raise InternalError(message="error deleting category")
             
 def valid_date(s):
     return datetime.strptime(s, "%Y-%m-%d %H:%M")

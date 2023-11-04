@@ -68,7 +68,6 @@ class Category(db.Model):
     __tablename__ = "category"
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     name = db.Column(db.String(32), nullable=False)
-    image = db.Column(db.String(32), default="default.jpg")
     created_timestamp = db.Column(
         db.DateTime, nullable=False, default=datetime.now())
     updated_timestamp = db.Column(
@@ -80,7 +79,6 @@ class Category(db.Model):
         return {
             "id": self.id,
             "name": self.name,
-            "image": self.image,
             # "products": [product.to_dict() for product in self.products],
         }
 
