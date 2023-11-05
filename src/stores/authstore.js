@@ -1,6 +1,6 @@
 import { computed, ref, onMounted } from 'vue'
 import { defineStore } from 'pinia'
-import axiosClient from '../js/axios';
+import axiosClient from '../js/axios'
 
 export const useAuthStore = defineStore('authStore', () => {
   const authenticated = ref(false)
@@ -14,24 +14,15 @@ export const useAuthStore = defineStore('authStore', () => {
       role.value = _user.role
       user.value = _user
     } else {
-      authenticated.value = false;
+      authenticated.value = false
       role.value = 'user'
       user.value = {}
     }
   }
 
-  // onMounted(async() => {
-  //   if (localStorage.getItem('access_token') && localStorage.getItem('username')) {
-  //     await fetchUser(localStorage.getItem('username'));
-  //     if (authenticated.value === false) {
-  //       console.log('User not logged in')
-  //     }
-  //   }
-  // })
-
   const getUser = computed(() => user.value)
 
-  const fetchUser = async(username) => {
+  const fetchUser = async (username) => {
     try {
       const res = await axiosClient.post(`/api/user/${username}`)
       if (res.status === 200) {
@@ -71,31 +62,21 @@ export const useAuthStore = defineStore('authStore', () => {
     localStorage.removeItem('access_token')
     console.log('logged out')
     authenticated.value = false
-    // try {
-    //   const res = await axiosClient.post('/logout')
-    //   console.log(res)
-    //   authenticated.value = false
-    //   role.value = 'user'
-    //   user.value = {}
-    //   console.log('logged out')
-    // } catch (err) {
-    //   console.log(err)
-    // }
   }
 
   async function signup(user_data) {
     try {
-      const res = await axiosClient.post('/api/user',{
+      const res = await axiosClient.post('/api/user', {
         name: user_data.name,
         username: user_data.username,
         email: user_data.email,
         role: user_data.role,
         password: user_data.password,
-        image : user_data.image
+        img_name: 'default.jpg',
+        image: null
       })
       console.log(res)
-      if (res.data.status === 201)
-        console.log(`user ${user_data.username} signed up!`)
+      if (res.data.status === 201) console.log(`user ${user_data.username} signed up!`)
 
       return res
     } catch (err) {
