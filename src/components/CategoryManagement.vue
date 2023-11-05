@@ -1,5 +1,5 @@
 <template>
-  <div class="row col-6 m-auto ">
+  <div class="row col-8 m-auto ">
     <h2 class="text-center mt-5">Category Management</h2>
     <div class="card">
       <div class="row justify-content-end">
@@ -14,7 +14,7 @@
       </div>
       <div v-if="categories.length > 0">
         <div class="row justify-content-center m-auto">
-          <div class="col-8">
+          <div class="col-10">
             <hr />
             <table class="table table-hover text-center">
               <thead>

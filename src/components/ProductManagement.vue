@@ -1,5 +1,5 @@
 <template>
-  <div class="row col-6 m-auto">
+  <div class="row col-8 m-auto">
     <h2 class="text-center mt-5">Product Management</h2>
     <div class="card">
       <div class="row justify-content-end">
@@ -12,12 +12,12 @@
       </div>
       <div v-if="products.length > 0">
         <div class="row justify-content-center m-auto">
-          <div class="col-8">
+          <div class="col-10">
             <hr />
             <table class="table table-hover text-center">
               <thead>
                 <tr>
-                  <th scope="col"><b>ID</b></th>
+                  <th scope="col"><b>Thumbnail</b></th>
                   <th scope="col"><b>ID</b></th>
                   <th scope="col"><b>Name</b></th>
                   <th scope="col"></th>
@@ -27,7 +27,7 @@
               </thead>
               <tbody>
                 <tr v-for="(product, idx) in products" :id="idx" :key="idx">
-                  <th></th>
+                  <th><img :src="`${backend_url_base}/${product.image}`" height="30" width="30"/></th>
                   <th>{{ product.id }}</th>
                   <th>{{ product.name }}</th>
                   <th>
@@ -43,7 +43,7 @@
                     </button>
                   </th>
                   <th>
-                    <button class="btn btn-sm btn-danger" @click="handleProductDelete(product.id)">
+                    <button class="btn btn-sm btn-danger" @click="handleProductDelete(product)">
                       <mdicon name="delete" class="text-white" :size="16" />
                       Delete
                     </button>
@@ -262,6 +262,7 @@ import axiosClient from '@/js/axios.js'
 import { Modal } from 'bootstrap'
 
 // data
+const backend_url_base = 'http://localhost:5000/images/products/'
 const categories = ref([])
 const products = ref([])
 const errordata = reactive({
@@ -280,6 +281,7 @@ const data = reactive({
   stock: 0,
   expiry_date: '',
   image: '',
+  image_file: '',
   created_timestamp: '',
   updated_timestamp: '',
   categories: []
@@ -369,9 +371,10 @@ function handleProductAdd(product, isEdit) {
   modal.show()
 }
 
-const handleProductDelete = async (id) => {
-  console.log('Delete Product:', id)
-  data.id = id
+const handleProductDelete = async (product) => {
+  console.log('Delete Product:', product.id)
+  data.id = product.id
+  category_id.value = product.category_id
   modalDelete.show()
 }
 
@@ -382,15 +385,15 @@ function handleProductDetails(id) {
 // Modal Functions
 const handleImage = (e) => {
   console.log('modal: handle Image')
-  data.file = e.target.files[0]
-  data.image = data.file.name
-  createBase64Image(data.file)
+  data.image_file = e.target.files[0]
+  data.image = data.image_file.name
+  createBase64Image(data.image_file)
 }
 
 function createBase64Image(fObj) {
   const reader = new FileReader()
   reader.onload = (e) => {
-    data.file = e.target.result.split(',')[1]
+    data.image_file = e.target.result.split(',')[1]
   }
   reader.readAsDataURL(fObj)
 }

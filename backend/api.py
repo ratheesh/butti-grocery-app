@@ -311,9 +311,11 @@ class ProductAPI(Resource):
     def get(self, category_id=None, product_id=None):
         if category_id is None:
             products = Product.query.all()
+            # print(products)
             for product in products:
                 basedir = os.path.abspath(os.path.dirname(__file__))
-                image_file= basedir + '/images/product/' + product.image
+                image_file= basedir + '/images/products/' + product.image
+                print('Image filename to be read: ', image_file)
                 if os.path.isfile(image_file):
                     with open(image_file, 'rb') as f:
                         product.image_file = base64.b64encode(f.read())
@@ -323,7 +325,7 @@ class ProductAPI(Resource):
             if category is None:
                 raise NotFound("Category not found")
 
-        if id is None:
+        if product_id is None:
             products = Product.query.filter_by(category_id=category_id).all()
             return products, 200
         else:
@@ -343,13 +345,13 @@ class ProductAPI(Resource):
                 raise NotFound("Category not found")
 
         args = product_request_parse.parse_args(strict=True)
+        # print(args)
         name = args.get("name", None)
         description = args.get("description", None)
         unit = args.get("unit", None)
         price = args.get("price", None)
         stock = args.get("stock", None)
         expiry_date = args.get("expiry_date", None)
-        print(expiry_date, datetime.now())
         image = args.get("image", None)
 
         if name is None:
@@ -382,6 +384,26 @@ class ProductAPI(Resource):
         )
         if product is None:
             raise InternalError(message="error creating product")
+        
+        db.session.add(product)
+        db.session.flush()
+
+        file = args.get("image_file", None)
+        if file is not None and image is None:
+            raise BadRequest("image_file name not provided")
+        else: 
+            try:
+                image = image.split('.')[0] + '_' + str(product.id) + '.jpg'
+                product.image = image
+
+                file_data = base64.b64decode(file)
+                basedir = os.path.abspath(os.path.dirname(__file__))
+                filename= basedir + '/images/products/' + image
+                print('Image filename to be saved: ', filename)
+                with open(filename, 'wb') as f:
+                    f.write(file_data)
+            except:
+                raise InternalError(message="Error in saving image")
 
         try:
             db.session.add(product)
