@@ -47,7 +47,7 @@ user_request_parse.add_argument("username", type=str)
 user_request_parse.add_argument("email", type=str)
 user_request_parse.add_argument("role", type=str)
 user_request_parse.add_argument("password", type=str)
-user_request_parse.add_argument("img_file", type=str)
+user_request_parse.add_argument("img_name", type=str)
 user_request_parse.add_argument("image", type=str)
 # user_request_parse.add_argument("image", type=werkzeug.datastructures.FileStorage)
 
@@ -86,7 +86,7 @@ class UserAPI(Resource):
     def post(self):
         '''Create a new user'''
         args = user_request_parse.parse_args(strict=True)
-        # print(args)
+        print(args)
         name = args.get("name", None)
         username = args.get("username", None)
         email = args.get("email", None)
@@ -139,7 +139,7 @@ class UserAPI(Resource):
         image = args.get("image", None)
         if image is not None and img_name is None:
             raise BadRequest("img_name name not provided")
-        else: 
+        elif image is not None: 
             try:
                 img_name = img_name.split('.')[0] + '_' + str(user.id) + '.jpg'
                 user.img_name = img_name
@@ -152,7 +152,6 @@ class UserAPI(Resource):
                     f.write(file_data)
             except:
                 raise InternalError(message="Error in saving image")
-
 
         try:
             db.session.add(user)

@@ -16,7 +16,7 @@ class User(db.Model):
     password = db.Column(db.String(256), nullable=False)
     approved = db.Column(db.Boolean, nullable=False, default=False)
     role = db.Column(db.String(32), nullable=False, default="user")
-    image = db.Column(db.String(32), default="default.jpg")
+    img_name = db.Column(db.String(32), default="default.jpg")
     created_timestamp = db.Column(
         db.DateTime, nullable=False, default=datetime.now())
     updated_timestamp = db.Column(
@@ -35,7 +35,7 @@ class User(db.Model):
             "email": self.email,
             "approved": self.approved,
             "role": self.role,
-            "image": self.image,
+            "img_name": self.img_name,
             "created_timestamp": self.created_timestamp,
             "updated_timestamp": self.updated_timestamp,
             # "orders": [order.to_dict() for order in self.orders],
@@ -190,7 +190,7 @@ def create_admin_user(db):
         password=generate_password_hash("admin"),
         role="admin",
         approved = True,
-        image = "admin.png",
+        img_name = "default.jpg",
         created_timestamp=datetime.now(),
         updated_timestamp=datetime.now(),
     )
