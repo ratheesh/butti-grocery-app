@@ -47,6 +47,7 @@ user_request_parse.add_argument("username", type=str)
 user_request_parse.add_argument("email", type=str)
 user_request_parse.add_argument("role", type=str)
 user_request_parse.add_argument("password", type=str)
+user_request_parse.add_argument("img_file", type=str)
 user_request_parse.add_argument("image", type=str)
 # user_request_parse.add_argument("image", type=werkzeug.datastructures.FileStorage)
 
@@ -58,6 +59,7 @@ user_response_fields = {
     "password": fields.String,
     "approved": fields.String,
     "role": fields.String,
+    "img_name": fields.String,
     "image": fields.String,
     "created_timestamp": fields.DateTime,
     "updated_timestamp": fields.DateTime,
@@ -84,12 +86,13 @@ class UserAPI(Resource):
     def post(self):
         '''Create a new user'''
         args = user_request_parse.parse_args(strict=True)
-        print(args)
+        # print(args)
         name = args.get("name", None)
         username = args.get("username", None)
         email = args.get("email", None)
         role = args.get("role", None)
         password = args.get("password", None)
+        img_name = args.get("img_name", None)
 
         # if args is None or name is None or username is None or password is None:
         if name is None:
@@ -107,6 +110,8 @@ class UserAPI(Resource):
             raise BadRequest("password not provided")
         # if len(password) < 4:
         #     raise BadRequest("password length is less than 4 chars")
+        if img_name is None or img_name == "":
+            img_name = 'default.jpg'
 
         # check if the user already exists based on username
         user = User.query.filter_by(username=username).first()
@@ -121,12 +126,33 @@ class UserAPI(Resource):
             password=generate_password_hash(password),
             role=role,
             approved=False,
-            image="default.jpg",
+            img_name=img_name,
             created_timestamp=datetime.now(),
             updated_timestamp=datetime.now(),
         )
         if user is None:
             raise InternalError(message="Error in creating User")
+
+        db.session.add(user)
+        db.session.flush()
+
+        image = args.get("image", None)
+        if image is not None and img_name is None:
+            raise BadRequest("img_name name not provided")
+        else: 
+            try:
+                img_name = img_name.split('.')[0] + '_' + str(user.id) + '.jpg'
+                user.img_name = img_name
+
+                file_data = base64.b64decode(image)
+                basedir = os.path.abspath(os.path.dirname(__file__))
+                filename= basedir + '/images/products/' + img_name
+                print('Image filename to be saved: ', filename)
+                with open(filename, 'wb') as f:
+                    f.write(file_data)
+            except:
+                raise InternalError(message="Error in saving image")
+
 
         try:
             db.session.add(user)

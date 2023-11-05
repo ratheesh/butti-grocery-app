@@ -3,6 +3,7 @@
     <div class="container">
         <div class="row my-5">
             <div class="col-10 border rounded-2 p-0">
+                <!-- <img :src="`${backend_base_url}/${auth.user.img_file}`" alt="User Profile Image" \> -->
                 <h2 class="text-center mt-3">{{  auth.user.name }}'s Page</h2>
                 <hr class="m-0">
                 <table class="table table-borderless">
@@ -81,6 +82,7 @@ import router from '@/router'
 import { useAuthStore } from '@/stores/authstore'
 import MainLayout from '@/layouts/MainLayout.vue'
 
+const backend_base_url="http://localhost:5000"
 const auth = useAuthStore()
 
 onMounted(() => {
