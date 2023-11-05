@@ -68,7 +68,7 @@
                 <li><span class="dropdown-item">Orders</span></li>
                 <li><hr class="dropdown-divider"></li>
                 <li class="nav-item mx-2" v-if="!auth.authenticated">
-                  <router-link :to="{ name: 'login' }" class="nav-link">
+                  <router-link :to="{ name: 'login' }" class="dropdown-item">
                     Login
                   </router-link>
                 </li>
