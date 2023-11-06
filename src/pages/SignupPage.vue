@@ -26,8 +26,8 @@
                 </div>
                 <div class="form-floating mb-3">
                   <select name="role" id="role" class="form-control" required="yes" v-model="userdata.role">
-                    <option :value="options[0]" selected>user</option>
-                    <option v-for='option in options' :value='option'>{{ option }}</option>
+                    <!-- <option :value="options[0]" selected>user</option> -->
+                    <option v-for='(option, idx) in options' :key="idx" :value='option'>{{ option }}</option>
                   </select>
                   <label for="role" class="form-label">Role</label>
                 </div>
@@ -44,7 +44,7 @@
               </div>
               <hr class="mt-1 mx-0" />
               <div class="mb-3 text-center">
-                <button type="submit" class="btn btn-success">
+                <button type="submit" class="btn btn-sm btn-outline-primary">
                   <span v-if="loading" class="spinner-border spinner-border-sm"></span>
                   <span v-if="!loading"><mdicon name="account-plus" :size="25" /></span>
                   Signup

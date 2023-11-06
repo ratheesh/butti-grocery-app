@@ -32,7 +32,7 @@
               </div>
               <hr class="mt-1 mx-0" />
               <div class="mb-3 text-center">
-                <button type="submit" class="btn btn-success btn">
+                <button type="submit" class="btn btn-sm btn-outline-primary">
                   <span v-if="loading" class="spinner-border spinner-border-sm"></span>
                   <span v-if="!loading"><mdicon name="login" :size="18" /></span
                   >&nbsp;Login

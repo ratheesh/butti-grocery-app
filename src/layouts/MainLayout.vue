@@ -18,7 +18,7 @@ import Footer from '@/layouts/Footer.vue'
 
 <style scoped>
 .content {
-    min-height: 90vh;
+    min-height: 85vh;
 }
 
 .footer {
