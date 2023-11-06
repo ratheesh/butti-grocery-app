@@ -1,3 +1,12 @@
+:root {
+  --bs-primary: #74b9ff;
+  --bs-secondary: #080808;
+  --bs-success: #198754;
+  --bs-info: #0dcaf0;
+  --bs-warning: #ffc107;
+  --bs-danger: #dc3545;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
