@@ -5,9 +5,9 @@ import { createPinia } from 'pinia'
 
 import App from '@/js/App.vue'
 import router from '@/router'
-import 'bootstrap/dist/css/bootstrap.min.css'
+// import 'bootstrap/dist/css/bootstrap.min.css'
 // import 'bootstrap/dist/js/bootstrap.min.js'
-import 'bootstrap'
+// import 'bootstrap'
 
 import mdiVue from 'mdi-vue/v3'
 import * as mdijs from '@mdi/js'
