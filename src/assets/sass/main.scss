@@ -6,7 +6,7 @@
 // 2. Include any default variable overrides here
 $primary: #415b76;
 $secondary:#adadad;
-$success: #11c88b;
+$success: #0ea271;
 $warning: #eeb15d;
 $danger: #f01e4d;
 
@@ -28,7 +28,7 @@ $custom-colors: (
   "teal-800": $teal-800,
 );
 // Merge the maps
-$theme-colors: map-merge($theme-colors, $custom-colors);$custom-colors: (
+$custom-colors: (
   "dark-lava": #4B4237,
   "goldenrod": #D5A021,
   "alabaster": #EDE7D9,
