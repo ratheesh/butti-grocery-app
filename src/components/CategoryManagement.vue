@@ -1,8 +1,8 @@
 <template>
   <div class="row col-8 m-auto ">
-    <h2 class="text-center mt-5">Category Management</h2>
+    <h2 class="text-center mt-3">Category Management</h2>
     <div class="card">
-      <div class="row justify-content-end">
+      <div class="row col-10 justify-content-end m-auto my-3">
         <div class="col-auto">
           <button class="btn btn-sm btn-success" @click="handleCategoryAdd({}, false)">
             <b>
@@ -15,12 +15,11 @@
       <div v-if="categories.length > 0">
         <div class="row justify-content-center m-auto">
           <div class="col-10">
-            <hr />
             <table class="table table-hover text-center">
-              <thead>
+              <thead class="table-dark">
                 <tr>
                   <th scope="col"><b>ID</b></th>
-                  <th scope="col"><b>Name</b></th>
+                  <th scope="col"><b>NAME</b></th>
                   <th scope="col"></th>
                   <th scope="col"></th>
                   <th scope="col"></th>

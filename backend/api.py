@@ -312,8 +312,8 @@ product_request_parse.add_argument("unit", type=str, required=True, default="pie
 product_request_parse.add_argument("price", type=int, required=True)
 product_request_parse.add_argument("stock", type=int, required=True)
 product_request_parse.add_argument("expiry_date", type=valid_date, required=True)
-product_request_parse.add_argument("image", type=str, default="default.jpg")
-product_request_parse.add_argument("image_file", type=str)
+product_request_parse.add_argument("image_name", type=str, default="default.jpg")
+product_request_parse.add_argument("image", type=str)
 # product_request_parse.add_argument("category_id", type=int)
 
 product_response_fields = {
@@ -324,8 +324,8 @@ product_response_fields = {
     "price": fields.Integer,
     "stock": fields.Integer,
     "expiry_date": fields.DateTime,
-    "image": fields.String,
-    "image_file": fields.String,
+    "image_name": fields.String,
+    # "image": fields.String,
     "created_timestamp": fields.DateTime,
     "updated_timestamp": fields.DateTime,
     "category_id": fields.Integer,
@@ -339,7 +339,7 @@ class ProductAPI(Resource):
             # print(products)
             for product in products:
                 basedir = os.path.abspath(os.path.dirname(__file__))
-                image_file= basedir + '/images/products/' + product.image
+                image_file= basedir + '/images/products/' + product.image_name
                 print('Image filename to be read: ', image_file)
                 if os.path.isfile(image_file):
                     with open(image_file, 'rb') as f:
@@ -370,13 +370,14 @@ class ProductAPI(Resource):
                 raise NotFound("Category not found")
 
         args = product_request_parse.parse_args(strict=True)
-        # print(args)
+        print(args)
         name = args.get("name", None)
         description = args.get("description", None)
         unit = args.get("unit", None)
         price = args.get("price", None)
         stock = args.get("stock", None)
         expiry_date = args.get("expiry_date", None)
+        image_name = args.get("image_name", None)
         image = args.get("image", None)
 
         if name is None:
@@ -391,8 +392,8 @@ class ProductAPI(Resource):
             raise BadRequest("stock not provided")
         if expiry_date is None:
             raise BadRequest("expiry_date not provided")
-        if image is None or image == "":
-            image = 'default.jpg'
+        if image_name is None:
+            raise BadRequest("image_name not provided")
 
         product = Product(
             name=name,
@@ -402,7 +403,7 @@ class ProductAPI(Resource):
             stock=stock,
             # expiry_date=expiry_date, # FIXME
             expiry_date=datetime.now(),
-            image=image,
+            image_name=image_name,
             category_id=category_id,
             created_timestamp=datetime.now(),
             updated_timestamp=datetime.now(),
@@ -413,22 +414,27 @@ class ProductAPI(Resource):
         db.session.add(product)
         db.session.flush()
 
-        file = args.get("image_file", None)
-        if file is not None and image is None:
-            raise BadRequest("image_file name not provided")
-        else: 
+        print(image_name, image)
+        if image_name is not None and image is not None: 
             try:
-                image = image.split('.')[0] + '_' + str(product.id) + '.jpg'
-                product.image = image
+                if image_name == "":
+                    raise BadRequest("image_name is empty")
 
-                file_data = base64.b64decode(file)
+                image_name = image_name.split('.')[0] + '_' + str(product.id) + '.jpg'
+                product.image_name = image_name
+
+                file_data = base64.b64decode(image)
                 basedir = os.path.abspath(os.path.dirname(__file__))
-                filename= basedir + '/images/products/' + image
+                filename= basedir + '/images/products/' + image_name
                 print('Image filename to be saved: ', filename)
                 with open(filename, 'wb') as f:
                     f.write(file_data)
             except:
                 raise InternalError(message="Error in saving image")
+        else:
+            image_name = 'default.jpg'
+            product.image_name = image_name
+
 
         try:
             db.session.add(product)

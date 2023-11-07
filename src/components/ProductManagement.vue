@@ -2,10 +2,10 @@
   <div class="row col-8 m-auto">
     <h2 class="text-center mt-5">Product Management</h2>
     <div class="card">
-      <div class="row justify-content-end">
+      <div class="row col-10 justify-content-end m-auto mt-3">
         <div class="col-auto">
           <button class="btn btn-sm btn-success" @click="handleProductAdd({}, false)">
-            <b><mdicon name="plus" class="text-white" :size="18" /></b>
+            <b><mdicon name="shape-square-rounded-plus" class="text-white" :size="18" /></b>
             Add
           </button>
         </div>
@@ -15,11 +15,10 @@
           <div class="col-10">
             <hr />
             <table class="table table-hover text-center">
-              <thead>
+              <thead class="table-dark">
                 <tr>
-                  <th scope="col"><b>Thumbnail</b></th>
                   <th scope="col"><b>ID</b></th>
-                  <th scope="col"><b>Name</b></th>
+                  <th scope="col"><b>NAME</b></th>
                   <th scope="col"></th>
                   <th scope="col"></th>
                   <th scope="col"></th>
@@ -27,27 +26,30 @@
               </thead>
               <tbody>
                 <tr v-for="(product, idx) in products" :id="idx" :key="idx">
-                  <th><img :src="`${backend_url_base}/${product.image}`" height="30" width="30"/></th>
-                  <th>{{ product.id }}</th>
-                  <th>{{ product.name }}</th>
-                  <th>
+                  <td>{{ product.id }}</td>
+                  <td><img :src="`${backend_url_base}/${product.image_name}`" height="40" width="40"/>&nbsp;&nbsp;{{ product.name }}</td>
+                  <td>
                     <button class="btn btn-sm btn-secondary" @click="handleProductDetails(product)">
                       <mdicon name="cog" class="text-white" :size="16" />
                       Details
                     </button>
-                  </th>
-                  <th>
-                    <button class="btn btn-sm btn-primary" @click="handleProductAdd(product, true)">
-                      <mdicon name="pencil" class="text-white" :size="16" />
+                  </td>
+                  <td>
+                    <button class="btn btn-sm btn-warning" @click="handleProductAdd(product, true)">
+                      <!-- <mdicon name="pencil" class="text-white" :size="16" /> -->
+                      <svg width="18px" height="18px" viewBox="0 0 24 24" fill="#fff" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M21.1213 2.70705C19.9497 1.53548 18.0503 1.53547 16.8787 2.70705L15.1989 4.38685L7.29289 12.2928C7.16473 12.421 7.07382 12.5816 7.02986 12.7574L6.02986 16.7574C5.94466 17.0982 6.04451 17.4587 6.29289 17.707C6.54127 17.9554 6.90176 18.0553 7.24254 17.9701L11.2425 16.9701C11.4184 16.9261 11.5789 16.8352 11.7071 16.707L19.5556 8.85857L21.2929 7.12126C22.4645 5.94969 22.4645 4.05019 21.2929 2.87862L21.1213 2.70705ZM18.2929 4.12126C18.6834 3.73074 19.3166 3.73074 19.7071 4.12126L19.8787 4.29283C20.2692 4.68336 20.2692 5.31653 19.8787 5.70705L18.8622 6.72357L17.3068 5.10738L18.2929 4.12126ZM15.8923 6.52185L17.4477 8.13804L10.4888 15.097L8.37437 15.6256L8.90296 13.5112L15.8923 6.52185ZM4 7.99994C4 7.44766 4.44772 6.99994 5 6.99994H10C10.5523 6.99994 11 6.55223 11 5.99994C11 5.44766 10.5523 4.99994 10 4.99994H5C3.34315 4.99994 2 6.34309 2 7.99994V18.9999C2 20.6568 3.34315 21.9999 5 21.9999H16C17.6569 21.9999 19 20.6568 19 18.9999V13.9999C19 13.4477 18.5523 12.9999 18 12.9999C17.4477 12.9999 17 13.4477 17 13.9999V18.9999C17 19.5522 16.5523 19.9999 16 19.9999H5C4.44772 19.9999 4 19.5522 4 18.9999V7.99994Z"
+                         fill="#000"/>
+                      </svg>
                       Edit
                     </button>
-                  </th>
-                  <th>
+                  </td>
+                  <td>
                     <button class="btn btn-sm btn-danger" @click="handleProductDelete(product)">
                       <mdicon name="delete" class="text-white" :size="16" />
                       Delete
                     </button>
-                  </th>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -193,7 +195,7 @@
             class="btn btn-sm btn-success"
           >
             <span v-if="loading" class="spinner-border spinner-border-sm"></span>
-            <b><mdicon name="plus" class="text-white" :size="18" /></b>
+            <b><mdicon name="shape-square-rounded-plus" class="text-white" :size="18" /></b>
             Add
           </button>
           <button
@@ -280,8 +282,8 @@ const data = reactive({
   price: 0,
   stock: 0,
   expiry_date: '',
-  image: '',
-  image_file: '',
+  image_name: null,
+  image: null,
   created_timestamp: '',
   updated_timestamp: '',
   categories: []
@@ -342,8 +344,8 @@ function handleProductAdd(product, isEdit) {
     const date = new Date(product.expiry_date)
     // data.expiry_date = `${date.getFullYear()}-${date.getMonth()}-${date.getDay()}`
     data.expiry_date = date.toISOString().split('T')[0]
-    console.log(data.expiry_date)
-    data.image = product.image
+    // console.log(data.expiry_date)
+    data.image_name = product.image_name
     data.created_timestamp = product.created_timestamp
     data.updated_timestamp = product.updated_timestamp
     for (const category of categories.value) {
@@ -357,8 +359,8 @@ function handleProductAdd(product, isEdit) {
     data.price = 0
     data.stock = 0
     data.expiry_date = ''
-    data.image = ''
-    data.image_file = ''
+    data.image_name = null
+    data.image = null
     data.created_timestamp = ''
     data.updated_timestamp = ''
     data.categories = []
@@ -385,21 +387,22 @@ function handleProductDetails(id) {
 // Modal Functions
 const handleImage = (e) => {
   console.log('modal: handle Image')
-  data.image_file = e.target.files[0]
-  data.image = data.image_file.name
-  createBase64Image(data.image_file)
+  data.image = e.target.files[0]
+  data.image_name = data.image.name
+  createBase64Image(data.image)
 }
 
 function createBase64Image(fObj) {
   const reader = new FileReader()
   reader.onload = (e) => {
-    data.image_file = e.target.result.split(',')[1]
+    data.image = e.target.result.split(',')[1]
   }
   reader.readAsDataURL(fObj)
 }
 
 async function handleProductModalEdit(edit) {
-  console.log('modal: isEdit :', edit)
+  // console.log('modal: isEdit :', edit)
+  // console.log('modal:add/edit data:', data)
 
   if (data.name === '') {
     errordata.isError = true
@@ -415,8 +418,10 @@ async function handleProductModalEdit(edit) {
   formData.append('stock', data.stock)
   const expiry_date = data.expiry_date + ' 00:00'
   formData.append('expiry_date', expiry_date)
-  formData.append('image', data.image)
-  formData.append('image_file', data.image_file)
+  if (data.image_name !== null)
+    formData.append('image_name', data.image_name)
+  if (data.image !== null)
+    formData.append('image', data.image)
 
   loading.value = true
   let resp = {}
