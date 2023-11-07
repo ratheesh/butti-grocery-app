@@ -6,9 +6,13 @@
 // 2. Include any default variable overrides here
 $primary: #415b76;
 $secondary:#adadad;
-$success: #0ea271;
+$success: #0e9281;
 $warning: #eeb15d;
 $danger: #f01e4d;
+$yiq-text-dark: black;
+$yiq-text-light: white;
+// $yiq-contrasted-threshold: 0;
+$min-contrast-ratio: 3.5; 
 
 // 3. Include remainder of required Bootstrap stylesheets (including any separate color mode stylesheets)
 @import "@/../node_modules/bootstrap/scss/variables";
