@@ -27,15 +27,15 @@
               </thead>
               <tbody>
                 <tr v-for='(category, idx) in categories' :id="idx" :key="idx">
-                  <th>{{ category.id }}</th>
-                  <th>{{ category.name }}</th>
-                  <th>
+                  <td class="align-middle">{{ category.id }}</td>
+                  <td class="align-middle">{{ category.name }}</td>
+                  <td>
                     <button class="btn btn-sm btn-secondary" @click="count++">
                       <mdicon name="cog" class="text-white" :size="16" />
                       Manage
                     </button>
-                  </th>
-                  <th>
+                  </td>
+                  <td>
                     <button class="btn btn-sm btn-warning" @click="handleCategoryAdd(category, true)">
                       <!-- <mdicon name="pencil" class="text-white" :size="16" /> -->
                       <svg width="18px" height="18px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -44,13 +44,13 @@
                       </svg>
                       Edit
                     </button>
-                  </th>
-                  <th>
+                  </td>
+                  <td>
                     <button class="btn btn-sm btn-danger" @click="handleCategoryDelete(category.id)">
                       <mdicon name="delete" class="text-white" :size="16" />
                       Delete
                     </button>
-                  </th>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -58,7 +58,7 @@
         </div>
       </div>
       <div v-else>
-        <h2 class="text-center mt-5 ">No Categories. Add one!</h2>
+        <h4 class="text-center mt-1 ">No Categories. Add one!</h4>
       </div>
     </div>
   </div>
@@ -251,9 +251,9 @@ async function handleCategoryModalEdit(edit) {
 async function handleCategoryModalDelete() {
   console.log('modal:Delete Category')
 
+  loading.value = true;
   try {
     const resp = await axiosClient.delete(`/api/category/${data.id}`);
-
     console.log(resp);
     console.log('modal: closing modal')
     document.getElementById("categoryModalClose").click()
