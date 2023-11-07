@@ -21,6 +21,7 @@ $min-contrast-ratio: 3.5;
 // 4. Include any default map overrides here
 // Create your own map
 $custom-colors: (
+  "crimson":#ea8a8a,
   "dark-lava": #4B4237,
   "goldenrod": #D5A021,
   "alabaster": #EDE7D9,
@@ -31,15 +32,6 @@ $custom-colors: (
   "pink": $pink,
   "teal-800": $teal-800,
 );
-// Merge the maps
-$custom-colors: (
-  "dark-lava": #4B4237,
-  "goldenrod": #D5A021,
-  "alabaster": #EDE7D9,
-  "spanish-gray": #A49694,
-  "dim-gray": #736B60,
-);
-
 // Merge the maps
 $theme-colors: map-merge($theme-colors, $custom-colors);
 

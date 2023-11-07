@@ -63,6 +63,7 @@ const routes = [
     path: '/product',
     name: 'product',
     component: ProductManagement,
+    meta: { title: 'Products' },
     props: true
   },
   {
@@ -81,6 +82,12 @@ const routes = [
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
   routes
+})
+
+router.beforeResolve((to, from) => {
+  console.log('User Authenticated')
+  console.log('Coming from:', from.path)
+  console.log('Going to:', to.path)
 })
 
 export default router

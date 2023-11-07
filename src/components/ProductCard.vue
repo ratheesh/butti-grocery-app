@@ -2,7 +2,7 @@
   <div>
     <div class="card mb-3 h-100" style="width: 16rem">
       <img
-        class="card-img-top object-fit-cover"
+        class="card-img-top object-fit-cover shadow"
         :src="data.image"
         alt="apples"
         height="150"

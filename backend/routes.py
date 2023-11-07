@@ -35,6 +35,7 @@ def login():
         refresh_token=refresh_token)
 
 @routes.route("/logout", methods=['POST'])
+@jwt_required()
 def logout():
     return "logged out",200
 

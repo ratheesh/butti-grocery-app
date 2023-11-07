@@ -6,6 +6,7 @@ from flask import Blueprint, make_response
 from flask_restful import NotFound, Resource, fields, marshal_with, reqparse, request
 from werkzeug.exceptions import HTTPException
 from werkzeug.security import check_password_hash, generate_password_hash
+from flask_jwt_extended import jwt_required
 
 from .db import db
 from .models import User, Category, Product, Item, Bookmark, Order
@@ -360,6 +361,7 @@ class ProductAPI(Resource):
             else:
                 return product, 200
 
+    # @jwt_required()
     @marshal_with(product_response_fields)
     def post(self, category_id):
         if category_id is None:

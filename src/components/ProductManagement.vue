@@ -133,16 +133,11 @@
             <label for="productCategory">Category</label>
           </div>
           <div class="form-floating mb-3">
-            <select class="form-select" id="productUnit" aria-label="Unit" v-model="data.unit">
-              <option value="piece">Piece</option>
-              <option value="kg">Kg</option>
-              <option value="500gm">500gm</option>
-              <option value="litre">Litre</option>
-              <option value="dozen">Dozen</option>
+            <select class="form-select" id="productUnit" aria-label="Unit" required=yes v-model="data.unit">
+              <option v-for='(unit, idx) in units' :key="idx" :value='unit'>{{ unit }}</option>
             </select>
             <label for="productUnit">Unit</label>
           </div>
-          <pre>{{ data.unit }}</pre>
           <div class="form-floating mb-3">
             <input
               type="text"
@@ -290,6 +285,7 @@ const errordata = reactive({
 let modal
 let modalDelete
 let loading = ref(false)
+const units = ['piece', 'kg', 'litre', 'dozen']
 const data = reactive({
   id: 0,
   name: '',
