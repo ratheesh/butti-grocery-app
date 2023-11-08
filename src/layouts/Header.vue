@@ -2,8 +2,8 @@
   <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-body-tertiary">
     <div class="container-fluid text-white px-0" style="background-color: #2f3640">
       <router-link to="/" class="navbar-brand text-white">
-        <div class="align-items-center">
-          <mdicon name="basket" class="text-white color-success" :size="29" />
+        <div class="d-flex align-items-center">
+          <mdicon name="basket" class="text-warning color-success mx-3" :size="36" />
           <span class="fs-4">Butti</span>
         </div>
       </router-link>
@@ -35,14 +35,14 @@
             <li class="nav-item">
               <router-link :to="{ name: 'home' }" class="nav-link">
                 <button class="btn btn-sm btn-outline-light">
-                  <mdicon class="text-white" name="home" :size="20" />Home
+                  <mdicon name="home" :size="20" />Home
                 </button>
               </router-link>
             </li>
             <li class="nav-item">
               <router-link :to="{ name: 'cart' }" class="nav-link">
-                <button class="btn btn-sm btn-outline-primary">
-                  <mdicon name="cart" class="text-white" :size="20" />
+                <button class="btn btn-sm btn-outline-rosy-brown">
+                  <mdicon name="cart" :size="20" />
                   Cart
                   <span class="badge text-bg-warning">{{  cart.items.length }}</span>
                 </button>
@@ -98,7 +98,7 @@
                 </li>
                 <li class="nav-item mx-2" v-else>
                   <span class="dropdown-item" @click="auth.logout">
-                    <mdicon name="logout" :size="20" />
+                    <mdicon name="logout" class="text-danger" :size="20" />
                     Logout
                   </span>
                 </li>
