@@ -8,23 +8,33 @@
         height="150"
       />
       <div class="card-body">
-        <b>Apples</b>
-        <br />
-        <span class="badge rounded-pill text-bg-success">${{ data.price }}</span>
-        <p class="card-text">{{ data.description }}</p>
-        <div class="inline-flex">
-          <div class="row text-center">
+        <div class="inline-flex justify-content-between">
+          <div class="row">
             <div class="col">
-              <mdicon @click="updateCount()" name="minus-circle" class="text-danger" />
+              <b class="fs-6">Apples</b>
+            </div>
+            <div class="col">
+              <span class="text-dark fw-bold fs-6"><b>₹</b>{{ data.price }}</span>
+            </div>
+          </div>
+        </div>
+        <!-- <p class="card-text">{{ data.description }}</p> -->
+        <br/>
+        <div class="inline-flex">
+          <div class="row text-center d-inline-flex align-items-center">
+            <div class="col d-flex align-items-center">
+              <mdicon @click="updateCount()" name="minus-circle" class="text-danger"/>
               <label class="text-center" style="width: 2em">{{ data.quantity }}</label>
               <mdicon
                 @click="updateCount(true)"
                 name="plus-circle"
                 class="text-success"
               />
-              <form @submit.prevent="addToCart" class="mt-2">
+            </div> 
+            <div class="col">
+              <form @submit.prevent="addToCart">
                 <button class="btn btn-success btn-sm">
-                  <mdicon name="cart-plus" :size="18" />Add to Cart
+                  <mdicon name="cart-plus" :size="20"/>Add
                 </button>
               </form>
             </div>
@@ -61,37 +71,4 @@ const updateCount = (add) => {
 };
 </script>
 
-<style scoped>
-.cartbtn {
-  border: 1px solid #aaa;
-  color: #000;
-  padding: 0 8px;
-  border-radius: 0;
-  border-color: #333;
-  font-size: 1rem;
-  font-weight: 600;
-  transition: all 0.3s ease-in-out;
-}
-
-.cartbtnleft {
-  background-color: #ff0000;
-  border-radius: 12px 0 0 12px;
-}
-
-.cartbtnright {
-  background-color: #00ff00;
-  border-radius: 0 12px 12px 0;
-}
-
-.cartinput {
-  width: 3em;
-  text-align: center;
-  border: 1px solid #888;
-  margin: 0px;
-  padding: 0px;
-  border-radius: 0;
-  font-size: 1rem;
-  font-weight: 600;
-  transition: all 0.3s ease-in-out;
-}
-</style>
+<style scoped></style>
