@@ -3,19 +3,16 @@ import { defineStore } from 'pinia'
 import axiosClient from '../js/axios'
 
 export const useAuthStore = defineStore('authStore', () => {
-  const authenticated = ref(false)
-  const role = ref('user')
-  const user = ref({})
+  const authenticated = ref(localStorage.getItem('access_token') !== null)
+  const user = ref(JSON.parse(localStorage.getItem('user')) || {})
 
   function setUser(_user) {
     console.log(_user)
     if (_user) {
       authenticated.value = true
-      role.value = _user.role
       user.value = _user
     } else {
       authenticated.value = false
-      role.value = 'user'
       user.value = {}
     }
   }
@@ -27,7 +24,6 @@ export const useAuthStore = defineStore('authStore', () => {
       const res = await axiosClient.post(`/api/user/${username}`)
       if (res.status === 200) {
         authenticated.value = true
-        role.value = res.data.user.role
         user.value = res.data.user
         return res
       } else {
@@ -44,10 +40,9 @@ export const useAuthStore = defineStore('authStore', () => {
       // console.log(res)
       if (res.status === 200) {
         authenticated.value = true
-        role.value = res.data.user.role
         user.value = res.data.user
         localStorage.setItem('access_token', JSON.stringify(res.data.access_token))
-        localStorage.setItem('username', JSON.stringify(res.data.user.username))
+        localStorage.setItem('user', JSON.stringify(res.data.user))
         // console.log('Logged in!')
         return res
       } else {
@@ -84,5 +79,5 @@ export const useAuthStore = defineStore('authStore', () => {
       return err
     }
   }
-  return { authenticated, role, user, setUser, getUser, login, logout, signup, fetchUser }
+  return { authenticated, user, setUser, getUser, login, logout, signup, fetchUser }
 })
