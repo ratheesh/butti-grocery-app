@@ -48,7 +48,7 @@ user_request_parse.add_argument("username", type=str)
 user_request_parse.add_argument("email", type=str)
 user_request_parse.add_argument("role", type=str)
 user_request_parse.add_argument("password", type=str)
-user_request_parse.add_argument("img_name", type=str)
+user_request_parse.add_argument("image_name", type=str)
 user_request_parse.add_argument("image", type=str)
 # user_request_parse.add_argument("image", type=werkzeug.datastructures.FileStorage)
 
@@ -60,7 +60,7 @@ user_response_fields = {
     "password": fields.String,
     "approved": fields.String,
     "role": fields.String,
-    "img_name": fields.String,
+    "image_name": fields.String,
     "image": fields.String,
     "created_timestamp": fields.DateTime,
     "updated_timestamp": fields.DateTime,
@@ -93,7 +93,7 @@ class UserAPI(Resource):
         email = args.get("email", None)
         role = args.get("role", None)
         password = args.get("password", None)
-        img_name = args.get("img_name", None)
+        image_name = args.get("image_name", None)
 
         # if args is None or name is None or username is None or password is None:
         if name is None:
@@ -111,8 +111,8 @@ class UserAPI(Resource):
             raise BadRequest("password not provided")
         # if len(password) < 4:
         #     raise BadRequest("password length is less than 4 chars")
-        if img_name is None or img_name == "":
-            img_name = 'default.jpg'
+        if image_name is None or image_name == "":
+            image_name = 'default.jpg'
 
         # check if the user already exists based on username
         user = User.query.filter_by(username=username).first()
@@ -127,7 +127,7 @@ class UserAPI(Resource):
             password=generate_password_hash(password),
             role=role,
             approved=False,
-            img_name=img_name,
+            image_name=image_name,
             created_timestamp=datetime.now(),
             updated_timestamp=datetime.now(),
         )
@@ -138,16 +138,16 @@ class UserAPI(Resource):
         db.session.flush()
 
         image = args.get("image", None)
-        if image is not None and img_name is None:
-            raise BadRequest("img_name name not provided")
+        if image is not None and image_name is None:
+            raise BadRequest("image_name name not provided")
         elif image is not None: 
             try:
-                img_name = img_name.split('.')[0] + '_' + str(user.id) + '.jpg'
-                user.img_name = img_name
+                image_name = image_name.split('.')[0] + '_' + str(user.id) + '.jpg'
+                user.image_name = image_name
 
                 file_data = base64.b64decode(image)
                 basedir = os.path.abspath(os.path.dirname(__file__))
-                filename= basedir + '/images/products/' + img_name
+                filename= basedir + '/images/products/' + image_name
                 print('Image filename to be saved: ', filename)
                 with open(filename, 'wb') as f:
                     f.write(file_data)

@@ -35,7 +35,7 @@ class User(db.Model):
             "email": self.email,
             "approved": self.approved,
             "role": self.role,
-            "img_name": self.img_name,
+            "image_name": self.img_name,
             "created_timestamp": self.created_timestamp,
             "updated_timestamp": self.updated_timestamp,
             # "orders": [order.to_dict() for order in self.orders],

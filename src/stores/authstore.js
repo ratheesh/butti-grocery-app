@@ -67,7 +67,7 @@ export const useAuthStore = defineStore('authStore', () => {
         email: user_data.email,
         role: user_data.role,
         password: user_data.password,
-        img_name: 'default.jpg',
+        image_name: 'default.jpg',
         image: null
       })
       console.log(res)

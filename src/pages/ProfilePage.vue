@@ -1,10 +1,12 @@
 <template>
 <main-layout>
     <div class="container">
-        <div class="row my-5">
-            <div class="col-10 border rounded-2 p-0">
-                <!-- <img :src="`${backend_base_url}/${auth.user.img_file}`" alt="User Profile Image" \> -->
-                <h2 class="text-center mt-3">{{  auth.user.name }}'s Page</h2>
+        <div class="text-center mt-3">
+            <img :src="`${backend_base_url}/images/users/${auth.user.image_name}`" alt="User Profile Image" style="width:150px;height:150px;border:1px solid #808080;border-radius:50%" >
+        </div>
+        <div class="row my-3">
+            <div class="col-8 border rounded-2 p-0 m-auto">
+                <h2 class="text-center mt-3">{{  auth.user.name }}'s Profile</h2>
                 <hr class="m-0">
                 <table class="table table-borderless">
                     <tr>
@@ -72,6 +74,7 @@
                 </div>
             </div>
         </div> 
+        <!-- <pre>{{ auth }}</pre> -->
     </div>
 </main-layout>
 </template>
