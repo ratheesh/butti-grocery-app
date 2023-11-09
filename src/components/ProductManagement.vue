@@ -2,7 +2,13 @@
   <div class="row col-8 m-auto">
     <h2 class="text-center mt-5">Product Management</h2>
     <div class="card">
-      <div class="row col-10 justify-content-end m-auto mt-3">
+      <div class="row col-10 justify-content-between m-auto mt-3">
+        <div class="col-auto">
+          <button class="btn btn-sm btn-outline-rosy-brown" @click="gotoCategories">
+            <b><mdicon name="cog" :size="18" /></b>
+            Categories
+          </button>
+        </div>
         <div class="col-auto">
           <button class="btn btn-sm btn-success" @click="handleProductAdd({}, false)">
             <b><mdicon name="shape-square-rounded-plus" class="text-white" :size="18" /></b>
@@ -15,7 +21,7 @@
           <div class="col-10">
             <!-- <hr /> -->
             <table class="table text-center">
-              <thead class="table-secondary">
+              <thead class="fs-6 table-secondary">
                 <tr>
                   <th scope="col"><b>#</b></th>
                   <th scope="col"><b>NAME</b></th>
@@ -178,6 +184,8 @@
               class="form-control"
               id="productImage"
               placeholder="Product Image"
+              accept="image/png, image/jpeg"
+              value=""
               @change="handleImage"
             />
           </div>
@@ -272,6 +280,7 @@
 <script setup>
 import { ref, onMounted, reactive } from 'vue'
 import axiosClient from '@/js/axios.js'
+import { useRouter } from 'vue-router'
 import { Modal } from 'bootstrap'
 
 // data
@@ -284,7 +293,7 @@ const errordata = reactive({
 })
 let modal
 let modalDelete
-let loading = ref(false)
+const loading = ref(false)
 const units = ['piece', 'kg', 'litre', 'dozen']
 const data = reactive({
   id: 0,
@@ -304,9 +313,14 @@ const category_id = ref(1)
 const edit = ref(false)
 
 // Main Functions
-onMounted(async () => {
+onMounted(async() => {
+  loading.value = true
   refreshCategories()
   refreshProducts()
+  // setTimeout(() => {
+  //   loading.value = false
+  // }, 5000)
+  loading.value = false
 
   modal = new Modal(document.getElementById('modalProduct'), {
     keyboard: false
@@ -343,6 +357,13 @@ async function refreshCategories() {
     })
 }
 
+const router = useRouter()
+const gotoCategories = () => {
+  console.log('goto categories')
+  router.push('/category')
+  // window.location.href = '/#/categories'
+}
+
 function handleProductAdd(product, isEdit) {
   console.log('Add/Edit Product:', product)
 
@@ -357,7 +378,8 @@ function handleProductAdd(product, isEdit) {
     // data.expiry_date = `${date.getFullYear()}-${date.getMonth()}-${date.getDay()}`
     data.expiry_date = date.toISOString().split('T')[0]
     // console.log(data.expiry_date)
-    data.image_name = product.image_name
+    data.image_name = null
+    data.image = null
     data.created_timestamp = product.created_timestamp
     data.updated_timestamp = product.updated_timestamp
     for (const category of categories.value) {
@@ -379,6 +401,10 @@ function handleProductAdd(product, isEdit) {
     for (const category of categories.value) {
       data.categories.push(category)
     }
+
+    //set date input field to today
+    // console.log('set exp. date', data.expiry_date.getDate())
+    document.getElementById('productExpiryDate').valueAsDate = new Date()
   }
   edit.value = isEdit
 
@@ -399,6 +425,13 @@ function handleProductDetails(id) {
 // Modal Functions
 const handleImage = (e) => {
   console.log('modal: handle Image')
+  // console.log(e)
+  if (e.target.files.length === 0) {
+    data.image_name = null
+    data.image = null
+   return
+}
+
   data.image = e.target.files[0]
   data.image_name = data.image.name
   createBase64Image(data.image)
@@ -445,7 +478,9 @@ async function handleProductModalEdit(edit) {
     console.log('modal: closing modal')
     document.getElementById('productModalClose').click()
     modal.hide()
+    loading.value = true
     refreshProducts()
+    loading.value = false
   } catch (err) {
     console.log(err)
     errordata.isError = true

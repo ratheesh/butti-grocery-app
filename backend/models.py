@@ -16,7 +16,7 @@ class User(db.Model):
     password = db.Column(db.String(256), nullable=False)
     approved = db.Column(db.Boolean, nullable=False, default=False)
     role = db.Column(db.String(32), nullable=False, default="user")
-    img_name = db.Column(db.String(32), default="default.jpg")
+    img_name = db.Column(db.String(32), default="default.png")
     created_timestamp = db.Column(
         db.DateTime, nullable=False, default=datetime.now())
     updated_timestamp = db.Column(
@@ -93,7 +93,7 @@ class Product(db.Model):
     price = db.Column(db.Integer, nullable=False)
     stock = db.Column(db.Integer, nullable=False)
     expiry_date = db.Column(db.DateTime, nullable=False, default=datetime.now())
-    image_name = db.Column(db.String(64), default="default.jpg")
+    image_name = db.Column(db.String(64), default="default.png")
     created_timestamp = db.Column(
         db.DateTime, nullable=False, default=datetime.now())
     updated_timestamp = db.Column(
@@ -190,7 +190,7 @@ def create_admin_user(db):
         password=generate_password_hash("admin"),
         role="admin",
         approved = True,
-        img_name = "default.jpg",
+        img_name = "default.png",
         created_timestamp=datetime.now(),
         updated_timestamp=datetime.now(),
     )

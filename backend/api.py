@@ -112,7 +112,7 @@ class UserAPI(Resource):
         # if len(password) < 4:
         #     raise BadRequest("password length is less than 4 chars")
         if image_name is None or image_name == "":
-            image_name = 'default.jpg'
+            image_name = 'default.png'
 
         # check if the user already exists based on username
         user = User.query.filter_by(username=username).first()
@@ -142,7 +142,7 @@ class UserAPI(Resource):
             raise BadRequest("image_name name not provided")
         elif image is not None: 
             try:
-                image_name = image_name.split('.')[0] + '_' + str(user.id) + '.jpg'
+                image_name = image_name.split('.')[0] + '_' + str(user.id) + '.png'
                 user.image_name = image_name
 
                 file_data = base64.b64decode(image)
@@ -313,7 +313,7 @@ product_request_parse.add_argument("unit", type=str, required=True, default="pie
 product_request_parse.add_argument("price", type=int, required=True)
 product_request_parse.add_argument("stock", type=int, required=True)
 product_request_parse.add_argument("expiry_date", type=valid_date, required=True)
-product_request_parse.add_argument("image_name", type=str, default="default.jpg")
+product_request_parse.add_argument("image_name", type=str, default="default.png")
 product_request_parse.add_argument("image", type=str)
 # product_request_parse.add_argument("category_id", type=int)
 
@@ -397,6 +397,7 @@ class ProductAPI(Resource):
         if image_name is None:
             raise BadRequest("image_name not provided")
 
+
         product = Product(
             name=name,
             description=description,
@@ -422,7 +423,7 @@ class ProductAPI(Resource):
                 if image_name == "":
                     raise BadRequest("image_name is empty")
 
-                image_name = image_name.split('.')[0] + '_' + str(product.id) + '.jpg'
+                image_name = image_name.split('.')[0] + '_' + str(product.id) + '.png'
                 product.image_name = image_name
 
                 file_data = base64.b64decode(image)
@@ -434,7 +435,7 @@ class ProductAPI(Resource):
             except:
                 raise InternalError(message="Error in saving image")
         else:
-            image_name = 'default.jpg'
+            image_name = 'default.png'
             product.image_name = image_name
 
 

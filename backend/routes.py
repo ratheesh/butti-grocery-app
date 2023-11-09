@@ -48,14 +48,12 @@ def refresh():
     return jsonify(access_token=access_token)
 
 @routes.route("/<path:path>", methods=["GET"])
-# @jwt_required()
-# @access(["admin", "manager", "user"])
 def send_image(path):
     '''serve images'''
     img_path=os.path.join(app.config["UPLOAD_FOLDER"], path)
     print(img_path)
     if os.path.isfile(img_path):
-        return send_file(img_path, mimetype='image/jpg')
+        return send_file(img_path, mimetype='image/png')
     else:
         return jsonify("image not found"), 404
     
