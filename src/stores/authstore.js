@@ -3,8 +3,8 @@ import { defineStore } from 'pinia'
 import axiosClient from '../js/axios'
 
 export const useAuthStore = defineStore('authStore', () => {
-  const authenticated = ref(localStorage.getItem('access_token') !== null)
-  const user = ref(JSON.parse(localStorage.getItem('user')) || {})
+  const authenticated = ref(localStorage.getItem('access_token'))
+  const user = ref(localStorage.getItem('user'))
 
   function setUser(_user) {
     console.log(_user)
@@ -41,8 +41,8 @@ export const useAuthStore = defineStore('authStore', () => {
       if (res.status === 200) {
         authenticated.value = true
         user.value = res.data.user
-        localStorage.setItem('access_token', JSON.stringify(res.data.access_token))
-        localStorage.setItem('user', JSON.stringify(res.data.user))
+        localStorage.setItem('access_token', res.data.access_token)
+        localStorage.setItem('user', res.data.user)
         // console.log('Logged in!')
         return res
       } else {
@@ -55,6 +55,7 @@ export const useAuthStore = defineStore('authStore', () => {
 
   async function logout() {
     localStorage.removeItem('access_token')
+    localStorage.removeItem('user')
     console.log('logged out')
     authenticated.value = false
   }
