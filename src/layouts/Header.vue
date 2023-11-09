@@ -98,7 +98,7 @@
                 </li>
                 <li class="nav-item mx-2" v-else>
                   <span class="dropdown-item" @click="auth.logout">
-                    <mdicon name="logout" class="text-danger" :size="20" />
+                    <mdicon name="power" class="fw-bolder text-danger" :size="20" />
                     Logout
                   </span>
                 </li>

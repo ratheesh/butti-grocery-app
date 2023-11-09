@@ -208,7 +208,7 @@ const handleCategoryDelete = async (id) => {
 
 // Modal Functions
 async function handleCategoryModalEdit(edit) {
-  console.log('modal: isEdit :', edit)
+  console.log(`modal (edit : ${edit})`)
 
   if (data.name === '') {
     errordata.isError = true;
