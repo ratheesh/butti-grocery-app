@@ -85,14 +85,12 @@
         <div class="modal-footer text-center">
           <button v-if="edit" @click="handleCategoryModalEdit(true)" type="button" class="btn btn-sm btn-success">
             <span v-if="loading" class="spinner-border spinner-border-sm"></span>
-            <mdicon name="update" class="text-white" :size="18" />
+            <span v-else><mdicon name="update" class="text-white" :size="18" /></span>
             Update
           </button>
           <button v-else @click="handleCategoryModalEdit(false)" type="button" class="btn btn-sm btn-success">
             <span v-if="loading" class="spinner-border spinner-border-sm"></span>
-            <b>
-              <mdicon name="shape-square-rounded-plus" class="text-white" :size="18" />
-            </b>
+            <span v-else><mdicon name="shape-square-rounded-plus" class="text-white" :size="18" /></span>
             Add
           </button>
           <button type="button" class="btn btn-sm btn-danger" id="categoryModalClose" data-bs-dismiss="modal">
@@ -127,7 +125,7 @@
         <div class="modal-footer">
           <button @click="handleCategoryModalDelete" type="button" class="btn btn-danger">
             <span v-if="loading" class="spinner-border spinner-border-sm"></span>
-            <mdicon name="delete" class="text-white" :size="16" />
+            <span v-else><mdicon name="delete" class="text-white" :size="16" /></span>
             Delete
           </button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
