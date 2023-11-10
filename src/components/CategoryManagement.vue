@@ -2,11 +2,11 @@
   <div class="row col-8 m-auto">
     <div class="card mt-4 p-0">
       <div class="card-header m-0 p-0">
-        <div class="row col-9 d-flex justify-content-between m-auto my-2">
+        <div class="row col-10 d-flex justify-content-between m-auto my-2">
           <div class="col-auto">
-            <span class="text-center fs-6 fw-bold mt-3">Category Management</span>
+            <span class="text-center fs-6 fw-normal mt-3">Categories</span>
           </div>
-          <div class="col-6 d-inline-flex justify-content-end m-auto">
+          <div class="col-6 d-inline-flex justify-content-end m-auto me-0">
             <div class="col-auto mx-2">
               <button class="btn btn-sm btn-outline-rosy-brown" @click="gotoProducts">
                 <b><mdicon name="cog" :size="18" /></b>
