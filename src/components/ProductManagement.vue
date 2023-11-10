@@ -1,94 +1,130 @@
 <template>
   <div class="row col-8 m-auto">
-    <h2 class="text-center mt-5">Product Management</h2>
-    <div class="card">
-      <div class="row col-10 justify-content-between m-auto mt-3">
-        <div class="col-auto">
-          <button class="btn btn-sm btn-outline-rosy-brown" @click="gotoCategories">
-            <b><mdicon name="cog" :size="18" /></b>
-            Categories
-          </button>
-        </div>
-        <div class="col-auto">
-          <button class="btn btn-sm btn-success" @click="handleProductAdd({}, false)">
-            <b><mdicon name="shape-square-rounded-plus" class="text-white" :size="18" /></b>
-            Add
-          </button>
-        </div>
-      </div>
-      <div v-if="products.length > 0">
-        <div class="row justify-content-center mt-3 m-auto">
-          <div class="col-10">
-            <!-- <hr /> -->
-            <table class="table text-center">
-              <thead class="fs-6 table-secondary">
-                <tr>
-                  <th scope="col"><b>#</b></th>
-                  <th scope="col"><b>NAME</b></th>
-                  <th scope="col"><b>PRICE</b></th>
-                  <th scope="col"><b>STOCK</b></th>
-                  <th scope="col"><b>EXPIRY DATE</b></th>
-                  <th scope="col"><b>ACTIONS</b></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(product, idx) in products" :id="idx" :key="idx">
-                  <td class="align-middle">{{ product.id }}</td>
-                  <td class="align-middle"><img class="mx-2" :src="`${backend_url_base}/${product.image_name}`" height="40" width="40"/>{{ product.name }}</td>
-                  <td class="align-middle align-left">
-                    <b>₹</b>{{ product.price }}/{{ product.unit }}
-                  </td>
-                  <td class="align-middle">
-                    {{ product.stock }}
-                  </td>
-                  <td class="align-middle">
-                    {{ formatDate(product.expiry_date) }}
-                  </td>
-                  <td class="align-middle">
-                      <mdicon name="dots-horizontal"
-                       :width="16" :height="16"
-                       class="dropdown-toggle p-1"
-                       data-bs-toggle="dropdown" aria-expanded="false"
-                       />
-                      <ul class="dropdown-menu">
-                        <li>
-                          <a class="dropdown-item">
-                          <mdicon name="information-variant-circle" class="text-gray" :size="16" />
-                          Info
-                          </a>
-                        </li>
-                        <li>
-                          <a class="dropdown-item" @click="handleProductAdd(product, true)">
-                          <!-- <b><mdicon name="shape-square-rounded-plus" class="text-indian-red" :size="16"/></b> -->
-                          <svg width="16px" height="16px" viewBox="0 0 24 24" fill="text-gray" xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd" clip-rule="evenodd" d="M21.1213 2.70705C19.9497 1.53548 18.0503 1.53547 16.8787 2.70705L15.1989 4.38685L7.29289 12.2928C7.16473 12.421 7.07382 12.5816 7.02986 12.7574L6.02986 16.7574C5.94466 17.0982 6.04451 17.4587 6.29289 17.707C6.54127 17.9554 6.90176 18.0553 7.24254 17.9701L11.2425 16.9701C11.4184 16.9261 11.5789 16.8352 11.7071 16.707L19.5556 8.85857L21.2929 7.12126C22.4645 5.94969 22.4645 4.05019 21.2929 2.87862L21.1213 2.70705ZM18.2929 4.12126C18.6834 3.73074 19.3166 3.73074 19.7071 4.12126L19.8787 4.29283C20.2692 4.68336 20.2692 5.31653 19.8787 5.70705L18.8622 6.72357L17.3068 5.10738L18.2929 4.12126ZM15.8923 6.52185L17.4477 8.13804L10.4888 15.097L8.37437 15.6256L8.90296 13.5112L15.8923 6.52185ZM4 7.99994C4 7.44766 4.44772 6.99994 5 6.99994H10C10.5523 6.99994 11 6.55223 11 5.99994C11 5.44766 10.5523 4.99994 10 4.99994H5C3.34315 4.99994 2 6.34309 2 7.99994V18.9999C2 20.6568 3.34315 21.9999 5 21.9999H16C17.6569 21.9999 19 20.6568 19 18.9999V13.9999C19 13.4477 18.5523 12.9999 18 12.9999C17.4477 12.9999 17 13.4477 17 13.9999V18.9999C17 19.5522 16.5523 19.9999 16 19.9999H5C4.44772 19.9999 4 19.5522 4 18.9999V7.99994Z"
-                            fill="#000"/>
-                          </svg>
-                          Edit
-                          </a>
-                        </li>
-                      </ul>
-
-                      <mdicon name="close-circle" class="text-danger" :size="20"
-                       @click="handleProductDelete(product)"/>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+    <div class="card mt-4 p-0">
+      <div class="card-header m-0 p-0">
+        <div class="row col-10 d-flex justify-content-between align-items-center m-auto my-2">
+          <div class="col-auto">
+            <span class="text-center fs-6 fw-bold mt-3">Product Management</span>
+          </div>
+          <div class="col-6 d-inline-flex justify-content-end m-auto me-0">
+            <div class="col-auto mx-2">
+              <button class="btn btn-sm btn-outline-rosy-brown" @click="gotoCategories">
+                <b><mdicon name="cog" :size="18" /></b>
+                Categories
+              </button>
+            </div>
+            <div class="col-auto mx-2">
+              <button class="btn btn-sm btn-success" @click="handleProductAdd({}, false)">
+                <b><mdicon name="shape-square-rounded-plus" class="text-white" :size="18" /></b>
+                Add
+              </button>
+            </div>
           </div>
         </div>
       </div>
-      <div v-else>
-        <div v-if="categories.length === 0" class="row col-12">
-          <p class="text-center mt-1">
-            No Categories. Atleast one category should be added before adding a product
-          </p>
-          <p class="text-center mt-1">
-            Click <b>here</b> go to category page and add one!
-          </p>
+      <div class="card-body">
+        <div v-if="products.length > 0">
+          <div class="row justify-content-center mt-3 m-auto">
+            <div class="col-10">
+              <!-- <hr /> -->
+              <div class="table-responsive">
+                <table class="table table-centered table-nowrap rounded">
+                  <thead class="border-bottom table-light">
+                    <tr>
+                      <th scope="col"><b>#</b></th>
+                      <th scope="col"><b>NAME</b></th>
+                      <th scope="col"><b>PRICE</b></th>
+                      <th scope="col"><b>STOCK</b></th>
+                      <th scope="col"><b>EXPIRY DATE</b></th>
+                      <th scope="col"><b>ACTIONS</b></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(product, idx) in products" :id="idx" :key="idx">
+                      <td class="align-middle">{{ product.id }}</td>
+                      <td class="align-middle">
+                        <img
+                          class="mx-2"
+                          :src="`${backend_url_base}/${product.image_name}`"
+                          height="40"
+                          width="40"
+                        />{{ product.name }}
+                      </td>
+                      <td class="align-middle align-left">
+                        <b>₹</b>{{ product.price }}/{{ product.unit }}
+                      </td>
+                      <td class="align-middle">
+                        {{ product.stock }}
+                      </td>
+                      <td class="align-middle">
+                        {{ formatDate(product.expiry_date) }}
+                      </td>
+                      <td class="align-middle">
+                        <mdicon
+                          name="dots-horizontal"
+                          :width="16"
+                          :height="16"
+                          class="dropdown-toggle p-1"
+                          data-bs-toggle="dropdown"
+                          aria-expanded="false"
+                        />
+                        <ul class="dropdown-menu">
+                          <li>
+                            <a class="dropdown-item">
+                              <mdicon
+                                name="information-variant-circle"
+                                class="text-gray"
+                                :size="16"
+                              />
+                              Info
+                            </a>
+                          </li>
+                          <li>
+                            <a class="dropdown-item" @click="handleProductAdd(product, true)">
+                              <!-- <b><mdicon name="shape-square-rounded-plus" class="text-indian-red" :size="16"/></b> -->
+                              <svg
+                                width="16px"
+                                height="16px"
+                                viewBox="0 0 24 24"
+                                fill="text-gray"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  fill-rule="evenodd"
+                                  clip-rule="evenodd"
+                                  d="M21.1213 2.70705C19.9497 1.53548 18.0503 1.53547 16.8787 2.70705L15.1989 4.38685L7.29289 12.2928C7.16473 12.421 7.07382 12.5816 7.02986 12.7574L6.02986 16.7574C5.94466 17.0982 6.04451 17.4587 6.29289 17.707C6.54127 17.9554 6.90176 18.0553 7.24254 17.9701L11.2425 16.9701C11.4184 16.9261 11.5789 16.8352 11.7071 16.707L19.5556 8.85857L21.2929 7.12126C22.4645 5.94969 22.4645 4.05019 21.2929 2.87862L21.1213 2.70705ZM18.2929 4.12126C18.6834 3.73074 19.3166 3.73074 19.7071 4.12126L19.8787 4.29283C20.2692 4.68336 20.2692 5.31653 19.8787 5.70705L18.8622 6.72357L17.3068 5.10738L18.2929 4.12126ZM15.8923 6.52185L17.4477 8.13804L10.4888 15.097L8.37437 15.6256L8.90296 13.5112L15.8923 6.52185ZM4 7.99994C4 7.44766 4.44772 6.99994 5 6.99994H10C10.5523 6.99994 11 6.55223 11 5.99994C11 5.44766 10.5523 4.99994 10 4.99994H5C3.34315 4.99994 2 6.34309 2 7.99994V18.9999C2 20.6568 3.34315 21.9999 5 21.9999H16C17.6569 21.9999 19 20.6568 19 18.9999V13.9999C19 13.4477 18.5523 12.9999 18 12.9999C17.4477 12.9999 17 13.4477 17 13.9999V18.9999C17 19.5522 16.5523 19.9999 16 19.9999H5C4.44772 19.9999 4 19.5522 4 18.9999V7.99994Z"
+                                  fill="#000"
+                                />
+                              </svg>
+                              Edit
+                            </a>
+                          </li>
+                        </ul>
+
+                        <mdicon
+                          name="close-circle"
+                          class="text-danger"
+                          :size="20"
+                          @click="handleProductDelete(product)"
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
-        <div v-else class="row col-12">
-          <h4 class="text-center mt-1">No Products. Add one!</h4>
+        <div v-else>
+          <div v-if="categories.length === 0" class="row col-12">
+            <p class="text-center mt-1">
+              No Categories. Atleast one category should be added before adding a product
+            </p>
+            <p class="text-center mt-1">Click <b>here</b> go to category page and add one!</p>
+          </div>
+          <div v-else class="row col-12">
+            <h4 class="text-center mt-1">No Products. Add one!</h4>
+          </div>
         </div>
       </div>
     </div>
@@ -155,8 +191,14 @@
             <label for="productCategory">Category</label>
           </div>
           <div class="form-floating mb-3">
-            <select class="form-select" id="productUnit" aria-label="Unit" required=yes v-model="data.unit">
-              <option v-for='(unit, idx) in units' :key="idx" :value='unit'>{{ unit }}</option>
+            <select
+              class="form-select"
+              id="productUnit"
+              aria-label="Unit"
+              required="yes"
+              v-model="data.unit"
+            >
+              <option v-for="(unit, idx) in units" :key="idx" :value="unit">{{ unit }}</option>
             </select>
             <label for="productUnit">Unit</label>
           </div>
@@ -216,9 +258,19 @@
             <span v-if="loading" class="spinner-border spinner-border-sm"></span>
             <span v-else>
               <!-- <mdicon name="pencil" class="text-white" :size="16" /> -->
-              <svg width="16px" height="16px" viewBox="0 0 24 24" fill="#fff" xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M21.1213 2.70705C19.9497 1.53548 18.0503 1.53547 16.8787 2.70705L15.1989 4.38685L7.29289 12.2928C7.16473 12.421 7.07382 12.5816 7.02986 12.7574L6.02986 16.7574C5.94466 17.0982 6.04451 17.4587 6.29289 17.707C6.54127 17.9554 6.90176 18.0553 7.24254 17.9701L11.2425 16.9701C11.4184 16.9261 11.5789 16.8352 11.7071 16.707L19.5556 8.85857L21.2929 7.12126C22.4645 5.94969 22.4645 4.05019 21.2929 2.87862L21.1213 2.70705ZM18.2929 4.12126C18.6834 3.73074 19.3166 3.73074 19.7071 4.12126L19.8787 4.29283C20.2692 4.68336 20.2692 5.31653 19.8787 5.70705L18.8622 6.72357L17.3068 5.10738L18.2929 4.12126ZM15.8923 6.52185L17.4477 8.13804L10.4888 15.097L8.37437 15.6256L8.90296 13.5112L15.8923 6.52185ZM4 7.99994C4 7.44766 4.44772 6.99994 5 6.99994H10C10.5523 6.99994 11 6.55223 11 5.99994C11 5.44766 10.5523 4.99994 10 4.99994H5C3.34315 4.99994 2 6.34309 2 7.99994V18.9999C2 20.6568 3.34315 21.9999 5 21.9999H16C17.6569 21.9999 19 20.6568 19 18.9999V13.9999C19 13.4477 18.5523 12.9999 18 12.9999C17.4477 12.9999 17 13.4477 17 13.9999V18.9999C17 19.5522 16.5523 19.9999 16 19.9999H5C4.44772 19.9999 4 19.5522 4 18.9999V7.99994Z"
-                 fill="#000"/>
+              <svg
+                width="16px"
+                height="16px"
+                viewBox="0 0 24 24"
+                fill="#fff"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  d="M21.1213 2.70705C19.9497 1.53548 18.0503 1.53547 16.8787 2.70705L15.1989 4.38685L7.29289 12.2928C7.16473 12.421 7.07382 12.5816 7.02986 12.7574L6.02986 16.7574C5.94466 17.0982 6.04451 17.4587 6.29289 17.707C6.54127 17.9554 6.90176 18.0553 7.24254 17.9701L11.2425 16.9701C11.4184 16.9261 11.5789 16.8352 11.7071 16.707L19.5556 8.85857L21.2929 7.12126C22.4645 5.94969 22.4645 4.05019 21.2929 2.87862L21.1213 2.70705ZM18.2929 4.12126C18.6834 3.73074 19.3166 3.73074 19.7071 4.12126L19.8787 4.29283C20.2692 4.68336 20.2692 5.31653 19.8787 5.70705L18.8622 6.72357L17.3068 5.10738L18.2929 4.12126ZM15.8923 6.52185L17.4477 8.13804L10.4888 15.097L8.37437 15.6256L8.90296 13.5112L15.8923 6.52185ZM4 7.99994C4 7.44766 4.44772 6.99994 5 6.99994H10C10.5523 6.99994 11 6.55223 11 5.99994C11 5.44766 10.5523 4.99994 10 4.99994H5C3.34315 4.99994 2 6.34309 2 7.99994V18.9999C2 20.6568 3.34315 21.9999 5 21.9999H16C17.6569 21.9999 19 20.6568 19 18.9999V13.9999C19 13.4477 18.5523 12.9999 18 12.9999C17.4477 12.9999 17 13.4477 17 13.9999V18.9999C17 19.5522 16.5523 19.9999 16 19.9999H5C4.44772 19.9999 4 19.5522 4 18.9999V7.99994Z"
+                  fill="#000"
+                />
               </svg>
             </span>
             Update
@@ -230,7 +282,9 @@
             class="btn btn-sm btn-success"
           >
             <span v-if="loading" class="spinner-border spinner-border-sm"></span>
-            <span v-else><b><mdicon name="shape-square-rounded-plus" class="text-white" :size="18" /></b></span>
+            <span v-else
+              ><b><mdicon name="shape-square-rounded-plus" class="text-white" :size="18" /></b
+            ></span>
             Add
           </button>
           <button
@@ -329,7 +383,7 @@ const category_id = ref(1)
 const edit = ref(false)
 
 // Main Functions
-onMounted(async() => {
+onMounted(async () => {
   loading.value = true
   refreshCategories()
   refreshProducts()
@@ -348,14 +402,13 @@ onMounted(async() => {
 })
 
 function formatDate(timestamp) {
-  const date = new Date(timestamp);
+  const date = new Date(timestamp)
   const options = {
-  weekday: 'short',
-  month: 'short',
-  day: 'numeric',
-  year: 'numeric',
-};
-  return date.toLocaleDateString("en-IN", options);
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
+  }
+  return date.toLocaleDateString('en-IN', options)
 }
 
 async function refreshProducts() {
@@ -452,8 +505,8 @@ const handleImage = (e) => {
   if (e.target.files.length === 0) {
     data.image_name = null
     data.image = null
-   return
-}
+    return
+  }
 
   data.image = e.target.files[0]
   data.image_name = data.image.name
@@ -486,10 +539,8 @@ async function handleProductModalEdit(edit) {
   formData.append('stock', data.stock)
   const expiry_date = data.expiry_date + ' 00:00'
   formData.append('expiry_date', expiry_date)
-  if (data.image_name !== null)
-    formData.append('image_name', data.image_name)
-  if (data.image !== null)
-    formData.append('image', data.image)
+  if (data.image_name !== null) formData.append('image_name', data.image_name)
+  if (data.image !== null) formData.append('image', data.image)
 
   loading.value = true
   let resp = {}
@@ -545,7 +596,7 @@ async function handleProductModalDelete() {
 </script>
 
 <style scoped>
-.dropdown-toggle::after { 
-  content: none; 
-} 
+.dropdown-toggle::after {
+  content: none;
+}
 </style>
