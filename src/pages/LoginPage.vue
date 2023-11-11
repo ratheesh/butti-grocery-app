@@ -1,111 +1,126 @@
 <template>
   <form-layout>
-  <div class="container">
-    <div class="row justify-content-center vh-auto">
-      <div class="col-md-5">
-        <div class="card m-auto">
-          <h2 class="text-center my-3">Login</h2>
-          <hr />
-          <div class="card-body m-0 p-0">
-            <form @submit.prevent="login">
-              <div class="m-0 p-3">
-              <div class="form-floating mb-3">
-                <input
-                  type="text"
-                  v-model="username"
-                  id="username"
-                  class="form-control"
-                  placeholder="User Name"
-                />
-                <label class="ml-3" for="username">User Name</label>
+    <div class="container">
+      <div class="row justify-content-center vh-auto">
+        <div class="col-md-5">
+          <div class="card shadow-sm m-auto">
+            <h3 class="text-center mt-3">Login</h3>
+            <hr />
+            <div class="card-body m-0 p-0">
+              <form @submit.prevent="login">
+                <div class="row justify-content-center m-0 p-0">
+                  <div class="col-md-10 m-0 p-0">
+                    <div class="form-group mb-4">
+                      <label for="username"
+                        >User Name<span class="text-danger"><b>*</b></span></label
+                      >
+                      <div class="input-group">
+                        <span class="input-group-text" id="username">
+                          <mdicon name="account" :size="20" />
+                        </span>
+                        <input
+                          type="text"
+                          class="form-control"
+                          placeholder="username"
+                          id="username"
+                          v-model="username"
+                          autofocus
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div class="form-group mb-3">
+                      <label for="password"
+                        >Password<span class="text-danger"><b>*</b></span></label
+                      >
+                      <div class="input-group">
+                        <span class="input-group-text" id="username">
+                          <mdicon name="form-textbox-password" :size="20" />
+                        </span>
+                        <input
+                          type="password"
+                          v-model="password"
+                          id="password"
+                          class="form-control"
+                          placeholder="Enter password"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <hr class="mt-1 mx-0" />
+                <div class="mb-3 text-center">
+                  <button type="submit" class="btn btn-sm btn-outline-primary">
+                    <span v-if="loading" class="spinner-border spinner-border-sm"></span>
+                    <span v-if="!loading"><mdicon name="login" :size="18" /></span>&nbsp;Login
+                  </button>
+                  &nbsp;
+                  <span class="text-muted">Not a Member?</span>
+                  &nbsp;
+                  <a @click.prevent="signup" href="">Signup</a>
+                </div>
+              </form>
+              <div class="alert alert-danger mx-3 text-center" role="alert" v-if="iserr">
+                {{ errmsg }}
               </div>
-              <div class="form-floating mb-3">
-                <input
-                  type="password"
-                  v-model="password"
-                  id="password"
-                  class="form-control"
-                  placeholder="Enter password"
-                />
-                <label for="password">Password</label>
-              </div>
-              </div>
-              <hr class="mt-1 mx-0" />
-              <div class="mb-3 text-center">
-                <button type="submit" class="btn btn-sm btn-outline-primary">
-                  <span v-if="loading" class="spinner-border spinner-border-sm"></span>
-                  <span v-if="!loading"><mdicon name="login" :size="18" /></span
-                  >&nbsp;Login
-                </button>
-                &nbsp;
-                <span class="text-muted">Not a Member?</span>
-                &nbsp;
-                <a @click.prevent="signup" href="">Signup</a>
-              </div>
-            </form>
-            <div class="alert alert-danger mx-3 text-center" role="alert" v-if="iserr">
-              {{ errmsg }}
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
   </form-layout>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref } from 'vue'
 // import { router } from "@/router";
-import router from '../router/index.js';
-import { useAuthStore } from "@/stores/authstore.js";
-import FormLayout from "@/layouts/FormLayout.vue"
+// import axiosClient from '@/js/axios.js'
+import router from '../router/index.js'
+import { useAuthStore } from '@/stores/authstore.js'
+import FormLayout from '@/layouts/FormLayout.vue'
 
-const username = ref("");
-const password = ref("");
-let loading = ref(false);
-const iserr = ref(false);
-const errmsg = ref("");
+const username = ref('')
+const password = ref('')
+let loading = ref(false)
+const iserr = ref(false)
+const errmsg = ref('')
 
-const auth = useAuthStore();
+const auth = useAuthStore()
 
 const login = async () => {
-  loading.value = true;
+  loading.value = true
   try {
-    const res = await auth.login(username.value, password.value);
-    if (res.status === 200) { 
+    const res = await auth.login(username.value, password.value)
+    if (res.status === 200) {
       console.log(`${auth.user.name} logged in as ${auth.user.role}`)
 
-      if (auth.role === "admin") {
-        router.push("/admin");
+      if (auth.role === 'admin') {
+        router.push('/admin')
+      } else if (auth.user.role === 'manager') {
+        router.push('/manager')
+      } else {
+        router.push('/')
       }
-      else if (auth.user.role === "manager") {
-        router.push("/manager");
-      }
-      else {
-        router.push("/");
-      }
-    }
-    else {
-      console.log("Login Error");
-      console.log(res);
-      iserr.value = true;
-      errmsg.value = res.data;
+    } else {
+      console.log('Login Error')
+      console.log(res)
+      iserr.value = true
+      errmsg.value = res.data
     }
   } catch (err) {
-      console.log("Login Error");
-      console.log(err);
-      iserr.value = true;
-      errmsg.value = err.data;
+    console.log('Login Error')
+    console.log(err)
+    iserr.value = true
+    errmsg.value = err.data
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 
 const signup = () => {
-  console.log("Signup");
-  router.push("/signup");
-};
+  console.log('Signup')
+  router.push('/signup')
+}
 </script>
 
 <style scoped></style>

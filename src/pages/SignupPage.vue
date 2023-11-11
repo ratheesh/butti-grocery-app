@@ -1,139 +1,212 @@
 <template>
-  <!-- <h1>signup view</h1> -->
   <form-layout>
-  <div class="container">
-    <div class="row justify-content-md-center">
-      <div class="col-md-6">
-        <div class="card m-auto">
-          <h2 class="text-center">Signup</h2>
-          <hr />
-          <div class="card-body m-0 p-0">
-            <form m-0 @submit.prevent="handleSignup">
-              <div class="p-3">
-                <div class="form-floating mb-3">
-                  <input type="text" id="user" class="form-control" placeholder="Name" v-model="userdata.name" />
-                  <label for="user">Name</label>
+    <div class="container">
+      <div class="row justify-content-md-center">
+        <div class="col-md-6">
+          <div class="card shadow-sm m-auto">
+            <h3 class="text-center mt-2">Signup</h3>
+            <hr />
+            <div class="card-body m-0 p-0">
+              <form m-0 @submit.prevent="handleSignup">
+                <div class="row justify-content-center m-0 p-0">
+                  <div class="col-md-10 m-0 p-0">
+                    <div class="form-group mb-3">
+                      <label for="name"
+                        >Full Name<span class="text-danger"><b>*</b></span></label
+                      >
+                      <div class="input-group">
+                        <span class="input-group-text" id="user">
+                          <mdicon name="form-textbox" :size="20" />
+                        </span>
+                        <input
+                          type="text"
+                          class="form-control"
+                          placeholder="Kumar"
+                          id="name"
+                          v-model="userdata.name"
+                          autofocus
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div class="form-group mb-4">
+                      <label for="username"
+                        >User Name<span class="text-danger"><b>*</b></span></label
+                      >
+                      <div class="input-group">
+                        <span class="input-group-text" id="username">
+                          <mdicon name="account" :size="20" />
+                        </span>
+                        <input
+                          type="text"
+                          class="form-control"
+                          placeholder="username"
+                          id="username"
+                          v-model="userdata.username"
+                          autofocus
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div class="form-group mb-3">
+                      <label for="email"
+                        >E-Mail<span class="text-danger"><b>*</b></span></label
+                      >
+                      <div class="input-group">
+                        <span class="input-group-text" id="username">
+                          <mdicon name="email" :size="20" />
+                        </span>
+                        <input
+                          type="text"
+                          id="email"
+                          class="form-control"
+                          placeholder="username@user.com"
+                          v-model="userdata.email"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div class="form-group mb-3">
+                      <label for="role"
+                        >User Role<span class="text-danger"><b>*</b></span></label
+                      >
+                      <div class="input-group">
+                        <span class="input-group-text" id="username">
+                          <mdicon name="security" :size="20" />
+                        </span>
+                        <select
+                          name="role"
+                          id="role"
+                          class="form-control"
+                          required="yes"
+                          v-model="userdata.role"
+                        >
+                          <option v-for="(option, idx) in options" :key="idx" :value="option">
+                            {{ option }}
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="form-group mb-3">
+                      <label for="password"
+                        >Password<span class="text-danger"><b>*</b></span></label
+                      >
+                      <div class="input-group">
+                        <span class="input-group-text" id="username">
+                          <mdicon name="form-textbox-password" :size="20" />
+                        </span>
+                        <input
+                          type="password"
+                          v-model="userdata.password"
+                          id="password"
+                          class="form-control"
+                          placeholder="Enter Password"
+                        />
+                      </div>
+                    </div>
+                    <div class="form-group mb-3">
+                      <label for="password2"
+                        >Re-enter Password<span class="text-danger"><b>*</b></span></label
+                      >
+                      <div class="input-group">
+                        <span class="input-group-text" id="username">
+                          <mdicon name="form-textbox-password" :size="20" />
+                        </span>
+                        <input
+                          type="password"
+                          v-model="userdata.password2"
+                          id="password2"
+                          class="form-control"
+                          placeholder="Re-enter Password"
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div class="form-floating mb-3">
-                  <input type="text" id="username" class="form-control" placeholder="User Name"
-                    v-model="userdata.username" />
-                  <label for="username">User Name</label>
+                <hr class="mt-1 mx-0" />
+                <div class="mb-3 text-center">
+                  <button type="submit" class="btn btn-sm btn-outline-primary">
+                    <span v-if="loading" class="spinner-border spinner-border-sm"></span>
+                    <span v-if="!loading"><mdicon name="account-plus" :size="25" /></span>
+                    Signup
+                  </button>
+                  &nbsp;
+                  <span class="text-muted">Already a Member?</span>
+                  &nbsp;
+                  <a @click.prevent="handleLogin" href="#">Login</a>
                 </div>
-                <div class="form-floating mb-3">
-                  <input type="text" id="email" class="form-control" placeholder="E-mail address"
-                    v-model="userdata.email" />
-                  <label for="email" class="form-label">E-Mail</label>
-                </div>
-                <div class="form-floating mb-3">
-                  <select name="role" id="role" class="form-control" required="yes" v-model="userdata.role">
-                    <!-- <option :value="options[0]" selected>user</option> -->
-                    <option v-for='(option, idx) in options' :key="idx" :value='option'>{{ option }}</option>
-                  </select>
-                  <label for="role" class="form-label">Role</label>
-                </div>
-                <div class="form-floating mb-3">
-                  <input type="password" id="password" class="form-control" placeholder="Password"
-                    v-model="userdata.password" />
-                  <label for="password" class="form-label">Password</label>
-                </div>
-                <div class="form-floating mb-3">
-                  <input type="password" id="password2" class="form-control" placeholder="Password"
-                    v-model="userdata.password2" />
-                  <label for="password2" class="form-label">Re-enter Password</label>
-                </div>
+              </form>
+              <div class="alert alert-danger mx-3 text-center" role="alert" v-if="iserr">
+                {{ errmsg }}
               </div>
-              <hr class="mt-1 mx-0" />
-              <div class="mb-3 text-center">
-                <button type="submit" class="btn btn-sm btn-outline-primary">
-                  <span v-if="loading" class="spinner-border spinner-border-sm"></span>
-                  <span v-if="!loading"><mdicon name="account-plus" :size="25" /></span>
-                  Signup
-                </button>
-                &nbsp;
-                <span class="text-muted">Already a Member?</span>
-                &nbsp;
-                <a @click.prevent="handleLogin" href="#">Login</a>
-              </div>
-            </form>
-            <div class="alert alert-danger mx-3 text-center" role="alert" v-if="iserr">
-              {{ errmsg }}
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
   </form-layout>
 </template>
 
 <script setup>
-import { ref, reactive } from "vue";
-import router from "@/router";
-import { useAuthStore } from "@/stores/authstore.js";
-import FormLayout from "@/layouts/FormLayout.vue"
+import { ref, reactive } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/authstore.js'
+import FormLayout from '@/layouts/FormLayout.vue'
 
-const options=[ 'user', 'manager']
+const options = ['user', 'manager']
 
 const userdata = reactive({
-  name: "",
-  username: "",
-  email: "",
-  role: "user",
-  password: "",
-  password2: "",
-});
+  name: '',
+  username: '',
+  email: '',
+  role: 'user',
+  password: '',
+  password2: ''
+})
 
-const loading = ref(false);
-const iserr = ref(false);
-const errmsg = ref("");
+const errorinfo = reactive({
+  iserr: false,
+  errmsg: ''
+})
 
-const auth = useAuthStore();
+const loading = ref(false)
+const iserr = ref(false)
+const errmsg = ref('')
+
+const router = useRouter()
+const auth = useAuthStore()
 
 const handleSignup = async () => {
-  console.log(userdata)
-  if (userdata.name == '' || userdata.email=='' || userdata.role == '' || userdata.password=='' ||
-  userdata.password2=='') {
-    iserr.value = true;
-    errmsg.value='Input data is not valid'
-    return
-  }  
   if (userdata.password != userdata.password2) {
-    iserr.value=true;
-    errmsg.value='Password does not match'
-    userdata.password = userdata.password2=''
+    iserr.value = true
+    errmsg.value = 'Password does not match'
+    userdata.password = userdata.password2 = ''
     return
   }
 
   try {
-    loading.value = true;
-    const res = await auth.signup(userdata);
-    loading.value = false;
-    if (res.data.status === 201) { 
-     if (auth.user.role == 'admin')
-      router.push('/admin');
-     else if (auth.user.role == 'manager')
-      router.push('/manager');
-     else router.push("/")
-
-    }
-    else {
-      console.log("Signup Error");
-      console.log(res);
-      iserr.value = true;
-      errmsg.value = res.data;
+    loading.value = true
+    const res = await auth.signup(userdata)
+    console.log('signup page: ', res)
+    console.log('status code:', res.status)
+    if (res.status == 201) {
+      if (auth.user.role == 'admin') router.push('/admin')
+      else if (auth.user.role == 'manager') router.push('/manager')
+      else router.push('/')
+    } else {
+      console.log('Return code is not 201')
     }
   } catch (err) {
-    loading.value=false
-    console.log("Signup Error", err);
+    errorinfo.iserr = true
+    errorinfo.errmsg = err.data
+  } finally {
+    loading.value = false
   }
-
-  router.push("/signup");
-};
+}
 
 const handleLogin = () => {
-  console.log("Login");
-  router.push("/login");
-};
+  router.push('/login')
+}
 </script>
 
 <style scoped></style>

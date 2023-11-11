@@ -3,8 +3,11 @@ import { defineStore } from 'pinia'
 import axiosClient from '../js/axios'
 
 export const useAuthStore = defineStore('authStore', () => {
-  const authenticated = ref(localStorage.getItem('access_token'))
-  const user = ref(localStorage.getItem('user'))
+  axiosClient.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem(
+    'access_token'
+  )}`
+  const authenticated = ref(!!localStorage.getItem('access_token'))
+  const user = ref(JSON.parse(localStorage.getItem('user')))
 
   function setUser(_user) {
     console.log(_user)
@@ -42,7 +45,8 @@ export const useAuthStore = defineStore('authStore', () => {
         authenticated.value = true
         user.value = res.data.user
         localStorage.setItem('access_token', res.data.access_token)
-        localStorage.setItem('user', res.data.user)
+        localStorage.setItem('user', JSON.stringify(res.data.user))
+        axiosClient.defaults.headers.common['Authorization'] = `Bearer ${res.data.access_token}`
         // console.log('Logged in!')
         return res
       } else {
@@ -56,24 +60,23 @@ export const useAuthStore = defineStore('authStore', () => {
   async function logout() {
     localStorage.removeItem('access_token')
     localStorage.removeItem('user')
-    console.log('logged out')
     authenticated.value = false
+    user.value = {}
+    console.log('logged out')
   }
 
   async function signup(user_data) {
+    const formData = new FormData()
+    formData.append('name', user_data.name)
+    formData.append('username', user_data.username)
+    formData.append('email', user_data.email)
+    formData.append('role', user_data.role)
+    formData.append('password', user_data.password)
+    formData.append('image_name', 'default.png')
     try {
-      const res = await axiosClient.post('/api/user', {
-        name: user_data.name,
-        username: user_data.username,
-        email: user_data.email,
-        role: user_data.role,
-        password: user_data.password,
-        image_name: 'default.png',
-        image: null
-      })
+      const res = await axiosClient.post('/api/user', formData)
       console.log(res)
-      if (res.data.status === 201) console.log(`user ${user_data.username} signed up!`)
-
+      if (res.status == 201) console.log(`user ${user_data.username} signed up!`)
       return res
     } catch (err) {
       console.log(err)

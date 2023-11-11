@@ -43,12 +43,12 @@ class InternalError(HTTPException):
 
 
 user_request_parse = reqparse.RequestParser(bundle_errors=True)
-user_request_parse.add_argument("name", type=str)
-user_request_parse.add_argument("username", type=str)
-user_request_parse.add_argument("email", type=str)
-user_request_parse.add_argument("role", type=str)
-user_request_parse.add_argument("password", type=str)
-user_request_parse.add_argument("image_name", type=str)
+user_request_parse.add_argument("name", type=str, required=True)
+user_request_parse.add_argument("username", type=str, required=True)
+user_request_parse.add_argument("email", type=str, required=True)
+user_request_parse.add_argument("role", type=str, required=True)
+user_request_parse.add_argument("password", type=str, required=True)
+user_request_parse.add_argument("image_name", type=str, required=True)
 user_request_parse.add_argument("image", type=str)
 # user_request_parse.add_argument("image", type=werkzeug.datastructures.FileStorage)
 
@@ -61,7 +61,7 @@ user_response_fields = {
     "approved": fields.String,
     "role": fields.String,
     "image_name": fields.String,
-    "image": fields.String,
+    # "image": fields.String,
     "created_timestamp": fields.DateTime,
     "updated_timestamp": fields.DateTime,
 }
