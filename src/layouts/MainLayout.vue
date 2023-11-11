@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid" >
   <Header />
-  <main class="content" style="margin-bottom=5%">
+  <main class="content">
   <slot />
   </main>
   <div class="footer">
@@ -16,12 +16,13 @@ import Footer from '@/layouts/Footer.vue'
 
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+$footer_height:5vh;
 .content {
-    min-height: 85vh;
+    min-height : calc(100vh - $footer_height);
 }
 
 .footer {
-  min-height: 5vh;
+  min-height: $footer_height;
 }
 </style>
