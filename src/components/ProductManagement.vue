@@ -224,16 +224,20 @@
             />
             <label for="productStock">Stock</label>
           </div>
-          <div class="form-floating mb-3">
-            <input
-              type="date"
-              class="form-control"
-              id="productExpiryDate"
-              placeholder="Expiry Date"
-              v-model="data.expiry_date"
-              required
-            />
-            <label for="productExpiryDate">Expiry Date</label>
+          <div class="form-group mb-3">
+            <div class="input-group">
+              <span class="input-group-text" id="username">
+                <mdicon name="calendar-today" :size="20" />
+              </span>
+              <input
+                type="date"
+                class="form-control"
+                id="productExpiryDate"
+                placeholder="Expiry Date"
+                v-model="data.expiry_date"
+                required
+              />
+            </div>
           </div>
           <div class="mb-3">
             <label for="productImage">Product Image</label>
@@ -472,7 +476,7 @@ function handleProductAdd(product, isEdit) {
     data.unit = ''
     data.price = 0
     data.stock = 0
-    data.expiry_date = ''
+    data.expiry_date = new Date().toISOString().split('T')[0]
     data.image_name = null
     data.image = null
     data.created_timestamp = ''
@@ -483,8 +487,8 @@ function handleProductAdd(product, isEdit) {
     }
 
     //set date input field to today
-    // console.log('set exp. date', data.expiry_date.getDate())
-    document.getElementById('productExpiryDate').valueAsDate = new Date()
+    // document.getElementById('productExpiryDate').valueAsDate = new Date()
+    // document.getElementById('productExpiryDate').value = new Date().toISOString().split('T')[0]
   }
   edit.value = isEdit
 
