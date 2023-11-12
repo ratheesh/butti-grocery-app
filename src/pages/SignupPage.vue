@@ -186,6 +186,11 @@ const router = useRouter()
 const handleSignup = async () => {
   errorinfo.iserr = false
   errorinfo.errmsg = ''
+  errors.name=false 
+  errors.username=false
+  errors.email= false
+  errors.role=false
+  errors.password=false
 
   if (userdata.password != userdata.password2) {
     iserr.value = true
@@ -206,8 +211,10 @@ const handleSignup = async () => {
     try {
       const res = await axiosClient.post('/api/user', formData)
       console.log(res)
-      if (res.status == 201)
+      if (res.status == 201) { 
        console.log(`user ${userdata.username} signed up!`)
+       router.push('/login')
+    }
       else {
         console.log('Signup Error')
         errorinfo.iserr = true
