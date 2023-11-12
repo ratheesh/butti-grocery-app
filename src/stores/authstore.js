@@ -69,23 +69,5 @@ export const useAuthStore = defineStore('authStore', () => {
     router.push('/login')
   }
 
-  async function signup(user_data) {
-    const formData = new FormData()
-    formData.append('name', user_data.name)
-    formData.append('username', user_data.username)
-    formData.append('email', user_data.email)
-    formData.append('role', user_data.role)
-    formData.append('password', user_data.password)
-    formData.append('image_name', 'default.png')
-    try {
-      const res = await axiosClient.post('/api/user', formData)
-      console.log(res)
-      if (res.status == 201) console.log(`user ${user_data.username} signed up!`)
-      return res
-    } catch (err) {
-      console.log(err)
-      return err
-    }
-  }
-  return { authenticated, user, setUser, getUser, login, logout, signup, fetchUser }
+  return { authenticated, user, setUser, getUser, login, logout, fetchUser }
 })

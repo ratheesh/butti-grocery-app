@@ -2,7 +2,7 @@ from datetime import datetime
 import os
 import base64
 
-from flask import Blueprint, make_response
+from flask import Blueprint, make_response, abort, Response
 from flask_restful import NotFound, Resource, fields, marshal_with, reqparse, request
 from werkzeug.exceptions import HTTPException
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -16,30 +16,24 @@ api = Blueprint("api", __name__)
 
 class BadRequest(HTTPException):
     def __init__(self, message):
-        super().__init__(message, response=None)
-        self.code = 400
-        self.description = message
-
+        self.response = make_response(message, 400)
+class AlreadyExists(HTTPException):
+    def __init__(self, message):
+        self.response = make_response(message, 409)
 
 class Unauthorized(HTTPException):
     def __init__(self, message):
-        super().__init__(message, response=None)
-        self.code = 401
-        self.description = message
+        self.response = make_response(message, 401)
 
 
 class NotFound(HTTPException):
     def __init__(self, message):
-        super().__init__(message, response=None)
-        self.code = 404
-        self.description = message
+        self.response = make_response(message, 404)
 
 
 class InternalError(HTTPException):
     def __init__(self, message):
-        super().__init__(message, response=None)
-        self.code = 500
-        self.description = message
+        self.response = make_response(message, 500)
 
 
 user_request_parse = reqparse.RequestParser(bundle_errors=True)
@@ -96,18 +90,18 @@ class UserAPI(Resource):
         image_name = args.get("image_name", None)
 
         # if args is None or name is None or username is None or password is None:
-        if name is None:
+        if name is None or name == '':
             raise BadRequest("name not provided")
-        if username is None:
+        if username is None or username == '':
             raise BadRequest("username not provided")
-        if email is None:
+        if email is None or email == '':
             raise BadRequest("email not provided")
-        if role is None:
+        if role is None or role == '':
             raise BadRequest("role not provided")
         else:
             if role == 'admin':
                 raise BadRequest("Admin role can not be created")
-        if password is None:
+        if password is None or password == '':
             raise BadRequest("password not provided")
         # if len(password) < 4:
         #     raise BadRequest("password length is less than 4 chars")
@@ -118,7 +112,8 @@ class UserAPI(Resource):
         user = User.query.filter_by(username=username).first()
         if user is not None:
             print("=== user already exists === ")
-            raise BadRequest("user already exists")
+            # raise BadRequest("user already exists")
+            abort(Response("user already exists", 400))
 
         user = User(
             name=name,

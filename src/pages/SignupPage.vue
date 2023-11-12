@@ -1,7 +1,7 @@
 <template>
   <form-layout>
     <div class="container">
-      <div class="row justify-content-md-center">
+      <div class="row justify-content-center mb-3">
         <div class="col-md-6">
           <div class="card shadow-sm m-auto">
             <h3 class="text-center mt-2">Signup</h3>
@@ -20,12 +20,11 @@
                         </span>
                         <input
                           type="text"
-                          class="form-control"
+                          :class="{ 'form-control':true, 'is-invalid':errors.name }"
                           placeholder="Kumar"
                           id="name"
                           v-model="userdata.name"
                           autofocus
-                          required
                         />
                       </div>
                     </div>
@@ -42,9 +41,9 @@
                           class="form-control"
                           placeholder="username"
                           id="username"
+                          :class="{ 'form-control':true, 'is-invalid':errors.username }"
                           v-model="userdata.username"
                           autofocus
-                          required
                         />
                       </div>
                     </div>
@@ -61,8 +60,8 @@
                           id="email"
                           class="form-control"
                           placeholder="username@user.com"
+                          :class="{ 'form-control':true, 'is-invalid':errors.email }"
                           v-model="userdata.email"
-                          required
                         />
                       </div>
                     </div>
@@ -78,7 +77,7 @@
                           name="role"
                           id="role"
                           class="form-control"
-                          required="yes"
+                          :class="{ 'form-control':true, 'is-invalid':errors.role }"
                           v-model="userdata.role"
                         >
                           <option v-for="(option, idx) in options" :key="idx" :value="option">
@@ -97,6 +96,7 @@
                         </span>
                         <input
                           type="password"
+                          :class="{ 'form-control':true, 'is-invalid':errors.password }"
                           v-model="userdata.password"
                           id="password"
                           class="form-control"
@@ -114,6 +114,7 @@
                         </span>
                         <input
                           type="password"
+                          :class="{ 'form-control':true, 'is-invalid':errors.password }"
                           v-model="userdata.password2"
                           id="password2"
                           class="form-control"
@@ -136,8 +137,8 @@
                   <a @click.prevent="handleLogin" href="#">Login</a>
                 </div>
               </form>
-              <div class="alert alert-danger mx-3 text-center" role="alert" v-if="iserr">
-                {{ errmsg }}
+              <div class="alert alert-danger mx-3 text-center" role="alert" v-if="errorinfo.iserr">
+                {{ errorinfo.errmsg }}
               </div>
             </div>
           </div>
@@ -149,8 +150,8 @@
 
 <script setup>
 import { ref, reactive } from 'vue'
+import axiosClient from '@/js/axios.js'
 import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores/authstore.js'
 import FormLayout from '@/layouts/FormLayout.vue'
 
 const options = ['user', 'manager']
@@ -172,11 +173,20 @@ const errorinfo = reactive({
 const loading = ref(false)
 const iserr = ref(false)
 const errmsg = ref('')
+const errors = reactive({
+  name:false,
+  username: false,
+  email:false,
+  role: false,
+  password: false,
+})
 
 const router = useRouter()
-const auth = useAuthStore()
 
 const handleSignup = async () => {
+  errorinfo.iserr = false
+  errorinfo.errmsg = ''
+
   if (userdata.password != userdata.password2) {
     iserr.value = true
     errmsg.value = 'Password does not match'
@@ -184,25 +194,41 @@ const handleSignup = async () => {
     return
   }
 
-  try {
+    const formData = new FormData()
+    formData.append('name', userdata.name)
+    formData.append('username', userdata.username)
+    formData.append('email', userdata.email)
+    formData.append('role', userdata.role)
+    formData.append('password', userdata.password)
+    formData.append('image_name', 'default.png')
+
     loading.value = true
-    const res = await auth.signup(userdata)
-    console.log('signup page: ', res)
-    console.log('status code:', res.status)
-    if (res.status == 201) {
-      if (auth.user.role == 'admin') router.push('/admin')
-      else if (auth.user.role == 'manager') router.push('/manager')
-      else router.push('/')
-    } else {
-      console.log('Return code is not 201')
+    try {
+      const res = await axiosClient.post('/api/user', formData)
+      console.log(res)
+      if (res.status == 201)
+       console.log(`user ${userdata.username} signed up!`)
+      else {
+        console.log('Signup Error')
+        errorinfo.iserr = true
+        errorinfo.errmsg = res.data
+        errors.name = errorinfo.errmsg.includes('name')
+        errors.username = errorinfo.errmsg.includes('user')
+        errors.email = errorinfo.errmsg.includes('email')
+        errors.password = errorinfo.errmsg.includes('password')
+      }
+    } catch (err) {
+      console.log(err)
+        errorinfo.iserr = true
+        errorinfo.errmsg = err.response.data
+        errors.name = errorinfo.errmsg.includes('name')
+        errors.username = errorinfo.errmsg.includes('user')
+        errors.email = errorinfo.errmsg.includes('email')
+        errors.password = errorinfo.errmsg.includes('password')
+    } finally {
+      loading.value = false
     }
-  } catch (err) {
-    errorinfo.iserr = true
-    errorinfo.errmsg = err.data
-  } finally {
-    loading.value = false
   }
-}
 
 const handleLogin = () => {
   router.push('/login')
