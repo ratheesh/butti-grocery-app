@@ -1,4 +1,5 @@
 import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { defineStore } from 'pinia'
 import axiosClient from '../js/axios'
 
@@ -8,6 +9,8 @@ export const useAuthStore = defineStore('authStore', () => {
   )}`
   const authenticated = ref(!!localStorage.getItem('access_token'))
   const user = ref(JSON.parse(localStorage.getItem('user')))
+
+  const router = useRouter()
 
   function setUser(_user) {
     console.log(_user)
@@ -63,6 +66,7 @@ export const useAuthStore = defineStore('authStore', () => {
     authenticated.value = false
     user.value = {}
     console.log('logged out')
+    router.push('/login')
   }
 
   async function signup(user_data) {
