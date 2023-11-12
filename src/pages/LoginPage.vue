@@ -20,13 +20,15 @@
                         </span>
                         <input
                           type="text"
-                          class="form-control"
+                          :class="{ 'form-control':true, 'is-invalid':errors.username }"
                           placeholder="username"
                           id="username"
                           v-model="username"
                           autofocus
-                          required
                         />
+                        <div class="invalid-feedback">
+                          <span>Invalid User Name</span>
+                        </div>
                       </div>
                     </div>
                     <div class="form-group mb-3">
@@ -41,9 +43,12 @@
                           type="password"
                           v-model="password"
                           id="password"
-                          class="form-control"
+                          :class="{ 'form-control':true, 'is-invalid':errors.password }"
                           placeholder="Enter password"
                         />
+                        <div class="invalid-feedback">
+                          <span>Invalid password</span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -72,7 +77,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, reactive } from 'vue'
 // import { router } from "@/router";
 // import axiosClient from '@/js/axios.js'
 import router from '../router/index.js'
@@ -84,6 +89,10 @@ const password = ref('')
 let loading = ref(false)
 const iserr = ref(false)
 const errmsg = ref('')
+const errors = reactive({
+  username: false,
+  password: false,
+})
 
 const auth = useAuthStore()
 
@@ -106,6 +115,8 @@ const login = async () => {
       console.log(res)
       iserr.value = true
       errmsg.value = res.data
+      errors.username = errmsg.value.includes('user')
+      errors.password = errmsg.value.includes('password')
     }
   } catch (err) {
     console.log('Login Error')
