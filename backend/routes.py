@@ -22,17 +22,16 @@ def login():
     username, password = data.get("username"), data.get("password")
     user = User.query.filter_by(username=username).first()
     if not user:
-        return make_response('user not found', 401)
+        return make_response('user not found', 400)
     if not check_password_hash(user.password, password):
-        return make_response('invalid password', 401)
+        return make_response('invalid password', 400)
     
     access_token = create_access_token(identity=user)
     refresh_token = create_refresh_token(identity=user)
     if not access_token or  not refresh_token:
-        return "Error Generating Token", 500
+        return make_response("error generating Token", 500)
     else:
-        return jsonify(user=user.to_dict(), access_token=access_token,
-        refresh_token=refresh_token)
+        return jsonify(user=user.to_dict(), access_token=access_token)
 
 @routes.route("/logout", methods=['POST'])
 @jwt_required()
