@@ -4,9 +4,7 @@
   <main class="content">
   <slot />
   </main>
-  <div class="footer">
   <Footer/>
-  </div>
   </div>
 </template>
 
