@@ -388,7 +388,7 @@ class ProductAPI(Resource):
         if stock is None:
             raise BadRequest("stock not provided")
         if expiry_date is None:
-            raise BadRequest("expiry_date not provided")
+            raise BadRequest("expiry date not provided")
         if image_name is None:
             raise BadRequest("image_name not provided")
 
