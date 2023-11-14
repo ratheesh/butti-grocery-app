@@ -195,7 +195,7 @@
               class="form-select"
               id="productUnit"
               aria-label="Unit"
-              required="yes"
+              required
               v-model="data.unit"
             >
               <option v-for="(unit, idx) in units" :key="idx" :value="unit">{{ unit }}</option>
@@ -204,22 +204,25 @@
           </div>
           <div class="form-floating mb-3">
             <input
-              type="text"
+              type="integer"
               class="form-control"
               id="productPrice"
               placeholder="Price"
               v-model="data.price"
+              min="1"
               required
             />
             <label for="productPrice">Price</label>
           </div>
           <div class="form-floating mb-3">
             <input
-              type="text"
+              type="integer"
               class="form-control"
               id="productStock"
               placeholder="Stock"
               v-model="data.stock"
+              min="1"
+              step="5"
               required
             />
             <label for="productStock">Stock</label>
@@ -485,6 +488,9 @@ function handleProductAdd(product, isEdit) {
     for (const category of categories.value) {
       data.categories.push(category)
     }
+
+    // force reset the previous file if selected
+    document.getElementById('productImage').value = ''
 
     //set date input field to today
     // document.getElementById('productExpiryDate').valueAsDate = new Date()
