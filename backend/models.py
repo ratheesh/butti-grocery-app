@@ -46,23 +46,6 @@ class User(db.Model):
         return self.username
 
 
-class Token(db.Model):
-    '''Token Model'''
-    __tablename__ = "token"
-    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    access_token = db.Column(db.String(256), nullable=False)
-    refresh_token = db.Column(db.String(256), nullable=False)
-
-    # user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "access_token": self.access_token,
-            "refresh_token": self.refresh_token,
-        }
-
-
 class Category(db.Model):
     '''Category Model'''
     __tablename__ = "category"
@@ -115,9 +98,7 @@ class Product(db.Model):
             "image_name": self.image_name,
             "created_timestamp": self.created_timestamp,
             "updated_timestamp": self.updated_timestamp,
-            # "item_id": self.item_id,
             "category_id": self.category_id,
-            # "bookmark_id": self.bookmark_id,
         }
 
 
@@ -141,6 +122,7 @@ class Item(db.Model):
             "created_timestamp": self.created_timestamp,
             "updated_timestamp": self.updated_timestamp,
             # "products": [product.to_dict() for product in self.products],
+            "product_id": self.product_id,
             "order_id": self.order_id,
         }
 
@@ -169,6 +151,13 @@ class Order(db.Model):
     items = db.relationship("Item", backref="order",  cascade="all,delete-orphan")
     created_timestamp = db.Column(
         db.DateTime, nullable=False, default=datetime.now())
+    
+    name = db.Column(db.String(32), nullable=False)
+    address = db.Column(db.String(128), nullable=False)
+    phone = db.Column(db.Integer, nullable=False)
+    email = db.Column(db.String(64), nullable=False)
+    payment_mode=db.Column(db.String(16), nullable=False)
+    delivery_date = db.Column(db.DateTime, nullable=False, default=datetime.now())
 
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 
@@ -177,6 +166,13 @@ class Order(db.Model):
         return {
             "id": self.id,
             "total_amount": self.total_amount,
+            "name":self.name,
+            "address":self.address,
+            "phone":self.phone,
+            "email":self.email,
+            "payment_mode":self.payment_mode,
+            "delivery_date":self.delivery_date,
+            "items": [item.to_dict for item in self.items],
             "user_id": self.user_id,
         }
 
