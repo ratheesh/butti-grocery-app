@@ -6,7 +6,6 @@
       <div class="card col-8 m-auto">
         <div class="row col-12 justify-content-center m-auto">
           <div v-if="cart.items.length > 0" class="col-8 mt-3">
-            <div class="table-responsive">
               <table class="table table-hover text-center">
                 <thead>
                   <tr class="table-light rounded-1">
@@ -21,7 +20,7 @@
                 <tbody>
                   <tr v-for="(item, idx) in cart.items" :key="idx" :id="item.id">
                     <td>{{ item.id }}</td>
-                    <td>{{ item.item }}</td>
+                    <td>{{ item.name }}</td>
                     <td>
                       <mdicon @click="item.quantity--" name="minus-circle" class="text-danger" />
                       <label class="text-center" style="width: 2em">{{ item.quantity }}</label>
@@ -47,7 +46,6 @@
                     <td></td>
                     <td></td>
                     <td></td>
-                    <td></td>
                     <td style="text-right">
                       <button
                         type="button"
@@ -58,7 +56,16 @@
                       </button>
                     </td>
                     <td>
-                      <button type="button" class="btn btn-sm btn-primary ml-auto">
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-danger"
+                        @click="clearCart"
+                      >
+                        <mdicon name="cart-remove" :height="18" />Clear Cart
+                      </button>
+                    </td>
+                    <td>
+                      <button type="button" class="btn btn-sm btn-primary ml-auto" @click="checkoutPage">
                         <svg
                           width="16px"
                           height="16px"
@@ -73,13 +80,12 @@
                             fill=""
                           />
                         </svg>
-                        Order
+                        Checkout
                       </button>
                     </td>
                   </tr>
                 </tfoot>
               </table>
-            </div>
           </div>
           <div v-else>
             <h2 class="text-center mt-5">Your Cart is Empty!</h2>
@@ -104,6 +110,15 @@ const deleteItem = (id) => {
   console.log('delete item event')
   cart.items.splice(id, 1)
 }
+
+const clearCart = () => {
+  cart.items = []
+}
+
+const checkoutPage = () => {
+  router.push('/checkout')
+}
+
 </script>
 
 <style scoped></style>
