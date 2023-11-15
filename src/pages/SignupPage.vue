@@ -126,14 +126,12 @@
                 </div>
                 <hr class="mt-1 mx-0" />
                 <div class="mb-3 text-center">
-                  <button type="submit" class="btn btn-sm btn-outline-primary">
+                  <button type="submit" class="btn btn-sm btn-outline-primary mx-2">
                     <span v-if="loading" class="spinner-border spinner-border-sm"></span>
-                    <span v-if="!loading"><mdicon name="account-plus" :size="25" /></span>
+                    <span v-if="!loading"><mdicon name="account-plus" :size="18" /></span>
                     Signup
                   </button>
-                  &nbsp;
                   <span class="text-muted">Already a Member?</span>
-                  &nbsp;
                   <a @click.prevent="handleLogin" href="#">Login</a>
                 </div>
               </form>

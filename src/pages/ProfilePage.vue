@@ -68,9 +68,14 @@
                 </table>
                 <hr class="m-0">
                 <div class="text-center my-3">
-                    <button class="btn btn-primary">Edit</button>
-                    &nbsp;&nbsp;&nbsp;&nbsp;
-                    <button class="btn btn-secondary" @click="router.push('/')">Go Home</button>
+                  <button class="btn btn-sm btn-primary mx-2 align-center">
+                    <b><mdicon name="shape-square-rounded-plus" class="text-white" :size="18"/></b>
+                    Edit
+                  </button>
+                  <button class="btn btn-sm btn-secondary mx-2" @click="router.push('/')">
+                    <b><mdicon name="home" class="text-black" :size="18"/></b>
+                    Go Home
+                    </button>
                 </div>
             </div>
         </div> 

@@ -57,11 +57,9 @@
                 <div class="mb-3 text-center">
                   <button type="submit" class="btn btn-sm btn-outline-primary">
                     <span v-if="loading" class="spinner-border spinner-border-sm"></span>
-                    <span v-if="!loading"><mdicon name="login" :size="18" /></span>&nbsp;Login
+                    <span v-if="!loading" class="mx-1"><mdicon name="login" :size="18" /></span>Login
                   </button>
-                  &nbsp;
-                  <span class="text-muted">Not a Member?</span>
-                  &nbsp;
+                  <span class="text-muted mx-2">Not a Member?</span>
                   <a @click.prevent="signup" href="">Signup</a>
                 </div>
               </form>

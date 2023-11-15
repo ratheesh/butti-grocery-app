@@ -2,11 +2,10 @@
   <main-layout>
     <h2 class="text-center">Admin Dash Board!</h2>
     <div>
-      <button class="btn btn-outline-success"
+      <button class="btn btn-outline-success mx-2"
       data-bs-toggle="modal" data-bs-target="#modalCategory">
       Add Category</button>
-      &nbsp;
-      <button class="btn btn-outline-success"
+      <button class="btn btn-outline-success mx-2"
       data-bs-toggle="modal" data-bs-target="#modalProduct">Add product</button>
     </div>
     <category-modal @add-category="addCategory" ></category-modal>

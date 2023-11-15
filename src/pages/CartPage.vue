@@ -5,7 +5,7 @@
       <h2 class="text-center">Your Cart</h2>
       <div class="card col-8 m-auto">
         <div class="row col-12 justify-content-center m-auto">
-          <div v-if="cart.items.length > 0" class="col-8 mt-3">
+          <div v-if="cart.items.length > 0" class="col-10 mt-3">
               <table class="table table-hover text-center">
                 <thead>
                   <tr class="table-light rounded-1">
