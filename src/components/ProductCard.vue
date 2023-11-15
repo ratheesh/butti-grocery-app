@@ -8,21 +8,17 @@
         height="150"
       />
       <div class="card-body">
-        <div class="inline-flex justify-content-between">
-          <div class="row">
+          <div class="row justify-content-between">
             <div class="col">
               <b class="fs-6">{{ data.name }}</b>
             </div>
-            <div class="col">
-              <span class="text-dark fw-normal fs-6"><b>₹</b><b>{{ data.price }}</b>/{{ data.unit }}</span>
+            <div class="col-auto">
+              <span class="text-dark text-right fw-normal fs-6"><b>₹</b><b>{{ data.price }}</b>/{{ data.unit }}</span>
             </div>
           </div>
-        </div>
-        <!-- <p class="card-text">{{ data.description }}</p> -->
-        <br/>
-        <div class="inline-flex">
-          <div class="row text-center d-inline-flex align-items-center">
-            <div class="col d-flex align-items-center">
+        <br/> <br/>
+          <div class="row justify-items-between">
+            <div class="col d-inline-flex align-items-center">
               <mdicon @click="updateCount()" name="minus-circle" class="text-danger"/>
               <label class="text-center" style="width: 2em">{{ quantity }}</label>
               <mdicon
@@ -31,7 +27,7 @@
                 class="text-success"
               />
             </div> 
-            <div class="col">
+            <div class="col-auto">
               <form @submit.prevent="addToCart(data)">
                 <button class="btn btn-success btn-sm">
                   <mdicon name="cart-plus" :size="20"/>Add
@@ -39,7 +35,6 @@
               </form>
             </div>
           </div>
-        </div>
       </div>
       <!-- <pre>{{ data }}</pre> -->
     </div>
