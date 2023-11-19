@@ -1,6 +1,7 @@
 from datetime import datetime
 import os
 import base64
+import secrets
 
 from flask import Blueprint, make_response, abort, Response
 from flask_restful import NotFound, Resource, fields, marshal_with, reqparse, request
@@ -308,7 +309,7 @@ product_request_parse.add_argument("unit", type=str, required=True, default="pie
 product_request_parse.add_argument("price", type=int, required=True)
 product_request_parse.add_argument("stock", type=int, required=True)
 product_request_parse.add_argument("expiry_date", type=valid_date, required=True)
-product_request_parse.add_argument("image_name", type=str, default="default.png")
+product_request_parse.add_argument("image_name", type=str)
 product_request_parse.add_argument("image", type=str)
 # product_request_parse.add_argument("category_id", type=int)
 
@@ -389,8 +390,11 @@ class ProductAPI(Resource):
             raise BadRequest("stock not provided")
         if expiry_date is None:
             raise BadRequest("expiry date not provided")
+
         if image_name is None:
-            raise BadRequest("image_name not provided")
+            image_name = 'default.png'
+        else:
+            image_name = secrets.token_hex(4) + '.jpg'
 
 
         product = Product(
@@ -399,8 +403,7 @@ class ProductAPI(Resource):
             unit=unit,
             price=price,
             stock=stock,
-            # expiry_date=expiry_date, # FIXME
-            expiry_date=datetime.now(),
+            expiry_date=expiry_date,
             image_name=image_name,
             category_id=category_id,
             created_timestamp=datetime.now(),
@@ -418,7 +421,7 @@ class ProductAPI(Resource):
                 if image_name == "":
                     raise BadRequest("image_name is empty")
 
-                image_name = image_name.split('.')[0] + '_' + str(product.id) + '.png'
+                # image_name = image_name.split('.')[0] + '_' + str(product.id) + '.png'
                 product.image_name = image_name
 
                 file_data = base64.b64decode(image)
@@ -467,6 +470,30 @@ class ProductAPI(Resource):
                 stock = args.get("stock", None)
                 expiry_date = args.get("expiry_date", None)
                 image = args.get("image", None)
+                image_name = args.get("image_name", None)
+                
+                print('image_name: ', image_name, 'product imagename:', product.image_name)
+                if image_name is None:
+                    image_name = product.image_name
+                
+                if image is not None: 
+                    try:
+                        # image_name = image_name.split('.')[0] + '_' + str(user.id) + '.png'
+
+                        if product.image_name == 'default.png':
+                            image_name = secrets.token_hex(4) + '.jpg'
+                        else:
+                            image_name = product.image_name
+
+                        file_data = base64.b64decode(image)
+                        basedir = os.path.abspath(os.path.dirname(__file__))
+                        filename= basedir + '/images/products/' + image_name
+                        print('Image filename to be saved: ', filename)
+                        with open(filename, 'wb') as f:
+                            f.write(file_data)
+                            os.sync()
+                    except:
+                        raise InternalError(message="Error in saving image")
 
                 product.name = name
                 product.description = description
@@ -474,7 +501,7 @@ class ProductAPI(Resource):
                 product.price = price
                 product.stock = stock
                 product.expiry_date = expiry_date
-                product.image = image
+                product.image_name = image_name
                 product.category_id = category_id
                 product.updated_timestamp=datetime.now()
 
@@ -496,8 +523,18 @@ class ProductAPI(Resource):
             if product is None:
                 raise NotFound("product not found")
             try:
+                image_name = product.image_name
                 db.session.delete(product)
                 db.session.commit()
+                
+                if image_name != 'default.png':
+                    basedir = os.path.abspath(os.path.dirname(__file__))
+                    filename= basedir + '/images/products/' + image_name
+                    if os.path.isfile(filename):
+                        try:
+                            os.remove(filename)
+                        except:
+                            raise InternalError('deleting the image file')
             except:
                 raise InternalError(message="error deleting product")
 
