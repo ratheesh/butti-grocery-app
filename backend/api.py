@@ -322,7 +322,7 @@ product_response_fields = {
     "stock": fields.Integer,
     "expiry_date": fields.DateTime,
     "image_name": fields.String,
-    # "image": fields.String,
+    "image": fields.String,
     "created_timestamp": fields.DateTime,
     "updated_timestamp": fields.DateTime,
     "category_id": fields.Integer,
@@ -340,7 +340,7 @@ class ProductAPI(Resource):
                 print('Image filename to be read: ', image_file)
                 if os.path.isfile(image_file):
                     with open(image_file, 'rb') as f:
-                        product.image_file = base64.b64encode(f.read())
+                        product.image = base64.b64encode(f.read()).decode('utf-8')
             return products, 200
         else:
             category=Category.query.filter_by(id=category_id).first()
@@ -349,12 +349,25 @@ class ProductAPI(Resource):
 
         if product_id is None:
             products = Product.query.filter_by(category_id=category_id).all()
+            for product in products:
+                basedir = os.path.abspath(os.path.dirname(__file__))
+                image_file= basedir + '/images/products/' + product.image_name
+                print('Image filename to be read: ', image_file)
+                if os.path.isfile(image_file):
+                    with open(image_file, 'rb') as f:
+                        product.image = base64.b64encode(f.read()).decode('utf-8')
             return products, 200
         else:
             product = Product.query.filter_by(category_id=category.id, id=product_id).first()
             if product is None:
                 raise NotFound("Product not found")
             else:
+                basedir = os.path.abspath(os.path.dirname(__file__))
+                image_file= basedir + '/images/products/' + product.image_name
+                print('Image filename to be read: ', image_file)
+                if os.path.isfile(image_file):
+                    with open(image_file, 'rb') as f:
+                        product.image = base64.b64encode(f.read()).decode('utf-8')
                 return product, 200
 
     # @jwt_required()
@@ -394,7 +407,7 @@ class ProductAPI(Resource):
         if image_name is None:
             image_name = 'default.png'
         else:
-            image_name = secrets.token_hex(4) + '.jpg'
+            image_name = secrets.token_hex(4) + '.png'
 
 
         product = Product(
@@ -481,7 +494,7 @@ class ProductAPI(Resource):
                         # image_name = image_name.split('.')[0] + '_' + str(user.id) + '.png'
 
                         if product.image_name == 'default.png':
-                            image_name = secrets.token_hex(4) + '.jpg'
+                            image_name = secrets.token_hex(4) + '.png'
                         else:
                             image_name = product.image_name
 
