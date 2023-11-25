@@ -60,7 +60,7 @@
               </router-link>
             </li>
             <li v-else class="nav-link dropdown">
-                  <a class="nav-link dropdown-toggle text-white p-0" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <a class="nav-link dropdown-toggle text-white p-0" href="javascript:void(0)" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     <mdicon name="account" :size="20" />
                     {{ auth.user.username }}
                   </a>
@@ -69,27 +69,31 @@
                   <mdicon name="account" :size="20" />
                   Profile
                 </router-link>
-                <li><span class="dropdown-item">
-                  <svg fill="#000000" xmlns="http://www.w3.org/2000/svg"  width="20" height="20" viewBox="0 0 100 100" xml:space="preserve">
-                    <g>
+                <li>
+                  <a class="dropdown-item" href="javascript:void(0)" style="text-decoration-none">
+                  <span>
+                    <svg fill="#000000" xmlns="http://www.w3.org/2000/svg"  width="20" height="20" viewBox="0 0 100 100" xml:space="preserve">
                       <g>
-                        <path d="M78.8,62.1l-3.6-1.7c-0.5-0.3-1.2-0.3-1.7,0L52,70.6c-1.2,0.6-2.7,0.6-3.9,0L26.5,60.4
-                          c-0.5-0.3-1.2-0.3-1.7,0l-3.6,1.7c-1.6,0.8-1.6,2.9,0,3.7L48,78.5c1.2,0.6,2.7,0.6,3.9,0l26.8-12.7C80.4,65,80.4,62.8,78.8,62.1z"
-                          />
+                        <g>
+                          <path d="M78.8,62.1l-3.6-1.7c-0.5-0.3-1.2-0.3-1.7,0L52,70.6c-1.2,0.6-2.7,0.6-3.9,0L26.5,60.4
+                            c-0.5-0.3-1.2-0.3-1.7,0l-3.6,1.7c-1.6,0.8-1.6,2.9,0,3.7L48,78.5c1.2,0.6,2.7,0.6,3.9,0l26.8-12.7C80.4,65,80.4,62.8,78.8,62.1z"
+                            />
+                        </g>
+                        <g>
+                          <path d="M78.8,48.1l-3.7-1.7c-0.5-0.3-1.2-0.3-1.7,0L52,56.6c-1.2,0.6-2.7,0.6-3.9,0L26.6,46.4
+                            c-0.5-0.3-1.2-0.3-1.7,0l-3.7,1.7c-1.6,0.8-1.6,2.9,0,3.7L48,64.6c1.2,0.6,2.7,0.6,3.9,0l26.8-12.7C80.4,51.1,80.4,48.9,78.8,48.1
+                            z"/>
+                        </g>
+                        <g>
+                          <path d="M21.2,37.8l26.8,12.7c1.2,0.6,2.7,0.6,3.9,0l26.8-12.7c1.6-0.8,1.6-2.9,0-3.7L51.9,21.4
+                            c-1.2-0.6-2.7-0.6-3.9,0L21.2,34.2C19.6,34.9,19.6,37.1,21.2,37.8z"/>
+                        </g>
                       </g>
-                      <g>
-                        <path d="M78.8,48.1l-3.7-1.7c-0.5-0.3-1.2-0.3-1.7,0L52,56.6c-1.2,0.6-2.7,0.6-3.9,0L26.6,46.4
-                          c-0.5-0.3-1.2-0.3-1.7,0l-3.7,1.7c-1.6,0.8-1.6,2.9,0,3.7L48,64.6c1.2,0.6,2.7,0.6,3.9,0l26.8-12.7C80.4,51.1,80.4,48.9,78.8,48.1
-                          z"/>
-                      </g>
-                      <g>
-                        <path d="M21.2,37.8l26.8,12.7c1.2,0.6,2.7,0.6,3.9,0l26.8-12.7c1.6-0.8,1.6-2.9,0-3.7L51.9,21.4
-                          c-1.2-0.6-2.7-0.6-3.9,0L21.2,34.2C19.6,34.9,19.6,37.1,21.2,37.8z"/>
-                      </g>
-                    </g>
-                  </svg>
-                  Orders
-                </span></li>
+                    </svg>
+                    Orders
+                </span>
+                  </a>
+                </li>
                 <li><hr class="dropdown-divider"></li>
                 <li class="nav-item mx-2" v-if="!auth.authenticated">
                   <router-link :to="{ name: 'login' }" class="dropdown-item">
@@ -97,10 +101,12 @@
                   </router-link>
                 </li>
                 <li class="nav-item mx-2" v-else>
-                  <span class="dropdown-item" @click="auth.logout">
-                    <mdicon name="power" class="fw-bolder text-danger" :size="20" />
-                    Logout
-                  </span>
+                  <a class="dropdown-item" href="javascript:void(0)">
+                    <span @click="auth.logout">
+                      <mdicon name="power" class="fw-bolder text-danger" :size="20" />
+                      Logout
+                    </span>
+                  </a>
                 </li>
               </ul>
             </li>
