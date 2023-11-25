@@ -1,18 +1,12 @@
 <template>
-  <div class="row col-8 m-auto">
-    <div class="card mt-4 p-0">
+  <div class="row col-8 justify-content-center m-auto">
+    <div class="card shadow-sm mt-4 p-0">
       <div class="card-header m-0 p-0">
         <div class="row col-10 d-flex justify-content-between align-items-center m-auto my-2">
           <div class="col-auto">
             <span class="text-center fs-6 fw-bold mt-3">Product Management</span>
           </div>
           <div class="col-6 d-inline-flex justify-content-end m-auto me-0">
-            <div class="col-auto mx-2">
-              <button class="btn btn-sm btn-outline-rosy-brown" @click="gotoCategories">
-                <b><mdicon name="cog" :size="18" /></b>
-                Categories
-              </button>
-            </div>
             <div class="col-auto mx-2">
               <button class="btn btn-sm btn-success" @click="handleProductAdd({}, false)">
                 <b><mdicon name="shape-square-rounded-plus" class="text-white" :size="18" /></b>
@@ -23,107 +17,96 @@
         </div>
       </div>
       <div class="card-body">
-        <div v-if="products.length > 0">
-          <div class="row justify-content-center mt-3 m-auto">
-            <div class="col-10">
-              <!-- <hr /> -->
-              <div class="table-responsive">
-                <table class="table table-centered table-nowrap rounded">
-                  <thead class="border-bottom table-light">
-                    <tr>
-                      <th scope="col"><b>#</b></th>
-                      <th scope="col"><b>NAME</b></th>
-                      <th scope="col"><b>PRICE</b></th>
-                      <th scope="col"><b>STOCK</b></th>
-                      <th scope="col"><b>EXPIRY DATE</b></th>
-                      <th scope="col"><b>ACTIONS</b></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="(product, idx) in products" :id="idx" :key="idx">
-                      <td class="align-middle">{{ product.id }}</td>
-                      <td class="align-middle">
-                        <img
-                          class="mx-2"
-                          :src="`${backend_url_base}/${product.image_name}`"
-                          height="60"
-                          width="60"
-                        />{{ product.name }}
-                      </td>
-                      <td class="align-middle align-left">
-                        <b>₹</b>{{ product.price }}/{{ product.unit }}
-                      </td>
-                      <td class="align-middle">
-                        {{ product.stock }}
-                      </td>
-                      <td class="align-middle">
-                        {{ formatDate(product.expiry_date) }}
-                      </td>
-                      <td class="align-middle">
-                        <mdicon
-                          name="dots-horizontal"
-                          :width="24"
-                          :height="24"
-                          class="dropdown-toggle p-1"
-                          data-bs-toggle="dropdown"
-                          aria-expanded="false"
-                        />
-                        <ul class="dropdown-menu">
-                          <li>
-                            <a class="dropdown-item">
-                              <mdicon
-                                name="information-variant-circle"
-                                class="text-gray"
-                                :size="16"
-                              />
-                              Info
-                            </a>
-                          </li>
-                          <li>
-                            <a class="dropdown-item" @click="handleProductAdd(product, true)">
-                              <!-- <b><mdicon name="shape-square-rounded-plus" class="text-indian-red" :size="16"/></b> -->
-                              <svg
-                                width="16px"
-                                height="16px"
-                                viewBox="0 0 24 24"
-                                fill="text-gray"
-                                xmlns="http://www.w3.org/2000/svg"
-                              >
-                                <path
-                                  fill-rule="evenodd"
-                                  clip-rule="evenodd"
-                                  d="M21.1213 2.70705C19.9497 1.53548 18.0503 1.53547 16.8787 2.70705L15.1989 4.38685L7.29289 12.2928C7.16473 12.421 7.07382 12.5816 7.02986 12.7574L6.02986 16.7574C5.94466 17.0982 6.04451 17.4587 6.29289 17.707C6.54127 17.9554 6.90176 18.0553 7.24254 17.9701L11.2425 16.9701C11.4184 16.9261 11.5789 16.8352 11.7071 16.707L19.5556 8.85857L21.2929 7.12126C22.4645 5.94969 22.4645 4.05019 21.2929 2.87862L21.1213 2.70705ZM18.2929 4.12126C18.6834 3.73074 19.3166 3.73074 19.7071 4.12126L19.8787 4.29283C20.2692 4.68336 20.2692 5.31653 19.8787 5.70705L18.8622 6.72357L17.3068 5.10738L18.2929 4.12126ZM15.8923 6.52185L17.4477 8.13804L10.4888 15.097L8.37437 15.6256L8.90296 13.5112L15.8923 6.52185ZM4 7.99994C4 7.44766 4.44772 6.99994 5 6.99994H10C10.5523 6.99994 11 6.55223 11 5.99994C11 5.44766 10.5523 4.99994 10 4.99994H5C3.34315 4.99994 2 6.34309 2 7.99994V18.9999C2 20.6568 3.34315 21.9999 5 21.9999H16C17.6569 21.9999 19 20.6568 19 18.9999V13.9999C19 13.4477 18.5523 12.9999 18 12.9999C17.4477 12.9999 17 13.4477 17 13.9999V18.9999C17 19.5522 16.5523 19.9999 16 19.9999H5C4.44772 19.9999 4 19.5522 4 18.9999V7.99994Z"
-                                  fill="#000"
+        <div v-if="main_loading">
+          <loading-indicator></loading-indicator>
+        </div>
+        <div v-else>
+          <div v-if="products.length > 0">
+            <div class="row justify-content-center mt-3 m-auto">
+              <div class="col-10">
+                <!-- <hr /> -->
+                <div class="table-responsive">
+                  <table class="table table-centered table-nowrap rounded">
+                    <thead class="border-bottom table-light">
+                      <tr>
+                        <th scope="col"><b>#</b></th>
+                        <th scope="col"><b>NAME</b></th>
+                        <th scope="col"><b>PRICE</b></th>
+                        <th scope="col"><b>STOCK</b></th>
+                        <th scope="col"><b>EXPIRY DATE</b></th>
+                        <th scope="col"><b>ACTIONS</b></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="(product, idx) in products" :id="idx" :key="idx" class="align-middle">
+                        <td>{{ product.id }}</td>
+                        <td>
+                          <img
+                            class="mx-2"
+                            :src="`${backend_url_base}/${product.image_name}`"
+                            height="60"
+                            width="60"
+                          />{{ product.name }}
+                        </td>
+                        <td >
+                          <b>₹</b>{{ product.price }}/{{ product.unit }}
+                        </td>
+                        <td>
+                          {{ product.stock }}
+                        </td>
+                        <td>
+                          {{ formatDate(product.expiry_date) }}
+                        </td>
+                        <td>
+                          <button class="btn btn-link dropdown-toggle px-0 " data-bs-toggle="dropdown" aria-expanded="false">
+                            <mdicon name="dots-horizontal" :width="24" :height="24" aria-expanded="false" />
+                          </button>
+                          <ul class="dropdown-menu">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0)">
+                                <mdicon
+                                  name="eye"
+                                  class="text-gray"
+                                  :size="20"
                                 />
-                              </svg>
-                              Edit
-                            </a>
-                          </li>
-                        </ul>
-
-                        <mdicon
-                          name="close-circle"
-                          class="text-danger"
-                          :size="20"
-                          @click="handleProductDelete(product)"
-                        />
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+                                View Details
+                              </a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0)" @click="handleProductAdd(product, true)">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="text-gray" xmlns="http://www.w3.org/2000/svg" >
+                                  <path
+                                    fill-rule="evenodd"
+                                    clip-rule="evenodd"
+                                    d="M21.1213 2.70705C19.9497 1.53548 18.0503 1.53547 16.8787 2.70705L15.1989 4.38685L7.29289 12.2928C7.16473 12.421 7.07382 12.5816 7.02986 12.7574L6.02986 16.7574C5.94466 17.0982 6.04451 17.4587 6.29289 17.707C6.54127 17.9554 6.90176 18.0553 7.24254 17.9701L11.2425 16.9701C11.4184 16.9261 11.5789 16.8352 11.7071 16.707L19.5556 8.85857L21.2929 7.12126C22.4645 5.94969 22.4645 4.05019 21.2929 2.87862L21.1213 2.70705ZM18.2929 4.12126C18.6834 3.73074 19.3166 3.73074 19.7071 4.12126L19.8787 4.29283C20.2692 4.68336 20.2692 5.31653 19.8787 5.70705L18.8622 6.72357L17.3068 5.10738L18.2929 4.12126ZM15.8923 6.52185L17.4477 8.13804L10.4888 15.097L8.37437 15.6256L8.90296 13.5112L15.8923 6.52185ZM4 7.99994C4 7.44766 4.44772 6.99994 5 6.99994H10C10.5523 6.99994 11 6.55223 11 5.99994C11 5.44766 10.5523 4.99994 10 4.99994H5C3.34315 4.99994 2 6.34309 2 7.99994V18.9999C2 20.6568 3.34315 21.9999 5 21.9999H16C17.6569 21.9999 19 20.6568 19 18.9999V13.9999C19 13.4477 18.5523 12.9999 18 12.9999C17.4477 12.9999 17 13.4477 17 13.9999V18.9999C17 19.5522 16.5523 19.9999 16 19.9999H5C4.44772 19.9999 4 19.5522 4 18.9999V7.99994Z"
+                                    fill="#000"
+                                  />
+                                </svg>
+                                Edit
+                              </a>
+                            </li>
+                          </ul>
+                          <button class="btn btn-link text-decoration-none px-0 " aria-expanded="false">
+                            <mdicon name="close-circle" class="text-danger" :size="20" @click="handleProductDelete(product)"/>
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div v-else>
-          <div v-if="categories.length === 0" class="row col-12">
-            <p class="text-center mt-1">
-              No Categories. Atleast one category should be added before adding a product
-            </p>
-            <p class="text-center mt-1">Click <b>here</b> go to category page and add one!</p>
-          </div>
-          <div v-else class="row col-12">
-            <h4 class="text-center mt-1">No Products. Add one!</h4>
+          <div v-else>
+            <div v-if="categories.length === 0" class="row col-12">
+              <p class="text-center mt-1">
+                No Categories. Atleast one category should be added before adding a product
+              </p>
+              <p class="text-center mt-1">Click <b>here</b> go to category page and add one!</p>
+            </div>
+            <div v-else class="row col-12">
+              <h4 class="text-center mt-1">No Products. Add one!</h4>
+            </div>
           </div>
         </div>
       </div>
@@ -360,6 +343,7 @@ import { ref, onMounted, reactive } from 'vue'
 import axiosClient from '@/js/axios.js'
 import { useRouter } from 'vue-router'
 import { Modal } from 'bootstrap'
+import LoadingIndicator from '@/components/LoadingIndicator.vue';
 
 // data
 const backend_url_base = 'http://localhost:5000/images/products/'
@@ -371,7 +355,7 @@ const errordata = reactive({
 })
 let modal
 let modalDelete
-const component_loading = ref(false)
+const main_loading = ref(true)
 const loading = ref(false)
 const units = ['piece', 'kg', 'litre', 'dozen']
 const data = reactive({
@@ -391,22 +375,21 @@ const data = reactive({
 const category_id = ref(1)
 const edit = ref(false)
 
-// Main Functions
-const loadingState = (state) => {
-  component_loading.value = state
-}
-
-onMounted(async () => {
-  loadingState(true)
+// main function 
+async function refreshData() {
+  console.log('Refreshing data...')
+  main_loading.value=true;
   try {
     await refreshCategories()
     await refreshProducts()
   } catch (err) {
     console.log(err)
   } finally {
-    loadingState(false)
+    main_loading.value = false
   }
+}
 
+onMounted(async () => {
   modal = new Modal(document.getElementById('modalProduct'), {
     keyboard: false
   })
@@ -428,28 +411,22 @@ function formatDate(timestamp) {
 
 async function refreshProducts() {
   console.log('refreshing products')
-  axiosClient
-    .get('/api/product')
-    .then((res) => {
-      console.log(res)
-      products.value = res.data
-    })
-    .catch((err) => {
-      console.log('Error: ', err)
-    })
+  try {
+    const resp = await axiosClient.get('/api/product')
+    products.value = resp.data
+  } catch (err) {
+    console.log('Error: ', err)
+  }
 }
 
 async function refreshCategories() {
   console.log('refreshing categories')
-  axiosClient
-    .get('/api/category')
-    .then((res) => {
-      console.log(res)
-      categories.value = res.data
-    })
-    .catch((err) => {
-      console.log('Error: ', err)
-    })
+  try {
+    const resp = await axiosClient.get('/api/category')
+    categories.value = resp.data
+  } catch (err) {
+    console.log('Error: ', err)
+  }
 }
 
 const router = useRouter()
@@ -573,7 +550,7 @@ async function handleProductModalEdit(edit) {
     document.getElementById('productModalClose').click()
     modal.hide()
     loading.value = true
-    refreshProducts()
+    refreshData()
     loading.value = false
   } catch (err) {
     console.log(err)
@@ -596,7 +573,7 @@ async function handleProductModalDelete() {
     console.log('modal: closing modal')
     document.getElementById('productModalClose').click()
     modal.hide()
-    refreshProducts()
+    refreshData()
   } catch (err) {
     console.log(err)
     errordata.isError = true
@@ -608,11 +585,11 @@ async function handleProductModalDelete() {
   }
 
   modalDelete.hide()
-  refreshProducts()
-  // force updated
-  // const instance = getCurrentInstance();
-  // return () => instance.proxy.$forceUpdate();
+  
+  await refreshData()
 }
+
+await refreshData()
 </script>
 
 <style scoped>
