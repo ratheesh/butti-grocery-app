@@ -48,8 +48,8 @@
                       <td>
                         <mdicon
                           name="dots-horizontal"
-                          :width="16"
-                          :height="16"
+                          :width="24"
+                          :height="24"
                           class="dropdown-toggle p-1"
                           data-bs-toggle="dropdown"
                           aria-expanded="false"
@@ -381,6 +381,11 @@ async function handleCategoryModalDelete() {
 </script>
 
 <style scoped>
+th {
+  vertical-align: middle;
+  border-bottom: 3px solid #485460;
+  font-size: 12px, bold;
+}
 .dropdown-toggle::after {
   content: none;
 }

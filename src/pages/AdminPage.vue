@@ -1,28 +1,22 @@
 <template>
   <main-layout>
     <h2 class="text-center">Admin Dash Board!</h2>
-    <div>
-      <button class="btn btn-outline-success mx-2"
-      data-bs-toggle="modal" data-bs-target="#modalCategory">
-      Add Category</button>
-      <button class="btn btn-outline-success mx-2"
-      data-bs-toggle="modal" data-bs-target="#modalProduct">Add product</button>
-    </div>
-    <category-modal @add-category="addCategory" ></category-modal>
+    <suspense>
+      <template #default>
+        <user-management></user-management>
+      </template>
+      <template  #fallback>
+       <loading-indicator></loading-indicator> 
+      </template>
+    </suspense>
   </main-layout>
 </template>
 
 <script setup>
 // import axiosClient from "@/js/axios.js";
 import MainLayout from "@/layouts/MainLayout.vue";
-import CategoryModal from "@/components/CategoryModal.vue";
-// import { onMounted } from "vue";
-// import { Modal } from 'bootstrap'
-
-const addCategory = (category) => {
-  console.log("admin: complete category");
-  console.log(category)
-};
+import UserManagement from "@/components/UserManagement.vue";
+import LoadingIndicator from '@/components/LoadingIndicator.vue';
 
 </script>
 

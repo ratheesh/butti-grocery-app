@@ -83,7 +83,7 @@
             <mdicon name="arrow-left-bold" :size="18" />
             Review Cart
           </button>
-          <button class="btn btn-sm btn-primary mx-2">
+          <button class="btn btn-sm btn-primary mx-2" @click="gotoOrderPage">
               <mdicon name="shopping-outline" :size="16" />
               Place Order
           </button>
@@ -120,6 +120,10 @@ const router = useRouter()
 
 const gotoCartPage = () => {
   router.push('/cart')
+}
+
+const gotoOrderPage = () => {
+  router.push('/order')
 }
 
 </script>

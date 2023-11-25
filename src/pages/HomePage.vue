@@ -1,8 +1,19 @@
 <template>
   <main-layout>
-  <div class="main mt-3">
+  <div class="main">
     <div class="container">
-      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 rows-cols-lg-3 rows-cols-xl-4 row-cols-xxl-4 g-1" >
+      <div class="row col-12 justify-content-end rounded m-auto mb-2">
+        <div class="col-4 col-auto">
+          <select class="form-select">
+            <option value="1">All</option>
+            <option value="2">Fruits</option>
+            <option value="3">Vegetables</option>
+            <option value="4">Grocery</option>
+            <option value="5">Dairy</option>
+          </select>
+        </div>
+      </div>
+      <div class="row row-cols-sm-2 row-cols-md-3 rows-cols-lg-3 rows-cols-xl-4 row-cols-xxl-5 g-2" >
         <div v-for="product in products" class="col" :key="product.id">
           <ProductCard :data="product"/>
         </div>

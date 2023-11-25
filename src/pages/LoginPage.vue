@@ -20,6 +20,7 @@
                         </span>
                         <input
                           type="text"
+                          class="form-control"
                           :class="{ 'form-control':true, 'is-invalid':errors.username }"
                           placeholder="username"
                           id="username"
@@ -41,6 +42,7 @@
                         </span>
                         <input
                           type="password"
+                          class="form-control"
                           v-model="password"
                           id="password"
                           :class="{ 'form-control':true, 'is-invalid':errors.password }"
@@ -101,6 +103,10 @@ const login = async () => {
     if (res.status === 200) {
       console.log(`${auth.user.name} logged in as ${auth.user.role}`)
 
+      if (router.currentRoute.value.query.redirect) {
+        router.push(router.currentRoute.value.query.redirect)
+        return
+      }
       if (auth.role === 'admin') {
         router.push('/admin')
       } else if (auth.user.role === 'manager') {
@@ -108,6 +114,7 @@ const login = async () => {
       } else {
         router.push('/')
       }
+
     } else {
       console.log('Login Error')
       console.log(res)

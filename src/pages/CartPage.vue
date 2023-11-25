@@ -22,9 +22,9 @@
                     <td>{{ item.id }}</td>
                     <td>{{ item.name }}</td>
                     <td>
-                      <mdicon @click="item.quantity--" name="minus-circle" class="text-danger" />
+                      <mdicon @click="updateCount(item)" name="minus-circle" class="text-danger" />
                       <label class="text-center" style="width: 2em">{{ item.quantity }}</label>
-                      <mdicon @click="item.quantity++" name="plus-circle" class="text-success" />
+                      <mdicon @click="updateCount(item, true)" name="plus-circle" class="text-success" />
                     </td>
                     <td>
                       <mdicon name="trash-can" class="text-danger" @click="deleteItem(idx)" />
@@ -117,6 +117,20 @@ const clearCart = () => {
 
 const checkoutPage = () => {
   router.push('/checkout')
+}
+
+const updateCount = (item, add) => {
+  if (add) {
+    if (item.quantity < 1)
+     item.quantity = 1
+    item.quantity++
+  } else {
+    if (item.quantity < 1)
+     item.quantity = 1
+    if (item.quantity > 1) {
+      item.quantity--
+    }
+  }
 }
 
 </script>

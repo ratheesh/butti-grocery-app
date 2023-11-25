@@ -46,8 +46,8 @@
                         <img
                           class="mx-2"
                           :src="`${backend_url_base}/${product.image_name}`"
-                          height="40"
-                          width="40"
+                          height="60"
+                          width="60"
                         />{{ product.name }}
                       </td>
                       <td class="align-middle align-left">
@@ -62,8 +62,8 @@
                       <td class="align-middle">
                         <mdicon
                           name="dots-horizontal"
-                          :width="16"
-                          :height="16"
+                          :width="24"
+                          :height="24"
                           class="dropdown-toggle p-1"
                           data-bs-toggle="dropdown"
                           aria-expanded="false"
@@ -315,6 +315,7 @@
     </div>
   </div>
 
+  <!-- Delete Modal -->
   <div class="modal fade" id="modalProductDelete" role="dialog" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
@@ -370,6 +371,7 @@ const errordata = reactive({
 })
 let modal
 let modalDelete
+const component_loading = ref(false)
 const loading = ref(false)
 const units = ['piece', 'kg', 'litre', 'dozen']
 const data = reactive({
@@ -390,14 +392,20 @@ const category_id = ref(1)
 const edit = ref(false)
 
 // Main Functions
+const loadingState = (state) => {
+  component_loading.value = state
+}
+
 onMounted(async () => {
-  loading.value = true
-  refreshCategories()
-  refreshProducts()
-  // setTimeout(() => {
-  //   loading.value = false
-  // }, 5000)
-  loading.value = false
+  loadingState(true)
+  try {
+    await refreshCategories()
+    await refreshProducts()
+  } catch (err) {
+    console.log(err)
+  } finally {
+    loadingState(false)
+  }
 
   modal = new Modal(document.getElementById('modalProduct'), {
     keyboard: false
@@ -490,13 +498,13 @@ function handleProductAdd(product, isEdit) {
     }
 
     // force reset the previous file if selected
-    document.getElementById('productImage').value = ''
 
     //set date input field to today
     // document.getElementById('productExpiryDate').valueAsDate = new Date()
     // document.getElementById('productExpiryDate').value = new Date().toISOString().split('T')[0]
   }
   edit.value = isEdit
+  document.getElementById('productImage').value = ''
 
   modal.show()
 }
@@ -513,6 +521,7 @@ const handleImage = (e) => {
   console.log('modal: handle Image')
   // console.log(e)
   if (e.target.files.length === 0) {
+    console.log('cancel file selection')
     data.image_name = null
     data.image = null
     return
@@ -520,6 +529,7 @@ const handleImage = (e) => {
 
   data.image = e.target.files[0]
   data.image_name = data.image.name
+  console.log(data.image)
   createBase64Image(data.image)
 }
 
@@ -606,6 +616,11 @@ async function handleProductModalDelete() {
 </script>
 
 <style scoped>
+th {
+  vertical-align: middle;
+  border-bottom: 3px solid #485460;
+  font-size: 12px, bold;
+}
 .dropdown-toggle::after {
   content: none;
 }

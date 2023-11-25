@@ -2,7 +2,9 @@ from datetime import datetime
 import os
 import base64
 import secrets
+from io import BytesIO
 
+from PIL import Image
 from flask import Blueprint, make_response, abort, Response
 from flask_restful import NotFound, Resource, fields, marshal_with, reqparse, request
 from werkzeug.exceptions import HTTPException
@@ -53,7 +55,7 @@ user_response_fields = {
     "username": fields.String,
     "email": fields.String,
     "password": fields.String,
-    "approved": fields.String,
+    "approved": fields.Boolean,
     "role": fields.String,
     "image_name": fields.String,
     # "image": fields.String,
@@ -115,6 +117,10 @@ class UserAPI(Resource):
             print("=== user already exists === ")
             # raise BadRequest("user already exists")
             abort(Response("user already exists", 400))
+        
+        isapproved=True
+        if role == 'manager':
+            isapproved=False
 
         user = User(
             name=name,
@@ -122,7 +128,7 @@ class UserAPI(Resource):
             email=email,
             password=generate_password_hash(password),
             role=role,
-            approved=False,
+            approved=isapproved,
             image_name=image_name,
             created_timestamp=datetime.now(),
             updated_timestamp=datetime.now(),
@@ -381,7 +387,7 @@ class ProductAPI(Resource):
                 raise NotFound("Category not found")
 
         args = product_request_parse.parse_args(strict=True)
-        print(args)
+        # print(args)
         name = args.get("name", None)
         description = args.get("description", None)
         unit = args.get("unit", None)
@@ -428,7 +434,7 @@ class ProductAPI(Resource):
         db.session.add(product)
         db.session.flush()
 
-        print(image_name, image)
+        # print(image_name, image)
         if image_name is not None and image is not None: 
             try:
                 if image_name == "":
@@ -443,6 +449,11 @@ class ProductAPI(Resource):
                 print('Image filename to be saved: ', filename)
                 with open(filename, 'wb') as f:
                     f.write(file_data)
+                
+                # img = Image.open(filename)
+                # img = Image.resize(300, 300)
+                # img.save(filename, format='PNG')
+
             except:
                 raise InternalError(message="Error in saving image")
         else:
