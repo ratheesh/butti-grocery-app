@@ -43,7 +43,7 @@
                         <td>
                           <img
                             class="mx-2"
-                            :src="`${backend_url_base}/${product.image_name}`"
+                            :src="`data:image/png;base64,${product.image}`"
                             height="60"
                             width="60"
                           />{{ product.name }}
@@ -427,13 +427,6 @@ async function refreshCategories() {
   } catch (err) {
     console.log('Error: ', err)
   }
-}
-
-const router = useRouter()
-const gotoCategories = () => {
-  console.log('goto categories')
-  router.push('/category')
-  // window.location.href = '/#/categories'
 }
 
 function handleProductAdd(product, isEdit) {
