@@ -14,7 +14,7 @@
             </select>
           </div>
         </div>
-        <div class="row row-cols-sm-2 row-cols-md-3 rows-cols-lg-3 rows-cols-xl-4 row-cols-xxl-5 g-2" >
+        <div class="row row-cols-sm-2 row-cols-md-3 rows-cols-lg-3 rows-cols-xl-4 row-cols-xxl-5 gx-5 gy-3" >
           <div v-for="product in products" class="col" :key="product.id">
             <ProductCard :data="product"/>
           </div>
