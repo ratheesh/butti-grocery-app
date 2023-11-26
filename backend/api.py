@@ -58,7 +58,7 @@ user_response_fields = {
     "approved": fields.Boolean,
     "role": fields.String,
     "image_name": fields.String,
-    # "image": fields.String,
+    "image": fields.String,
     "created_timestamp": fields.DateTime,
     "updated_timestamp": fields.DateTime,
 }
@@ -73,11 +73,22 @@ class UserAPI(Resource):
         if username:
             user = User.query.filter_by(username=username).first()
             if user:
+                basedir = os.path.abspath(os.path.dirname(__file__))
+                image_file = basedir + '/images/users/' + user.image_name
+                if os.path.isfile(image_file):
+                    with open(image_file, 'rb') as f:
+                        user.image = base64.encode(f.read()).decode('utf-8')
                 return user, 200
             else:
                 raise NotFound("User not found")
         else:
             users = User.query.all()
+            for user in users:
+                basedir = os.path.abspath(os.path.dirname(__file__))
+                image_file = basedir + '/images/users/' + user.image_name
+                if os.path.isfile(image_file):
+                    with open(image_file, 'rb') as f:
+                        user.image = base64.encode(f.read()).decode('utf-8')
             return users, 200
 
     @marshal_with(user_response_fields)
@@ -103,13 +114,15 @@ class UserAPI(Resource):
             raise BadRequest("role not provided")
         else:
             if role == 'admin':
-                raise BadRequest("Admin role can not be created")
+                raise BadRequest("admin role can not be created")
         if password is None or password == '':
             raise BadRequest("password not provided")
         # if len(password) < 4:
         #     raise BadRequest("password length is less than 4 chars")
-        if image_name is None or image_name == "":
+        if image_name is None:
             image_name = 'default.png'
+        else:
+            image_name = secrets.token_hex(4) + '.png'
 
         # check if the user already exists based on username
         user = User.query.filter_by(username=username).first()
@@ -134,33 +147,42 @@ class UserAPI(Resource):
             updated_timestamp=datetime.now(),
         )
         if user is None:
-            raise InternalError(message="Error in creating User")
+            raise InternalError(message="error in creating User")
 
         db.session.add(user)
         db.session.flush()
 
         image = args.get("image", None)
-        if image is not None and image_name is None:
-            raise BadRequest("image_name name not provided")
-        elif image is not None: 
+        if image is not None and image_name is not None:
             try:
-                image_name = image_name.split('.')[0] + '_' + str(user.id) + '.png'
+                if image_name == '':
+                    raise BadRequest('image_name is empty')
+
                 user.image_name = image_name
 
                 file_data = base64.b64decode(image)
                 basedir = os.path.abspath(os.path.dirname(__file__))
-                filename= basedir + '/images/products/' + image_name
+                filename= basedir + '/images/users/' + image_name
                 print('Image filename to be saved: ', filename)
-                with open(filename, 'wb') as f:
-                    f.write(file_data)
+
+                # with open(filename, 'wb') as f:
+                #     f.write(file_data)
+                
+                img = Image.open(BytesIO(file_data))
+                img.resize((500, 500))
+                img.save(filename, format='PNG')
+
             except:
-                raise InternalError(message="Error in saving image")
+                raise InternalError(message="error in saving image")
+            else:
+                image_name = 'default.png'
+                user.image_name = image_name
 
         try:
             db.session.add(user)
             db.session.commit()
         except:
-            raise InternalError(message="Error in creating User")
+            raise InternalError(message="error in creating user")
 
         return user, 201
 
@@ -173,17 +195,41 @@ class UserAPI(Resource):
 
             name = args.get("name", None)
             password = generate_password_hash(args.get("password", None))
+            image = args.get("image",None)
+            image_name = args.get("image_name", None)
+            
+            if image_name is None:
+                image_name = user.image_name
 
             user = User.query.filter_by(username=username).first()
             if user is not None:
                 if user.username == "admin":
-                    raise Unauthorized(message="Admin profile can not modified")
-
-                user.name = name
-                user.password = password
-                user.updated_timestamp = datetime.now()
+                    raise Unauthorized(message="admin profile can not modified")
             else:
                 raise NotFound(message="User not found")
+            
+            if image is not None:
+                try:
+                    if user.image_name == 'default.png':
+                        image_name = secrets.token_hex(4) + '.png'
+                    else:
+                        image_name = user.image_name
+                    
+                    file_data = base64.b64decode(image)
+                    basedir = os.path.abspath(os.path.dirname(__file__))
+                    filename = basedir + 'images/users/' + image_name
+                    print('user image file to be saved:', filename)
+                    
+                    img = Image.open(BytesIO(file_data))
+                    img.resize((500, 500))
+                    img.save(filename, format='PNG')
+
+                except:
+                    raise InternalError('error saving image')
+
+            user.name = name
+            user.password = password
+            user.updated_timestamp = datetime.now()
 
             try:
                 db.session.add(user)
@@ -447,12 +493,17 @@ class ProductAPI(Resource):
                 basedir = os.path.abspath(os.path.dirname(__file__))
                 filename= basedir + '/images/products/' + image_name
                 print('Image filename to be saved: ', filename)
-                with open(filename, 'wb') as f:
-                    f.write(file_data)
+
+                # with open(filename, 'wb') as f:
+                #     f.write(file_data)
                 
-                # img = Image.open(filename)
-                # img = Image.resize(300, 300)
-                # img.save(filename, format='PNG')
+                print('-1-')
+                img = Image.open(BytesIO(file_data))
+                print('-2-')
+                img.resize((500, 500))
+                print('-3-')
+                img.save(filename, format='PNG')
+                print('-4-')
 
             except:
                 raise InternalError(message="Error in saving image")
@@ -513,9 +564,14 @@ class ProductAPI(Resource):
                         basedir = os.path.abspath(os.path.dirname(__file__))
                         filename= basedir + '/images/products/' + image_name
                         print('Image filename to be saved: ', filename)
-                        with open(filename, 'wb') as f:
-                            f.write(file_data)
-                            os.sync()
+
+                        # with open(filename, 'wb') as f:
+                        #     f.write(file_data)
+                        #     os.sync()
+
+                        img = Image.open(BytesIO(file_data))
+                        img = img.resize((500, 500))
+                        img.save(filename, format='PNG')
                     except:
                         raise InternalError(message="Error in saving image")
 
