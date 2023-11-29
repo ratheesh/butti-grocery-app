@@ -225,8 +225,7 @@
               />
             </div>
           </div>
-          <div class="mb-3">
-            <label for="productImage">Product Image</label>
+          <div class="mb-0">
             <input
               type="file"
               class="form-control"
@@ -341,12 +340,10 @@
 <script setup>
 import { ref, onMounted, reactive } from 'vue'
 import axiosClient from '@/js/axios.js'
-import { useRouter } from 'vue-router'
 import { Modal } from 'bootstrap'
 import LoadingIndicator from '@/components/LoadingIndicator.vue';
 
 // data
-const backend_url_base = 'http://localhost:5000/images/products/'
 const categories = ref([])
 const products = ref([])
 const errordata = reactive({
@@ -443,8 +440,8 @@ function handleProductAdd(product, isEdit) {
     // data.expiry_date = `${date.getFullYear()}-${date.getMonth()}-${date.getDay()}`
     data.expiry_date = date.toISOString().split('T')[0]
     // console.log(data.expiry_date)
-    data.image_name = null
-    data.image = null
+    data.image_name = product.image_name
+    data.image = product.image
     data.created_timestamp = product.created_timestamp
     data.updated_timestamp = product.updated_timestamp
     for (const category of categories.value) {
