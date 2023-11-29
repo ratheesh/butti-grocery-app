@@ -5,7 +5,7 @@ import secrets
 from io import BytesIO
 
 from PIL import Image
-from flask import Blueprint, make_response, abort, Response
+from flask import Blueprint, make_response, abort, Response, jsonify
 from flask_restful import NotFound, Resource, fields, marshal_with, reqparse, request
 from werkzeug.exceptions import HTTPException
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -47,51 +47,25 @@ user_request_parse.add_argument("role", type=str, required=True)
 user_request_parse.add_argument("password", type=str, required=True)
 user_request_parse.add_argument("image_name", type=str, required=True)
 user_request_parse.add_argument("image", type=str)
-# user_request_parse.add_argument("image", type=werkzeug.datastructures.FileStorage)
-
-user_response_fields = {
-    "id": fields.Integer,
-    "name": fields.String,
-    "username": fields.String,
-    "email": fields.String,
-    "password": fields.String,
-    "approved": fields.Boolean,
-    "role": fields.String,
-    "image_name": fields.String,
-    "image": fields.String,
-    "created_timestamp": fields.DateTime,
-    "updated_timestamp": fields.DateTime,
-}
 
 class UserAPI(Resource):
     """
     User Object for managing users
     """
 
-    @marshal_with(user_response_fields)
     def get(self, username=None):
         if username:
             user = User.query.filter_by(username=username).first()
             if user:
-                basedir = os.path.abspath(os.path.dirname(__file__))
-                image_file = basedir + '/images/users/' + user.image_name
-                if os.path.isfile(image_file):
-                    with open(image_file, 'rb') as f:
-                        user.image = base64.encode(f.read()).decode('utf-8')
-                return user, 200
+                data = jsonify(user.to_dict())
+                return make_response(data, 200)
             else:
                 raise NotFound("User not found")
         else:
             users = User.query.all()
-            for user in users:
-                basedir = os.path.abspath(os.path.dirname(__file__))
-                image_file = basedir + '/images/users/' + user.image_name
-                if os.path.isfile(image_file):
-                    with open(image_file, 'rb') as f:
-                        user.image = base64.encode(f.read()).decode('utf-8')
-            return users, 200
+            data = [user.to_dict() for user in users]
+            return make_response(data, 200)
 
-    @marshal_with(user_response_fields)
     def post(self):
         '''Create a new user'''
         args = user_request_parse.parse_args(strict=True)
@@ -184,9 +158,10 @@ class UserAPI(Resource):
         except:
             raise InternalError(message="error in creating user")
 
-        return user, 201
+        data = jsonify(user.to_dict())
+        return make_response(data, 201)
 
-    @marshal_with(user_response_fields)
+    @jwt_required()
     def put(self, username=None):
         if username is None:
             raise BadRequest("username not given")
@@ -237,8 +212,9 @@ class UserAPI(Resource):
             except:
                 raise InternalError(message="Error in updating User")
 
-            return user, 200
+            data = jsonify(user.do_dict(), 200)
 
+    @jwt_required()
     def delete(self, username=None):
         if username is None:
             raise BadRequest("User name is missing")
@@ -252,34 +228,28 @@ class UserAPI(Resource):
             except:
                 raise InternalError(message="Error deleting User")
 
-        return "User deleted successfully", 200
+        return f"user {user.name} deleted successfully", 200
 
 
 category_request_parse = reqparse.RequestParser(bundle_errors=True)
 category_request_parse.add_argument("name", type=str, required=True)
-
-category_response_fields = {
-    "id": fields.Integer,
-    "name": fields.String,
-    "created_timestamp": fields.DateTime,
-    "updated_timestamp": fields.DateTime,
-}
 class CategoryAPI(Resource):
     '''Category Object for managing categories'''
-    @marshal_with(category_response_fields)
+    @jwt_required()
     def get(self, category_id=None):
         if category_id is None:
             categories = Category.query.all()
-            return categories, 200
+            data = [category.to_dict() for category in categories]
+            return make_response(data, 200)
         else:
             category = Category.query.filter_by(id=category_id).one_or_none()
             if category is None:
                 raise NotFound("category not found")
             else:
-                return category, 200
+                # print(category)
+                return make_response(jsonify(category.to_dict()), 200)
 
-
-    @marshal_with(category_response_fields)
+    @jwt_required()
     def post(self):
         args = category_request_parse.parse_args(strict=True)
         
@@ -307,9 +277,9 @@ class CategoryAPI(Resource):
         except:
             raise InternalError(message="error creating category")
 
-        return category, 201
+        return make_response(category.to_dict(), 201)
     
-    @marshal_with(category_response_fields)
+    @jwt_required()
     def put(self, category_id):
         if category_id is None:
             raise NotFound("category id is missing")
@@ -335,8 +305,9 @@ class CategoryAPI(Resource):
             except:
                 raise InternalError(message="error in updating category")
 
-            return category, 200
+            return make_response(jsonify(category.to_dict()), 200)
     
+    @jwt_required()
     def delete(self, category_id):
         if id is None:
             raise BadRequest("category id is missing")
@@ -350,6 +321,8 @@ class CategoryAPI(Resource):
                 db.session.commit()
             except:
                 raise InternalError(message="error deleting category")
+
+        return f'category {category.name} deleted successfully', 200
             
 def valid_date(s):
     return datetime.strptime(s, "%Y-%m-%d %H:%M")
@@ -363,37 +336,15 @@ product_request_parse.add_argument("stock", type=int, required=True)
 product_request_parse.add_argument("expiry_date", type=valid_date, required=True)
 product_request_parse.add_argument("image_name", type=str)
 product_request_parse.add_argument("image", type=str)
-# product_request_parse.add_argument("category_id", type=int)
 
-product_response_fields = {
-    "id": fields.Integer,
-    "name": fields.String,
-    "description": fields.String,
-    "unit": fields.String,
-    "price": fields.Integer,
-    "stock": fields.Integer,
-    "expiry_date": fields.DateTime,
-    "image_name": fields.String,
-    "image": fields.String,
-    "created_timestamp": fields.DateTime,
-    "updated_timestamp": fields.DateTime,
-    "category_id": fields.Integer,
-}
 class ProductAPI(Resource):
     '''Product Object for managing products'''
-    @marshal_with(product_response_fields)
+
     def get(self, category_id=None, product_id=None):
         if category_id is None:
             products = Product.query.all()
-            # print(products)
-            for product in products:
-                basedir = os.path.abspath(os.path.dirname(__file__))
-                image_file= basedir + '/images/products/' + product.image_name
-                print('Image filename to be read: ', image_file)
-                if os.path.isfile(image_file):
-                    with open(image_file, 'rb') as f:
-                        product.image = base64.b64encode(f.read()).decode('utf-8')
-            return products, 200
+            data = [product.to_dict() for product in products]
+            return make_response(data, 200)
         else:
             category=Category.query.filter_by(id=category_id).first()
             if category is None:
@@ -401,29 +352,17 @@ class ProductAPI(Resource):
 
         if product_id is None:
             products = Product.query.filter_by(category_id=category_id).all()
-            for product in products:
-                basedir = os.path.abspath(os.path.dirname(__file__))
-                image_file= basedir + '/images/products/' + product.image_name
-                print('Image filename to be read: ', image_file)
-                if os.path.isfile(image_file):
-                    with open(image_file, 'rb') as f:
-                        product.image = base64.b64encode(f.read()).decode('utf-8')
-            return products, 200
+            data = [product.to_dict() for product in products]
+            return make_response(data, 200)
         else:
             product = Product.query.filter_by(category_id=category.id, id=product_id).first()
             if product is None:
                 raise NotFound("Product not found")
             else:
-                basedir = os.path.abspath(os.path.dirname(__file__))
-                image_file= basedir + '/images/products/' + product.image_name
-                print('Image filename to be read: ', image_file)
-                if os.path.isfile(image_file):
-                    with open(image_file, 'rb') as f:
-                        product.image = base64.b64encode(f.read()).decode('utf-8')
-                return product, 200
+                data = jsonify(product.to_dict()) 
+                return make_response(data, 200)
 
-    # @jwt_required()
-    @marshal_with(product_response_fields)
+    @jwt_required()
     def post(self, category_id):
         if category_id is None:
             raise BadRequest("Category id is missing")
@@ -497,13 +436,9 @@ class ProductAPI(Resource):
                 # with open(filename, 'wb') as f:
                 #     f.write(file_data)
                 
-                print('-1-')
                 img = Image.open(BytesIO(file_data))
-                print('-2-')
                 img.resize((500, 500))
-                print('-3-')
                 img.save(filename, format='PNG')
-                print('-4-')
 
             except:
                 raise InternalError(message="Error in saving image")
@@ -511,16 +446,16 @@ class ProductAPI(Resource):
             image_name = 'default.png'
             product.image_name = image_name
 
-
         try:
             db.session.add(product)
             db.session.commit()
         except:
             raise InternalError(message="error creating product")
 
-        return product, 201
+        data = jsonify(product.to_dict()) 
+        return make_response(data, 201)
         
-    @marshal_with(product_response_fields)
+    @jwt_required()
     def put(self, category_id, product_id):
         if category_id is None:
             raise BadRequest("category id is missing")
@@ -591,8 +526,10 @@ class ProductAPI(Resource):
                 except:
                     raise InternalError(message="Error in updating product")
 
-                return product, 200
+                data = jsonify(product.to_dict()) 
+                return make_response(data, 200)
     
+    @jwt_required()
     def delete(self, category_id, product_id):
         if category_id is None:
             raise BadRequest("category id is missing")

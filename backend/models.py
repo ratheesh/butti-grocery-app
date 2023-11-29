@@ -1,4 +1,6 @@
 from datetime import datetime
+import os
+import base64
 
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.declarative import declarative_base
@@ -28,6 +30,13 @@ class User(db.Model):
     # token = db.relationship("Token",backref=backref("user", uselist=False), cascade="all, delete-orphan")
 
     def to_dict(self):
+        self.image=None
+        basedir = os.path.abspath(os.path.dirname(__file__))
+        image_file= basedir + '/images/users/' + self.image_name
+        if os.path.isfile(image_file):
+            with open(image_file, 'rb') as f:
+                self.image = base64.b64encode(f.read()).decode('utf-8')
+
         return {
             "id": self.id,
             "name": self.name,
@@ -36,6 +45,7 @@ class User(db.Model):
             "approved": self.approved,
             "role": self.role,
             "image_name": self.image_name,
+            "image":self.image,
             "created_timestamp": self.created_timestamp,
             "updated_timestamp": self.updated_timestamp,
             # "orders": [order.to_dict() for order in self.orders],
@@ -62,6 +72,8 @@ class Category(db.Model):
         return {
             "id": self.id,
             "name": self.name,
+            "created_timestamp": self.created_timestamp,
+            "updated_timestamp": self.updated_timestamp,
             # "products": [product.to_dict() for product in self.products],
         }
 
@@ -87,6 +99,13 @@ class Product(db.Model):
     category_id = db.Column(db.Integer, db.ForeignKey("category.id"), nullable=False)
 
     def to_dict(self):
+        self.image=None
+        basedir = os.path.abspath(os.path.dirname(__file__))
+        image_file= basedir + '/images/products/' + self.image_name
+        if os.path.isfile(image_file):
+            with open(image_file, 'rb') as f:
+                self.image = base64.b64encode(f.read()).decode('utf-8')
+
         return {
             "id": self.id,
             "name": self.name,
@@ -96,6 +115,7 @@ class Product(db.Model):
             "stock": self.stock,
             "expiry_date": self.expiry_date,
             "image_name": self.image_name,
+            "image":self.image,
             "created_timestamp": self.created_timestamp,
             "updated_timestamp": self.updated_timestamp,
             "category_id": self.category_id,
