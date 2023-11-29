@@ -38,23 +38,15 @@ def login():
 def logout():
     return "logged out",200
 
-@routes.route("/refresh", methods=["POST"])
-@jwt_required(refresh=True)
-def refresh():
-    '''Refresh route'''
-    identity = get_jwt_identity()
-    access_token = create_access_token(identity=identity, fresh=False)
-    return jsonify(access_token=access_token)
-
-@routes.route("/<path:path>", methods=["GET"])
-def send_image(path):
-    '''serve images'''
-    img_path=os.path.join(app.config["UPLOAD_FOLDER"], path)
-    print(img_path)
-    if os.path.isfile(img_path):
-        return send_file(img_path, mimetype='image/png')
-    else:
-        return jsonify("image not found"), 404
+# @routes.route("/<path:path>", methods=["GET"])
+# def send_image(path):
+#     '''serve images'''
+#     img_path=os.path.join(app.config["UPLOAD_FOLDER"], path)
+#     print(img_path)
+#     if os.path.isfile(img_path):
+#         return send_file(img_path, mimetype='image/png')
+#     else:
+#         return jsonify("image not found"), 404
     
 
 @routes.route("/test", methods=["GET"])
@@ -62,4 +54,4 @@ def send_image(path):
 @access(["admin"])
 def test():
     '''test route'''
-    return jsonify("user"),200
+    return jsonify(user=user.to_dict()),200
