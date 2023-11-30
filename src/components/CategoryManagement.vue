@@ -269,7 +269,7 @@ async function refreshCategories() {
   console.log('refreshing categories')
   main_loading.value = true
   try {
-  const resp = await axiosClient .get('/api/category')
+  const resp = await axiosClient.get('/api/category')
       console.log(resp)
   categories.value = resp.data
   } catch(err)  {
@@ -330,12 +330,12 @@ async function handleCategoryModalEdit(edit) {
   } catch (err) {
     console.log(err)
     errordata.isError = true
-    errordata.msg = err.response.data.message
+    errordata.msg = err.response.data
   } finally {
     data.name = ''
     data.image = null
     data.file = null
-    errordata.isError = false
+    // errordata.isError = false
     loading.value = false
   }
 }
@@ -354,10 +354,10 @@ async function handleCategoryModalDelete() {
   } catch (err) {
     console.log(err)
     errordata.isError = true
-    errordata.msg = err.response.data.message
+    errordata.msg = err.response.data
   } finally {
     data.name = ''
-    errordata.isError = false
+    // errordata.isError = false
     errordata.msg = ''
     loading.value = false
   }
