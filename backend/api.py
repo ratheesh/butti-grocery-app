@@ -45,7 +45,7 @@ user_request_parse.add_argument("username", type=str, required=True)
 user_request_parse.add_argument("email", type=str, required=True)
 user_request_parse.add_argument("role", type=str, required=True)
 user_request_parse.add_argument("password", type=str, required=True)
-user_request_parse.add_argument("image_name", type=str, required=True)
+user_request_parse.add_argument("image_name", type=str)
 user_request_parse.add_argument("image", type=str)
 
 class UserAPI(Resource):
@@ -76,6 +76,7 @@ class UserAPI(Resource):
         role = args.get("role", None)
         password = args.get("password", None)
         image_name = args.get("image_name", None)
+        image = args.get("image", None)
 
         # if args is None or name is None or username is None or password is None:
         if name is None or name == '':
@@ -126,7 +127,7 @@ class UserAPI(Resource):
         db.session.add(user)
         db.session.flush()
 
-        image = args.get("image", None)
+        # image = args.get("image", None)
         if image is not None and image_name is not None:
             try:
                 if image_name == '':
@@ -222,6 +223,9 @@ class UserAPI(Resource):
             user = User.query.filter_by(username=username).first()
             if user is None:
                 raise NotFound(message="User not found")
+
+            if user.username == 'admin':
+                raise BadRequest('admin user can not be deleted')
             try:
                 db.session.delete(user)
                 db.session.commit()
@@ -555,18 +559,10 @@ class ProductAPI(Resource):
             except:
                 raise InternalError(message="error deleting product")
 
-        return "product deleted successfully", 200
+        return f"product {product.name} deleted successfully", 200
 
 bookmark_request_parse = reqparse.RequestParser(bundle_errors=True)
-bookmark_request_parse.add_argument("name", type=str)
 
-bookmark_response_fields = {
-    "id": fields.Integer,
-    "name": fields.String,
-    "created_timestamp": fields.DateTime,
-    "updated_timestamp": fields.DateTime,
-    "user_id": fields.Integer,
-}
 class BookmarkAPI(Resource):
     '''Bookmarks Object for managing bookmarks'''
     def get(self, user_id, id=None):
@@ -587,13 +583,21 @@ class BookmarkAPI(Resource):
             else:
                 return bookmark, 200
 
-    def post(self, user_id):
+    @jwt_required()
+    def post(self, user_id, product_id):
         if user_id is None:
-            raise BadRequest("User id is missing")
+            raise BadRequest("user id is missing")
         else:
             user=User.query.filter_by(id=user_id).first()
             if user is None:
-                raise NotFound("User not found")
+                raise NotFound("user not found")
+        
+        if product_id is None:
+            raise BadRequest("product id is missing")
+        else:
+            product = Product.query.filter_by(id=product_id).first()
+            if product is None:
+                raise NotFound("product not found")
         
         args=user_request_parse.parse_args(strict=True)
         name = args.get("name", None)
@@ -605,6 +609,7 @@ class BookmarkAPI(Resource):
             bookmark = Bookmark(
                 name=name,
                 user_id=user.id,
+                product_id = product.id
             )
             db.session.add(bookmark)
             db.session.commit()
@@ -614,30 +619,11 @@ class BookmarkAPI(Resource):
         return bookmark, 201
 
     
+    @jwt_required()
     def put(self, id):
-        if id is None:
-            raise BadRequest("Bookmark id is missing")
-        
-        bookmark=Bookmark.query.filter_by(id=id).first()
-        if bookmark is None:
-            raise NotFound("Bookmark not found")
-        else:
-            user_id=bookmark.user_id
-            args=user_request_parse.parse_args(strict=True)
-            name=args.get("name", None)
+            return make_response("modification not supported", 501)
 
-            bookmark.name=name
-            bookmark.user_id=user_id
-            bookmark.updated_timestamp=datetime.now()
-
-            try:
-                db.session.add(bookmark)
-                db.session.commit()
-            except:
-                raise InternalError(message="Error in updating bookmark")
-            
-            return bookmark, 200
-
+    @jwt_required()
     def delete(self, id):
         if id is None:
             raise BadRequest("Bookmark id is missing")
@@ -647,9 +633,9 @@ class BookmarkAPI(Resource):
                 db.session.delete(bookmark)
                 db.session.commit()
             except:
-                raise InternalError(message="Error deleting bookmark")
+                raise InternalError(message="error deleting bookmark")
 
-        return "Bookmark deleted successfully", 200
+        return "bookmark deleted successfully", 200
 
 order_request_parse = reqparse.RequestParser(bundle_errors=True)
 order_request_parse.add_argument("name", type=str, required=True)
