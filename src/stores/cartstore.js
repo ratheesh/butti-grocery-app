@@ -1,16 +1,23 @@
-import { ref, reactive } from 'vue'
+import { ref, onMounted } from 'vue'
 import { defineStore } from 'pinia'
 
 export const useCartStore = defineStore('cartStore', () => {
   const items = ref([])
-  const orderinfo = reactive({
+  const delivery_info = ref({
     name: '',
     address: '',
     phone: '',
-    email: '',
-    payment_method: '',
-    upi_address: ''
+    delivery_date: ''
   })
 
-  return { items, orderinfo }
+  onMounted(() => {
+    items.value = JSON.parse(localStorage.getItem('cart') || '[]')
+  })
+
+  const updateItems = () => {
+    console.log('updating items...')
+    localStorage.setItem('cart', JSON.stringify(items.value))
+  }
+
+  return { items, delivery_info, updateItems }
 })

@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div class="card mb-3 h-100" style="width: 16rem">
+    <div class="card shadow-sm h-100" style="width: 16rem">
       <img
-        class="card-img-top object-fit-contain shadow"
+        class="card-img-top object-fit-contain"
         :src="`data:image/png;base64,${data.image}`"
         alt="product image"
         height="150"
@@ -65,6 +65,7 @@ const updateCount = (add) => {
       quantity.value--
     }
   }
+  // cart.updateItems()
 }
 
 const cart = useCartStore()
@@ -81,6 +82,7 @@ function addToCart(product) {
     // cart.items.splice(index, 1, _item)
     const item = cart.items[index]
     item.quantity += quantity.value
+    cart.updateItems()
     return
   }
 
@@ -92,6 +94,8 @@ function addToCart(product) {
   item.quantity = quantity.value
 
   cart.items.push(item)
+  console.log('add to cart')
+  cart.updateItems()
 }
 </script>
 
