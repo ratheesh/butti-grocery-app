@@ -7,7 +7,7 @@ from flask_restful import Api
 from flask_caching import Cache
 from datetime import datetime,timedelta
 
-from .api import api, UserAPI, CategoryAPI, ProductAPI, BookmarkAPI, OrderAPI
+from .api import api, UserAPI, CategoryAPI, ProductAPI, OrderAPI
 from .routes import routes
 from .db import db
 from .models import User, create_admin_user
@@ -55,7 +55,11 @@ def user_lookup_callback(_jwt_header, jwt_data):
 
 @jwt.invalid_token_loader
 def invalid_token_callback(msg):
-    return make_response(jsonify(msg), 422)
+    return make_response('invalid token', 401)
+    
+@jwt.invalid_token_loader
+def invalid_token_callback(msg):
+    return make_response('token expired', 401)
 
 app.register_blueprint(routes, url_prefix="/")
 app.register_blueprint(api, url_prefix="/api")
@@ -63,7 +67,7 @@ app.register_blueprint(api, url_prefix="/api")
 hapi.add_resource(UserAPI, "/api/user", "/api/user/<username>")
 hapi.add_resource(CategoryAPI, "/api/category", "/api/category/<int:category_id>")
 hapi.add_resource(ProductAPI, "/api/product", "/api/product/<int:category_id>", "/api/product/<int:category_id>/<int:product_id>")
-hapi.add_resource(BookmarkAPI, "/api/bookmark/<int:product_id>", "/api/bookmark/<int:product_id>/<int:bookmark_id>")
+# hapi.add_resource(BookmarkAPI, "/api/bookmark/<int:product_id>", "/api/bookmark/<int:product_id>/<int:bookmark_id>")
 hapi.add_resource(OrderAPI, "/api/order", "/api/order/<int:order_id>")
 
 # End of File

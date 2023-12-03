@@ -24,7 +24,7 @@
                     <td>{{ user.id }}</td>
                     <td class="align-items-center">
                       <a class="d-flex align-items-center text-decoration-none">
-                        <img src="https://appsrv1-147a1.kxcdn.com/volt-dashboard-pro-v141/img/team/profile-picture-1.jpg"
+                        <img :src="`data:image/png;base64,${user.image}`"
                           height="40" width="40" class="avatar rounded-circle me-3" alt="profile" />
                         <div class="d-block">
                           <span class="fw-bold">{{ user.name }}</span>
@@ -191,11 +191,15 @@ const revokeUser = (user) => {
 const deleteUser = (user) => {
   // console.log('delete user')
   current_user.value = user.username
+  errordata.isError=false
+  errordata.msg=''
   modalDelete.show()
 }
 
 const modalUserDelete = async() => {
   console.log('modal: deleting user')
+  errordata.isError=false
+  errordata.msg=''
   loading.value = true
   
   try {
@@ -206,6 +210,8 @@ const modalUserDelete = async() => {
     fetchUsers()
   } catch(err) {
     console.log(err)
+    errordata.isError=true,
+    errordata.msg=err.response.data
   } finally {
     loading.value = false
   }

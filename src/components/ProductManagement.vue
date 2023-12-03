@@ -8,7 +8,11 @@
           </div>
           <div class="col-6 d-inline-flex justify-content-end m-auto me-0">
             <div class="col-auto mx-2">
-              <button class="btn btn-sm btn-success" @click="handleProductAdd({}, false)">
+              <button
+                class="btn btn-sm btn-success"
+                v-show="categories.length > 0"
+                @click="handleProductAdd({}, false)"
+              >
                 <b><mdicon name="shape-square-rounded-plus" class="text-white" :size="18" /></b>
                 Add
               </button>
@@ -38,7 +42,12 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for="(product, idx) in products" :id="idx" :key="idx" class="align-middle">
+                      <tr
+                        v-for="(product, idx) in products"
+                        :id="idx"
+                        :key="idx"
+                        class="align-middle"
+                      >
                         <td>{{ product.id }}</td>
                         <td>
                           <img
@@ -48,9 +57,7 @@
                             width="60"
                           />{{ product.name }}
                         </td>
-                        <td >
-                          <b>₹</b>{{ product.price }}/{{ product.unit }}
-                        </td>
+                        <td><b>₹</b>{{ product.price }}/{{ product.unit }}</td>
                         <td>
                           {{ product.stock }}
                         </td>
@@ -58,23 +65,38 @@
                           {{ formatDate(product.expiry_date) }}
                         </td>
                         <td>
-                          <button class="btn btn-link dropdown-toggle px-0 " data-bs-toggle="dropdown" aria-expanded="false">
-                            <mdicon name="dots-horizontal" :width="24" :height="24" aria-expanded="false" />
+                          <button
+                            class="btn btn-link dropdown-toggle px-0"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false"
+                          >
+                            <mdicon
+                              name="dots-horizontal"
+                              :width="24"
+                              :height="24"
+                              aria-expanded="false"
+                            />
                           </button>
                           <ul class="dropdown-menu">
                             <li>
                               <a class="dropdown-item" href="javascript:void(0)">
-                                <mdicon
-                                  name="eye"
-                                  class="text-gray"
-                                  :size="20"
-                                />
+                                <mdicon name="eye" class="text-gray" :size="20" />
                                 View Details
                               </a>
                             </li>
                             <li>
-                              <a class="dropdown-item" href="javascript:void(0)" @click="handleProductAdd(product, true)">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="text-gray" xmlns="http://www.w3.org/2000/svg" >
+                              <a
+                                class="dropdown-item"
+                                href="javascript:void(0)"
+                                @click="handleProductAdd(product, true)"
+                              >
+                                <svg
+                                  width="20"
+                                  height="20"
+                                  viewBox="0 0 24 24"
+                                  fill="text-gray"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
                                   <path
                                     fill-rule="evenodd"
                                     clip-rule="evenodd"
@@ -86,8 +108,16 @@
                               </a>
                             </li>
                           </ul>
-                          <button class="btn btn-link text-decoration-none px-0 " aria-expanded="false">
-                            <mdicon name="close-circle" class="text-danger" :size="20" @click="handleProductDelete(product)"/>
+                          <button
+                            class="btn btn-link text-decoration-none px-0"
+                            aria-expanded="false"
+                          >
+                            <mdicon
+                              name="close-circle"
+                              class="text-danger"
+                              :size="20"
+                              @click="handleProductDelete(product)"
+                            />
                           </button>
                         </td>
                       </tr>
@@ -341,7 +371,7 @@
 import { ref, onMounted, reactive } from 'vue'
 import axiosClient from '@/js/axios.js'
 import { Modal } from 'bootstrap'
-import LoadingIndicator from '@/components/LoadingIndicator.vue';
+import LoadingIndicator from '@/components/LoadingIndicator.vue'
 
 // data
 const categories = ref([])
@@ -372,10 +402,10 @@ const data = reactive({
 const category_id = ref(1)
 const edit = ref(false)
 
-// main function 
+// main function
 async function refreshData() {
   console.log('Refreshing data...')
-  main_loading.value=true;
+  main_loading.value = true
   try {
     await refreshCategories()
     await refreshProducts()
@@ -575,7 +605,7 @@ async function handleProductModalDelete() {
   }
 
   modalDelete.hide()
-  
+
   await refreshData()
 }
 
