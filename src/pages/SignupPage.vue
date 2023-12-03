@@ -122,6 +122,12 @@
                         />
                       </div>
                     </div>
+                    <div class="mb-2">
+                      <input type="file" class="form-control" id="profileImage" placeholder="Profile Image" accept="image/png, image/jpeg"
+                      value=""
+                        @change="handleImage"
+                      />
+                    </div>
                   </div>
                 </div>
                 <hr class="mt-1 mx-0" />
@@ -181,6 +187,30 @@ const errors = reactive({
 
 const router = useRouter()
 
+const handleImage = (e) => {
+  console.log('modal: handle Image')
+  // console.log(e)
+  if (e.target.files.length === 0) {
+    console.log('cancel file selection')
+    userdata.image_name = null
+    userdata.image = null
+    return
+  }
+
+  userdata.image = e.target.files[0]
+  userdata.image_name = userdata.image.name
+  console.log(userdata.image)
+  createBase64Image(userdata.image)
+}
+
+function createBase64Image(fObj) {
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    userdata.image = e.target.result.split(',')[1]
+  }
+  reader.readAsDataURL(fObj)
+}
+
 const handleSignup = async () => {
   errorinfo.iserr = false
   errorinfo.errmsg = ''
@@ -203,7 +233,8 @@ const handleSignup = async () => {
     formData.append('email', userdata.email)
     formData.append('role', userdata.role)
     formData.append('password', userdata.password)
-    formData.append('image_name', 'default.png')
+    formData.append('image_name', userdata.image_name)
+    formData.append('image', userdata.image)
 
     loading.value = true
     try {

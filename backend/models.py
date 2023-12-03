@@ -151,16 +151,15 @@ class Bookmark(db.Model):
     '''Bookmark Model'''
     __tablename__ = "bookmark"
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    
-    bookmark_id = db.Column(db.Integer, db.ForeignKey("product.id"), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    product_id = db.Column(db.Integer, db.ForeignKey("product.id"), nullable=False)
 
     def to_dict(self):
         '''to_dict'''
         return {
             "id": self.id,
-            "products": [product.to_dict() for product in self.products],
             "user_id": self.user_id,
+            "product_id": self.product_id,
         }
 
 class Order(db.Model):
@@ -178,7 +177,6 @@ class Order(db.Model):
     email = db.Column(db.String(64), nullable=False)
     payment_mode=db.Column(db.String(16), nullable=False)
     delivery_date = db.Column(db.DateTime, nullable=False, default=datetime.now())
-
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 
     def to_dict(self):
@@ -192,7 +190,8 @@ class Order(db.Model):
             "email":self.email,
             "payment_mode":self.payment_mode,
             "delivery_date":self.delivery_date,
-            "items": [item.to_dict for item in self.items],
+            "items": [item.to_dict() for item in self.items],
+            "created_timestamp": self.created_timestamp,
             "user_id": self.user_id,
         }
 

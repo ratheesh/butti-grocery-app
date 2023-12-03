@@ -1,131 +1,182 @@
 <template>
-<manager-layout>
+  <manager-layout>
     <div class="text-center">
-        <h3>Checkout</h3>
+      <h3>Checkout</h3>
     </div>
-  <div class="row col-8 m-auto">
-    <div class="col-6 m-auto">
-      <div class="form-group mb-4">
-        <label for="username"
-          >Name<span class="text-danger"><b>*</b></span></label
-        >
-        <div class="input-group">
-          <span class="input-group-text" id="username">
-            <mdicon name="account" :size="20" />
-          </span>
-          <input
-            type="text"
-            :class="{ 'form-control':true, 'is-invalid':errors.username }"
-            placeholder="Receipt Name"
-            id="username"
-            v-model="order_info.name"
-            autofocus
-          />
+    <cart-component></cart-component>
+    <div class="row col-md-6 col-lg-8 m-auto gy-3 p-0">
+      <div class="card rounded shadow-sm border-1 p-0">
+        <div class="card-header">
+          <h4 class="text-center">Delivery Information</h4>
+        </div>
+        <div class="card-body">
+          <form>
+            <div class="col-md-6 m-auto">
+              <div class="form-group mb-4">
+                <label for="name"
+                  >Name<span class="text-danger"><b>*</b></span></label
+                >
+                <div class="input-group">
+                  <span class="input-group-text" id="username">
+                    <mdicon name="account" :size="20" />
+                  </span>
+                  <input
+                    type="text"
+                    :class="{ 'form-control': true, 'is-invalid': errors.name }"
+                    placeholder="Receipt Name"
+                    id="name"
+                    v-model="delivery_info.name"
+                    required
+                    autofocus
+                  />
+                  <div class="invalid-feedback">
+                    <p class="text-danger">Provide receiver name</p>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group mb-4">
+                <label for="address"
+                  >Delivery Address<span class="text-danger"><b>*</b></span></label
+                >
+                <div class="input-group">
+                  <span class="input-group-text" id="address">
+                    <mdicon name="map-marker" :size="20" />
+                  </span>
+                  <textarea
+                    type="text"
+                    :class="{ 'form-control': true, 'is-invalid': errors.address }"
+                    placeholder="Delivery Address"
+                    id="address"
+                    v-model="delivery_info.address"
+                    required
+                    autofocus
+                  />
+                  <div class="invalid-feedback">
+                    <p class="text-danger">Provide valid address</p>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group mb-4">
+                <label for="phone"
+                  >Phone Number<span class="text-danger"><b>*</b></span></label
+                >
+                <div class="input-group">
+                  <span class="input-group-text" id="phone">
+                    <mdicon name="phone" :size="20" />&nbsp; +91-
+                  </span>
+                  <input
+                    type="integer"
+                    :class="{ 'form-control': true, 'is-invalid': errors.phone }"
+                    placeholder="0123456789"
+                    id="phone"
+                    v-model="delivery_info.phone_number"
+                    required
+                    autofocus
+                    min="1000000000"
+                    max="9999999999"
+                  />
+                  <div class="invalid-feedback">
+                    <p class="text-danger">Provide valid phone number</p>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group mb-4">
+                <label for="deliveryDate"
+                  >Delivery Date<span class="text-danger"><b>*</b></span></label
+                >
+                <div class="input-group">
+                  <span class="input-group-text" id="email">
+                    <mdicon name="calendar" :size="20" />
+                  </span>
+                  <input
+                    type="datetime-local"
+                    :class="{ 'form-control': true, 'is-invalid': errors.deliverydate }"
+                    placeholder=""
+                    id="deliveryDate"
+                    v-model="delivery_info.delivery_date"
+                    required
+                    autofocus
+                    min="09:00"
+                    max="18:00"
+                    step="00:30"
+                  />
+                  <div class="invalid-feedback">
+                    <p class="text-danger">Provide valid delivery date</p>
+                  </div>
+                </div>
+              </div>
+              <hr />
+              <div class="d-flex align-items-center justify-content-end mb-3">
+                <a class="btn btn-sm btn-warning mx-2" href="#">
+                  <mdicon name="home" :size="18" />
+                  Go Home
+                </a>
+                <button class="btn btn-sm btn-primary mx-2" @click="placeOrder">
+                  <mdicon name="shopping-outline" :size="16" />
+                  Place Order
+                </button>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
-      <div class="form-group mb-4">
-        <label for="address"
-          >Delivery Address<span class="text-danger"><b>*</b></span></label
-        >
-        <div class="input-group">
-          <span class="input-group-text" id="address">
-            <mdicon name="map-marker" :size="20" />
-          </span>
-          <textarea
-            type="text"
-            :class="{ 'form-control':true, 'is-invalid':errors.address }"
-            placeholder="Delivery Address"
-            id="address"
-            v-model="order_info.address"
-            autofocus
-          />
-        </div>
-      </div>
-      <div class="form-group mb-4">
-        <label for="phone"
-          >Phone Number<span class="text-danger"><b>*</b></span></label
-        >
-        <div class="input-group">
-          <span class="input-group-text" id="phone">
-            <mdicon name="phone" :size="20" />
-          </span>
-          <input
-            type="text"
-            :class="{ 'form-control':true, 'is-invalid':errors.phone }"
-            placeholder="Phone Number(10 digits)"
-            id="phone"
-            v-model="order_info.phone"
-            autofocus
-          />
-        </div>
-      </div>
-      <div class="form-group mb-4">
-        <label for="email"
-          >Email<span class="text-danger"><b>*</b></span></label
-        >
-        <div class="input-group">
-          <span class="input-group-text" id="email">
-            <mdicon name="email" :size="20" />
-          </span>
-          <input
-            type="email"
-            :class="{ 'form-control':true, 'is-invalid':errors.email }"
-            placeholder="user@email.com"
-            id="email"
-            v-model="order_info.email"
-            autofocus
-          />
-        </div>
-      </div>
-      <hr/>
-        <div class="d-flex align-items-center justify-content-end mb-3">
-          <button class="btn btn-sm btn-warning mx-2" @click="gotoCartPage">
-            <mdicon name="arrow-left-bold" :size="18" />
-            Review Cart
-          </button>
-          <button class="btn btn-sm btn-primary mx-2" @click="gotoOrderPage">
-              <mdicon name="shopping-outline" :size="16" />
-              Place Order
-          </button>
-        </div>
     </div>
-  </div>
-</manager-layout>
+    <!-- <pre>{{ cart }}</pre> -->
+    <!-- <pre>{{ delivery_info }}</pre> -->
+  </manager-layout>
 </template>
 
 <script setup>
-import { reactive } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, reactive } from 'vue'
+import axiosClient from '@/js/axios.js'
+import { useCartStore } from '@/stores/cartstore.js'
+// import { useRouter } from 'vue-router'
 import ManagerLayout from '@/layouts/MainLayout.vue'
-// import { useCartStore } from '@/stores/cartstore.js'
+import CartComponent from '@/components/CartComponent.vue'
 
+const loading = ref(false)
 // const cart = useCartStore()
-const order_info=reactive({
+const delivery_info = reactive({
   name: '',
   address: '',
-  phone: '',
-  email: '',
-  delivery_date: '',
+  phone_number: 0,
+  delivery_date: ''
 })
 
 const errors = reactive({
-  username: false,
+  name: false,
   address: false,
   phone: false,
-  email: false,
-  delivery_date: false,
-})  
+  delivery_date: false
+})
 
-const router = useRouter()
+// const router = useRouter()
+const cart = useCartStore()
 
-const gotoCartPage = () => {
-  router.push('/cart')
+const placeOrder = async () => {
+  const formData = new FormData()
+  formData.append('name', delivery_info.name)
+  formData.append('address', delivery_info.address)
+  formData.append('phone_number', parseInt(delivery_info.phone_number))
+  for (const item of cart.items) {
+    formData.append('items', JSON.stringify(item))
+  }
+  const deliverydate = new Date(delivery_info.delivery_date).toISOString().replace('T', ' ')
+  formData.append('delivery_date', deliverydate)
+  formData.append('total_amount', 0.0)
+  // console.table(formData)
+
+  try {
+    loading.value = true
+    const resp = await axiosClient.post(`/api/order`, formData)
+    console.log(resp)
+    cart.clearItems()
+  } catch (err) {
+    console.log(err)
+  } finally {
+    loading.value = false
+  }
 }
-
-const gotoOrderPage = () => {
-  router.push('/order')
-}
-
 </script>
 
 <style scoped lang="scss"></style>

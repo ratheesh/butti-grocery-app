@@ -3,13 +3,14 @@ import os
 import base64
 import secrets
 from io import BytesIO
+import json
 
 from PIL import Image
 from flask import Blueprint, make_response, abort, Response, jsonify
 from flask_restful import NotFound, Resource, fields, marshal_with, reqparse, request
 from werkzeug.exceptions import HTTPException
 from werkzeug.security import check_password_hash, generate_password_hash
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from .db import db
 from .models import User, Category, Product, Item, Bookmark, Order
@@ -149,9 +150,9 @@ class UserAPI(Resource):
 
             except:
                 raise InternalError(message="error in saving image")
-            else:
-                image_name = 'default.png'
-                user.image_name = image_name
+        else:
+            image_name = 'default.png'
+            user.image_name = image_name
 
         try:
             db.session.add(user)
@@ -182,7 +183,7 @@ class UserAPI(Resource):
                 if user.username == "admin":
                     raise Unauthorized(message="admin profile can not modified")
             else:
-                raise NotFound(message="User not found")
+                raise NotFound(message="user not found")
             
             if image is not None:
                 try:
@@ -560,126 +561,83 @@ class ProductAPI(Resource):
                 raise InternalError(message="error deleting product")
 
         return f"product {product.name} deleted successfully", 200
-
-bookmark_request_parse = reqparse.RequestParser(bundle_errors=True)
-
-class BookmarkAPI(Resource):
-    '''Bookmarks Object for managing bookmarks'''
-    def get(self, user_id, id=None):
-        if user_id is None:
-            raise BadRequest("User id is missing")
-        else:
-            user=User.query.filter_by(id=user_id).first()
-            if user is None:
-                raise NotFound("User not found")
-        
-        if id is None:
-            bookmarks = Bookmark.query.filter_by(user_id=user.id).all()
-            return bookmarks, 200
-        else:
-            bookmark = Bookmark.query.filter_by(user_id=user.id, id=id).first()
-            if bookmark is None:
-                raise NotFound("Bookmark not found")
-            else:
-                return bookmark, 200
-
-    @jwt_required()
-    def post(self, user_id, product_id):
-        if user_id is None:
-            raise BadRequest("user id is missing")
-        else:
-            user=User.query.filter_by(id=user_id).first()
-            if user is None:
-                raise NotFound("user not found")
-        
-        if product_id is None:
-            raise BadRequest("product id is missing")
-        else:
-            product = Product.query.filter_by(id=product_id).first()
-            if product is None:
-                raise NotFound("product not found")
-        
-        args=user_request_parse.parse_args(strict=True)
-        name = args.get("name", None)
-
-        if name is None:
-            raise BadRequest("name not provided")
-        
-        try:
-            bookmark = Bookmark(
-                name=name,
-                user_id=user.id,
-                product_id = product.id
-            )
-            db.session.add(bookmark)
-            db.session.commit()
-        except:
-            raise InternalError(message="error creating bookmark")
-        
-        return bookmark, 201
-
-    
-    @jwt_required()
-    def put(self, id):
-            return make_response("modification not supported", 501)
-
-    @jwt_required()
-    def delete(self, id):
-        if id is None:
-            raise BadRequest("Bookmark id is missing")
-        else:
-            try:
-                bookmark=Bookmark.query.filter_by(id=id).first()
-                db.session.delete(bookmark)
-                db.session.commit()
-            except:
-                raise InternalError(message="error deleting bookmark")
-
-        return "bookmark deleted successfully", 200
+def valid_date(s):
+    return datetime.strptime(s, "%Y-%m-%d %H:%M")
 
 order_request_parse = reqparse.RequestParser(bundle_errors=True)
 order_request_parse.add_argument("name", type=str, required=True)
+order_request_parse.add_argument("address", type=str, required=True)
+order_request_parse.add_argument("phone_number", type=int, required=True)
+order_request_parse.add_argument("items",type=str,action='append',location='json', required=True)
 order_request_parse.add_argument("total_amount", type=float, required=True)
-order_request_parse.add_argument("items", type=list, required=True)
-order_request_parse.add_argument("user_id", type=int, required=True)
-
-order_response_fields = {
-    "id": fields.Integer,
-    "total_amount": fields.Float,
-    "items": fields.List,
-    "created_timestamp": fields.DateTime,
-    "user_id": fields.Integer,
-}
+order_request_parse.add_argument("delivery_date", type=valid_date, required=True)
+# order_request_parse.add_argument("user_id", type=int)
 class OrderAPI(Resource):
     '''Order Object for managing orders'''
-    @marshal_with(order_response_fields)
-    def get(self, user_id, id=None):
+    # @marshal_with(order_response_fields)
+    @jwt_required()
+    def get(self, id=None):
+        user_id = get_jwt_identity()
         if user_id is None:
-            raise NotFound("User id is missing")
+            raise NotFound("user id is missing")
         if id is None:
             orders = Order.query.filter_by(user_id=user_id).all()
-            return orders, 200
+            data = [order.to_dict() for order in orders]
+            return make_response(data, 200)
         else:
             order = Order.query.filter_by(user_id=user_id, id=id).first()
             if order is None:
-                raise NotFound("Order not found")
+                raise NotFound("order not found")
             else:
-                return order, 200 
+                return make_response(order.to_dict(), 200)
     
-    @marshal_with(order_response_fields)
-    def post(self, user_id, items):
+    # @marshal_with(order_response_fields)
+    @jwt_required()
+    def post(self):
+        user_id = get_jwt_identity()
+        print(user_id)
         if user_id is None:
-            raise BadRequest("User id is missing")
-        if items is None:
-            raise BadRequest("Items are missing")
+            raise BadRequest("user id is missing/not logged in")
         else:
             user=User.query.filter_by(id=user_id).first()
+            print(user)
             if user is None:
-                raise NotFound("User not found")
+                raise NotFound("user not found")
+            
+            print('-before parsing args -')
+            args = order_request_parse.parse_args()
+            print('-after parsing args -')
+            print(args)
+            name=args.get('name', None)
+            address=args.get('address', None)
+            phone_number=args.get('phone_number', None)
+            items=args.get('items', None)
+            total_amount=args.get('total_amount', None)
+            delivery_date=args.get('delivery_date', None)
+            
+            if name is None:
+                raise BadRequest('name not provided')
+            if address is None:
+                raise BadRequest('address not provided')
+            if phone_number is None:
+                raise BadRequest('phone number not provided')
+            if items is None:
+                raise BadRequest('items not provided')
+            elif items == []:
+                raise BadRequest('items are empty')
+            if total_amount is None:
+                raise BadRequest('total amount not provided')
+            if delivery_date is None:
+                raise BadRequest('delivery date not provided')
             
             order = Order(
-                items=items,
+                name = name,
+                address=address,
+                phone=phone_number,
+                email='test@test.com',
+                payment_mode='cod',
                 total_amount=total_amount,
+                delivery_date=datetime.now(),
                 user_id=user.id,
                 created_timestamp=datetime.now(),
             )
@@ -689,29 +647,29 @@ class OrderAPI(Resource):
 
             items_list = []
             for item in items:
+                item = json.loads(item)
+                print(item)
                 new_item = Item(
-                    product_id=item.product_id,
-                    quantity=item.quantity,
+                    quantity=item.get('quantity'),
+                    product_id=item.get('id'),
                     order_id=order.id,
                     created_timestamp=datetime.now(),
                     updated_timestamp=datetime.now(),
                 )
                 items_list.append(new_item)
+            
             try:
                 db.session.add_all(items_list)
                 db.session.add(order)
                 db.session.commit()
             except:
                 raise InternalError(message="error creating order")
+            return make_response(order.to_dict(), 201)
     
-    @marshal_with(order_response_fields)
+    @jwt_required()
     def put(self,id, user_id, items):
         if user_id is None:
             raise BadRequest("User id is missing")
-        if id is None:
-            raise BadRequest("Order id is missing")
-        if items is None:
-            raise BadRequest("Items are missing")
 
         order=Order.query.filter_by(id=id).first()
         if order is None:
@@ -722,6 +680,17 @@ class OrderAPI(Resource):
         if items.len() == 0:
             raise BadRequest("Items list is empty")
         
+        args = order_request_parse.parse_args(strict=True)
+        id = args.get('id', None)
+        items = args.get('items', None)
+        total_amount = args.get('total_amount', None)
+
+        if id is None:
+            raise BadRequest("Order id is missing")
+        if items is None:
+            raise BadRequest("Items are missing")
+        if total_amount is None:
+            raise BadRequest("total_amount is missing")
         order.total_amount = total_amount
         order.items = items
         order.updated_timestamp = datetime.now()
@@ -735,6 +704,7 @@ class OrderAPI(Resource):
         
         return order, 200
     
+    @jwt_required()
     def delete(self, id):
         if id is None:
             raise BadRequest("Order id is missing")

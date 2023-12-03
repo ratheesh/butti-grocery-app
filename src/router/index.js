@@ -1,4 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
+import { useAuthStore } from '@/stores/authstore.js'
 
 import AdminPage from '@/pages/AdminPage.vue'
 import ManagerPage from '@/pages/ManagerPage.vue'
@@ -10,8 +11,9 @@ import ProfilePage from '@/pages/ProfilePage.vue'
 import CartPage from '@/pages/CartPage.vue'
 import CheckoutPage from '@/pages/CheckoutPage.vue'
 import OrderPage from '@/pages/OrderPage.vue'
-import CategoryManagement from '@/components/CategoryManagement.vue'
-import ProductManagement from '@/components/ProductManagement.vue'
+import OrdersPage from '@/pages/OrdersPage.vue'
+// import CategoryManagement from '@/components/CategoryManagement.vue'
+// import ProductManagement from '@/components/ProductManagement.vue'
 import ProductPage from '@/pages/ProductPage.vue'
 
 const routes = [
@@ -44,7 +46,7 @@ const routes = [
     name: 'profile',
     component: ProfilePage,
     meta: {
-      title: 'Logout',
+      title: 'Profile',
       requiresAuth: true
     }
   },
@@ -78,21 +80,26 @@ const routes = [
     component: OrderPage
   },
   {
-    path: '/category',
-    name: 'category',
-    component: CategoryManagement,
-    props: true
+    path: '/orders',
+    name: 'orders',
+    component: OrdersPage
   },
-  {
-    path: '/product',
-    name: 'product',
-    component: ProductManagement,
-    props: true,
-    meta: {
-      title: 'Product',
-      requiresAuth: true
-    }
-  },
+  // {
+  //   path: '/category',
+  //   name: 'category',
+  //   component: CategoryManagement,
+  //   props: true
+  // },
+  // {
+  //   path: '/product',
+  //   name: 'product',
+  //   component: ProductManagement,
+  //   props: true,
+  //   meta: {
+  //     title: 'Product',
+  //     requiresAuth: true
+  //   }
+  // },
   {
     path: '/product/:id',
     name: 'product_id',
@@ -118,6 +125,8 @@ const router = createRouter({
 router.beforeResolve((to, from) => {
   console.log('Coming from:', from.path)
   if (to.meta.requiresAuth && !localStorage.getItem('access_token')) {
+    const auth = useAuthStore()
+    auth.clearAuth()
     return {
       path: '/login',
       query: { redirect: to.fullPath }
