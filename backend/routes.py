@@ -10,6 +10,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_required, get_jwt_identity)
 from .models import User
 from .jwt import access
+from .tasks import sample_task, add_task
 
 routes = Blueprint("controller", __name__)
 
@@ -55,3 +56,15 @@ def logout():
 def test():
     '''test route'''
     return jsonify(user=user.to_dict()),200
+    
+@routes.route('/celery', methods=['GET'])
+def celery():
+    '''celery route'''
+    sample_task.delay()
+    return jsonify("celery task executed"),200
+
+@routes.route('/celery_add', methods=['GET'])
+def celery_add():
+    '''celery route'''
+    add_task.delay()
+    return jsonify("celery add task executed"),200

@@ -6,17 +6,21 @@ from flask_cors import CORS
 from flask_restful import Api
 from flask_caching import Cache
 from datetime import datetime,timedelta
+from celery.schedules import crontab
 
 from .api import api, UserAPI, CategoryAPI, ProductAPI, OrderAPI
 from .routes import routes
 from .db import db
 from .models import User, create_admin_user
 from flask_jwt_extended import JWTManager
+from .celery_utils import celery_init_app
+from .tasks import sample_task, add_task
 
 
 DB_FILE = "butti.sqlite3"
 basedir = os.path.abspath(os.path.dirname(__file__))
 db_file = "sqlite:///" + os.path.join(basedir, DB_FILE)
+
 app = Flask(__name__, template_folder="templates")
 app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 app.debug = True
@@ -29,11 +33,17 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=30)
 app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=10)
 
+app.config["broker_url"] = "redis://localhost:6379/0"
+app.config["result_backend"] = "redis://localhost:6379/0"
+app.config["broker_connection_retry_on_startup"] = True
+
 CORS(app)
 hapi = Api(app)
 db.init_app(app)
 app.app_context().push()
 cache = Cache(app, config={'CACHE_TYPE': 'simple'})
+
+celery_app = celery_init_app(app)
 
 dbfile = os.path.join(basedir, DB_FILE)
 if not os.path.exists(dbfile):
@@ -70,4 +80,15 @@ hapi.add_resource(ProductAPI, "/api/product", "/api/product/<int:category_id>", 
 # hapi.add_resource(BookmarkAPI, "/api/bookmark/<int:product_id>", "/api/bookmark/<int:product_id>/<int:bookmark_id>")
 hapi.add_resource(OrderAPI, "/api/order", "/api/order/<int:order_id>")
 
+@celery_app.on_after_finalize.connect
+def setup_periodic_tasks(sender, **kwargs):
+    sender.add_periodic_task(
+        crontab(minute='*'), sample_task.s(), name='Send e-mail daily'
+    )
+
+    sender.add_periodic_task(
+        crontab(minute='2'),
+        add_task.s(),
+        name='perform monthly task'
+    )
 # End of File
