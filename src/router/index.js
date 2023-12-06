@@ -10,10 +10,7 @@ import LogoutPage from '@/pages/LogoutPage.vue'
 import ProfilePage from '@/pages/ProfilePage.vue'
 import CartPage from '@/pages/CartPage.vue'
 import CheckoutPage from '@/pages/CheckoutPage.vue'
-import OrderPage from '@/pages/OrderPage.vue'
 import OrdersPage from '@/pages/OrdersPage.vue'
-// import CategoryManagement from '@/components/CategoryManagement.vue'
-// import ProductManagement from '@/components/ProductManagement.vue'
 import ProductPage from '@/pages/ProductPage.vue'
 
 const routes = [
@@ -75,31 +72,10 @@ const routes = [
     component: CheckoutPage
   },
   {
-    path: '/order',
-    name: 'order',
-    component: OrderPage
-  },
-  {
     path: '/orders',
     name: 'orders',
     component: OrdersPage
   },
-  // {
-  //   path: '/category',
-  //   name: 'category',
-  //   component: CategoryManagement,
-  //   props: true
-  // },
-  // {
-  //   path: '/product',
-  //   name: 'product',
-  //   component: ProductManagement,
-  //   props: true,
-  //   meta: {
-  //     title: 'Product',
-  //     requiresAuth: true
-  //   }
-  // },
   {
     path: '/product/:id',
     name: 'product_id',
