@@ -45,9 +45,9 @@
                     </td>
                     <td v-else>
                       <div class="d-flex align-items-center">
-                        <mdicon name="clock-time-four" :width="16" :height="16" class="text-warning p-1"
+                        <mdicon name="clock-time-four" :width="16" :height="16" class="text-purple p-1"
                           data-bs-toggle="dropdown" aria-expanded="false" />
-                        <span class="text-warning">Pending</span>
+                        <span class="text-purple">Pending</span>
                       </div>
                     </td>
                     <td>
@@ -62,13 +62,13 @@
                             </a></b>
                         </li>
                         <li v-if="!user.approved">
-                          <b><a class="dropdown-item d-flex align-items-center" href="javascript:void(0)" @click="approveUser(user)">
+                          <b><a class="dropdown-item d-flex align-items-center" href="javascript:void(0)" @click="approveUser(user, true)">
                               <mdicon name="check-circle" class="text-success me-2" :size="20" />
                               Approve
                             </a></b>
                         </li>
                         <li v-else>
-                          <b><a class="dropdown-item d-flex align-items-center" href="javascript:void(0)" @click="revokeUser(user)">
+                          <b><a class="dropdown-item d-flex align-items-center" href="javascript:void(0)" @click="approveUser(user, false)">
                               <mdicon name="cancel" class="fw-bold text-danger me-2" :size="20" />
                               Revoke
                             </a></b>
@@ -180,13 +180,27 @@ const showUser = (user) => {
   console.log('show user details')
 }
 
-const approveUser = (user) => {
+const approveUser = async(user, approved) => {
   console.log('approve user')
+  const formData = new FormData()
+  formData.append('user_id', user.id)
+  formData.append('approved', !!approved)
+
+  try {
+    main_loading.value = true
+    await axiosClient.post(`/approve`, formData)
+  } catch(err) {
+    console.log(err)
+  } finally {
+    main_loading.value = false
+  }
+
+  await fetchUsers()
 }
 
-const revokeUser = (user) => {
-  console.log('reject user')
-}
+// const revokeUser = (user) => {
+//   console.log('reject user')
+// }
 
 const deleteUser = (user) => {
   // console.log('delete user')

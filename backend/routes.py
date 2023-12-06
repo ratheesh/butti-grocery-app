@@ -10,6 +10,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_required, get_jwt_identity)
 from .models import User
 from .jwt import access
+from .db import db
 
 routes = Blueprint("controller", __name__)
 
@@ -49,9 +50,34 @@ def logout():
 #         return jsonify("image not found"), 404
     
 
-@routes.route("/test", methods=["GET"])
+@routes.route("/approve", methods=["POST"])
 @jwt_required()
 @access(["admin"])
-def test():
-    '''test route'''
-    return jsonify(user=user.to_dict()),200
+def approve():
+    '''approve manager'''
+    current_user_id = get_jwt_identity()
+    current_user = User.query.get(current_user_id)
+    if current_user.role != "admin":
+        return make_response(jsonify("unauthorized"), 403)
+    else:
+        data = request.get_json()
+        user_id = data.get("user_id")
+        approved = data.get('approved')
+        if approved == 'false':
+            approved = False
+        else:
+            approved = True
+
+        if user_id is None or approved is None:
+            return make_response(jsonify("invalid request"), 400)
+
+        user = User.query.get(user_id)
+        print(user.name, user.role, approved)
+        user.approved = approved
+        try:
+            db.session.add(user)
+            db.session.commit()
+        except:
+            return jsonify("error approving user"), 500
+
+        return make_response(jsonify(user=user.to_dict()),200)
