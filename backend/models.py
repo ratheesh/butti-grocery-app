@@ -87,6 +87,7 @@ class Product(db.Model):
     unit = db.Column(db.String(64), nullable=False)
     price = db.Column(db.Integer, nullable=False)
     stock = db.Column(db.Integer, nullable=False)
+    stock_remaining = db.Column(db.Integer, nullable=False)
     expiry_date = db.Column(db.DateTime, nullable=False, default=datetime.now())
     image_name = db.Column(db.String(64), default="default.png")
     created_timestamp = db.Column(
@@ -113,6 +114,7 @@ class Product(db.Model):
             "unit": self.unit,
             "price": self.price,
             "stock": self.stock,
+            "stock_remaining": self.stock_remaining,
             "expiry_date": self.expiry_date,
             "image_name": self.image_name,
             "image":self.image,

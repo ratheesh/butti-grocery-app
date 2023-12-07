@@ -53,7 +53,7 @@ class UserAPI(Resource):
     """
     User Object for managing users
     """
-
+    @jwt_required()
     def get(self, username=None):
         if username:
             user = User.query.filter_by(username=username).first()
@@ -412,6 +412,7 @@ class ProductAPI(Resource):
             unit=unit,
             price=price,
             stock=stock,
+            stock_remaning=stock,
             expiry_date=expiry_date,
             image_name=image_name,
             category_id=category_id,
@@ -646,9 +647,15 @@ class OrderAPI(Resource):
             db.session.flush()
 
             items_list = []
+            product_list = []
             for item in items:
                 item = json.loads(item)
                 print(item)
+
+                product = Product.query.filter_by(id=item.get('id')).first()
+                if product.stock_remaining < item.get('quantity'):
+                    raise BadRequest("quantity is more than stock")
+
                 new_item = Item(
                     quantity=item.get('quantity'),
                     product_id=item.get('id'),
@@ -656,10 +663,13 @@ class OrderAPI(Resource):
                     created_timestamp=datetime.now(),
                     updated_timestamp=datetime.now(),
                 )
+                product.stock_remaining = product.stock_remaining - item.get('quantity')
                 items_list.append(new_item)
+                product_list.append(product)
             
             try:
                 db.session.add_all(items_list)
+                db.session.add_all(product_list)
                 db.session.add(order)
                 db.session.commit()
             except:

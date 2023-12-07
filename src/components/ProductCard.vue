@@ -22,14 +22,20 @@
         <br />
         <br />
         <div class="row justify-items-between">
-          <div class="col d-inline-flex align-items-center">
+          <div v-if="!outofstock">
+            <span class="text-danger">Out of Stock</span>
+          </div>
+          <div class="col d-inline-flex align-items-center" :disabled="outofstock" >
             <mdicon @click="updateCount()" name="minus-circle" class="text-danger" />
             <label class="text-center" style="width: 2em">{{ quantity }}</label>
             <mdicon @click="updateCount(true)" name="plus-circle" class="text-success" />
           </div>
           <div class="col-auto">
             <form @submit.prevent="addToCart(data)">
-              <button class="btn btn-success btn-sm">
+              <button
+               class="btn btn-success btn-sm"
+               :disabled="outofstock"
+              >
                 <mdicon name="cart-plus" :size="20" />Add
               </button>
             </form>
@@ -42,7 +48,7 @@
 </template>
 
 <script setup>
-import { ref, toRef } from 'vue'
+import { ref, toRef, onMounted } from 'vue'
 import { useCartStore } from '@/stores/cartstore.js'
 
 const props = defineProps({
@@ -54,6 +60,11 @@ const props = defineProps({
 
 const data = toRef(props, 'data')
 const quantity = ref(1)
+const outofstock = ref(false)
+
+onMounted(() => {
+  data.value.stock_available < 1 ? (outofstock.value = true) : (outofstock.value = false)
+})
 
 const updateCount = (add) => {
   if (add) {

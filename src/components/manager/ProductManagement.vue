@@ -37,6 +37,7 @@
                         <th scope="col"><b>NAME</b></th>
                         <th scope="col"><b>PRICE</b></th>
                         <th scope="col"><b>STOCK</b></th>
+                        <th scope="col"><b>STOCK REMANING</b></th>
                         <th scope="col"><b>EXPIRY DATE</b></th>
                         <th scope="col"><b>ACTIONS</b></th>
                       </tr>
@@ -60,6 +61,9 @@
                         <td><b>₹</b>{{ product.price }}/{{ product.unit }}</td>
                         <td>
                           {{ product.stock }}
+                        </td>
+                        <td>
+                          {{ product.stock_remaining }}
                         </td>
                         <td>
                           {{ formatDate(product.expiry_date) }}
