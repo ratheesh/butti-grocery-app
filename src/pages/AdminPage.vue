@@ -39,7 +39,7 @@
         </div>
       </div>
     </template>
-      <suspense>
+      <suspense timeout="0">
         <template #default>
           <!-- <user-management></user-management> -->
           <component :is="component"></component>

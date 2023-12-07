@@ -1,10 +1,10 @@
 <template>
   <div class="container-fluid">
     <div class="row">
-      <div class="col-auto">
+      <div class="col-1">
         <slot name="sidebar" />
       </div>
-      <div class="col-10">
+      <div class="col-11 m-0 p-0 pe-2">
         <Header />
         <main class="content">
           <slot name="default" />

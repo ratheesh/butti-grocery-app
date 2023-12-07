@@ -1,6 +1,6 @@
 <template>
-  <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-body-tertiary">
-    <div class="container-fluid text-white px-0" style="background-color: #2f3640">
+  <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-body-tertiary p-0">
+    <div class="container-fluid text-white m-0 p-0" style="background-color: #2f3640">
       <router-link to="/" class="navbar-brand text-white">
         <div class="d-flex align-items-center">
           <mdicon name="basket" class="text-warning color-success mx-3" :size="36" />
