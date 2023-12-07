@@ -5,7 +5,7 @@
       <div class="my-1">
         <cart-component></cart-component>
       </div>
-      <div class="col-md-8 d-inline-flex justify-content-end m-auto mt-2 g-2">
+      <div class="col-md-10 col-md-12 d-inline-flex justify-content-end m-auto mt-2 g-2">
         <button type="button" class="btn btn-sm btn-secondary mx-2" @click="router.push('/')">
           <mdicon name="home" :height="20" />Goto Home
         </button>

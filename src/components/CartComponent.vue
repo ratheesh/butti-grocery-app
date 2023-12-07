@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- <h2 class="text-center">Your Cart</h2> -->
-    <div class="card card-body col-md-6 col-lg-8 m-auto p-0">
+    <div class="card card-body col-md-8 col-lg-10 m-auto p-0">
       <div class="row col-12 justify-content-center m-auto p-0">
         <div v-if="cart.items.length > 0" class="mt-3">
           <table class="table table-responsive table-nowrap text-center">
