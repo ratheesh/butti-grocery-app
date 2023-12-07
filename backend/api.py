@@ -138,7 +138,7 @@ class UserAPI(Resource):
 
                 file_data = base64.b64decode(image)
                 basedir = os.path.abspath(os.path.dirname(__file__))
-                filename= basedir + '/images/users/' + image_name
+                filename= basedir + '/static/images/users/' + image_name
                 print('Image filename to be saved: ', filename)
 
                 # with open(filename, 'wb') as f:
@@ -194,7 +194,7 @@ class UserAPI(Resource):
                     
                     file_data = base64.b64decode(image)
                     basedir = os.path.abspath(os.path.dirname(__file__))
-                    filename = basedir + 'images/users/' + image_name
+                    filename = basedir + '/static/images/users/' + image_name
                     print('user image file to be saved:', filename)
                     
                     img = Image.open(BytesIO(file_data))
@@ -435,7 +435,7 @@ class ProductAPI(Resource):
 
                 file_data = base64.b64decode(image)
                 basedir = os.path.abspath(os.path.dirname(__file__))
-                filename= basedir + '/images/products/' + image_name
+                filename= basedir + '/static/images/products/' + image_name
                 print('Image filename to be saved: ', filename)
 
                 # with open(filename, 'wb') as f:
@@ -502,7 +502,7 @@ class ProductAPI(Resource):
 
                         file_data = base64.b64decode(image)
                         basedir = os.path.abspath(os.path.dirname(__file__))
-                        filename= basedir + '/images/products/' + image_name
+                        filename= basedir + '/static/images/products/' + image_name
                         print('Image filename to be saved: ', filename)
 
                         # with open(filename, 'wb') as f:
@@ -551,7 +551,7 @@ class ProductAPI(Resource):
                 
                 if image_name != 'default.png':
                     basedir = os.path.abspath(os.path.dirname(__file__))
-                    filename= basedir + '/images/products/' + image_name
+                    filename= basedir + '/static/images/products/' + image_name
                     if os.path.isfile(filename):
                         try:
                             os.remove(filename)
