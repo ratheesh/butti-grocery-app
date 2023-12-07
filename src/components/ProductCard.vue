@@ -19,11 +19,12 @@
             >
           </div>
         </div>
-        <br />
-        <br />
         <div class="row justify-items-between">
-          <div v-if="!outofstock">
+          <div v-if="outofstock" class="text-center p-1 fw-bolder">
             <span class="text-danger">Out of Stock</span>
+          </div>
+          <div v-else class="p-1">
+            <br/>
           </div>
           <div class="col d-inline-flex align-items-center" :disabled="outofstock" >
             <mdicon @click="updateCount()" name="minus-circle" class="text-danger" />
@@ -60,7 +61,7 @@ const props = defineProps({
 
 const data = toRef(props, 'data')
 const quantity = ref(1)
-const outofstock = ref(false)
+const outofstock = ref(true)
 
 onMounted(() => {
   data.value.stock_available < 1 ? (outofstock.value = true) : (outofstock.value = false)

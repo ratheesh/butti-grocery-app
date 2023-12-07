@@ -414,7 +414,7 @@ class ProductAPI(Resource):
             unit=unit,
             price=price,
             stock=stock,
-            stock_remaning=stock,
+            stock_remaining=stock,
             expiry_date=expiry_date,
             image_name=image_name,
             category_id=category_id,

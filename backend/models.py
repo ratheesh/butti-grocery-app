@@ -32,7 +32,7 @@ class User(db.Model):
     def to_dict(self):
         self.image=None
         basedir = os.path.abspath(os.path.dirname(__file__))
-        image_file= basedir + '/images/users/' + self.image_name
+        image_file= basedir + '/static/images/users/' + self.image_name
         if os.path.isfile(image_file):
             with open(image_file, 'rb') as f:
                 self.image = base64.b64encode(f.read()).decode('utf-8')
@@ -102,7 +102,7 @@ class Product(db.Model):
     def to_dict(self):
         self.image=None
         basedir = os.path.abspath(os.path.dirname(__file__))
-        image_file= basedir + '/images/products/' + self.image_name
+        image_file= basedir + '/static/images/products/' + self.image_name
         if os.path.isfile(image_file):
             with open(image_file, 'rb') as f:
                 self.image = base64.b64encode(f.read()).decode('utf-8')
