@@ -1,5 +1,5 @@
 <template>
-  <div class="row col-8 justify-content-center m-auto">
+  <div class="row col-10 justify-content-center m-auto">
     <div class="card shadow-sm mt-4 p-0">
       <div class="card-header m-0 p-0">
         <div class="row col-10 d-flex justify-content-between align-items-center m-auto my-2">
@@ -27,7 +27,7 @@
         <div v-else>
           <div v-if="products.length > 0">
             <div class="row justify-content-center mt-3 m-auto">
-              <div class="col-10">
+              <div class="m-0 p-0">
                 <!-- <hr /> -->
                 <div class="table-responsive">
                   <table class="table table-centered table-nowrap rounded">

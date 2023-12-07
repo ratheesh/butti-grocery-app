@@ -1,12 +1,12 @@
 <template>
-  <div class="row col-8 m-auto">
+  <div class="row col-10 m-auto">
     <div class="card shadow-sm mt-4 p-0">
       <div class="card-header m-0 p-0">
         <div class="row col-10 d-flex justify-content-between m-auto my-2">
           <div class="col-auto">
             <span class="text-center fs-6 fw-normal mt-3">Categories</span>
           </div>
-          <div class="col-6 d-inline-flex justify-content-end m-auto me-0">
+          <div class="col-10 d-inline-flex justify-content-end m-auto me-0">
             <div class="col-auto mx-2">
               <button class="btn btn-sm btn-success" @click="handleCategoryAdd({}, false)">
                 <b>
@@ -25,7 +25,7 @@
         <div v-else>
           <div v-if="categories.length > 0">
             <div class="row justify-content-center m-auto">
-              <div class="col-10">
+              <div class="p-0 m-0">
                 <div class="table-responsive">
                   <table class="table table-centered table-nowrap rounded">
                     <thead class="table-light">
