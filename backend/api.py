@@ -44,6 +44,7 @@ user_request_parse = reqparse.RequestParser(bundle_errors=True)
 user_request_parse.add_argument("name", type=str, required=True)
 user_request_parse.add_argument("username", type=str, required=True)
 user_request_parse.add_argument("email", type=str, required=True)
+user_request_parse.add_argument("approved", type=str)
 user_request_parse.add_argument("role", type=str, required=True)
 user_request_parse.add_argument("password", type=str, required=True)
 user_request_parse.add_argument("image_name", type=str)
@@ -212,9 +213,10 @@ class UserAPI(Resource):
                 db.session.add(user)
                 db.session.commit()
             except:
-                raise InternalError(message="Error in updating User")
-
-            data = jsonify(user.do_dict(), 200)
+                raise InternalError(message="error in updating User")
+            
+            data = jsonify(user.do_dict())
+            return make_response(data, 200)
 
     @jwt_required()
     def delete(self, username=None):
