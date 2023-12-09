@@ -159,7 +159,7 @@ import { RouterLink } from 'vue-router'
 import { useAuthStore } from '../stores/authstore'
 import { useCartStore } from '../stores/cartstore'
 import { storeToRefs } from 'pinia';
-import { onMounted } from 'vue';
+// import { onMounted } from 'vue';
 
 const auth = useAuthStore()
 const cart = useCartStore()

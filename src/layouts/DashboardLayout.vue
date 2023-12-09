@@ -17,8 +17,8 @@
 
 <script setup>
 import { storeToRefs } from 'pinia'
-import Header from '@/layouts/Header.vue'
-import Footer from '@/layouts/Footer.vue'
+import Header from '@/layouts/HeaderBar.vue'
+import Footer from '@/layouts/FooterBar.vue'
 import { useAuthStore } from '../stores/authstore'
 
 const auth = useAuthStore()
