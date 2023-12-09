@@ -7,11 +7,14 @@ export const useAuthStore = defineStore('authStore', () => {
   axiosClient.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem(
     'access_token'
   )}`
-  const authenticated = ref(!!localStorage.getItem('access_token'))
-  const user = ref(JSON.parse(localStorage.getItem('user')))
 
   const router = useRouter()
 
+  // variables
+  const authenticated = ref(!!localStorage.getItem('access_token'))
+  const user = ref(JSON.parse(localStorage.getItem('user')))
+
+  // functions
   function setUser(_user) {
     console.log(_user)
     if (_user) {
@@ -28,6 +31,7 @@ export const useAuthStore = defineStore('authStore', () => {
     authenticated.value = false
     localStorage.removeItem('user')
     localStorage.removeItem('access_token')
+    axiosClient.defaults.headers.common['Authorization'] = `Bearer None`
   }
 
   const getUser = computed(() => user.value)
@@ -68,11 +72,7 @@ export const useAuthStore = defineStore('authStore', () => {
   }
 
   async function logout() {
-    localStorage.removeItem('access_token')
-    localStorage.removeItem('user')
-    axiosClient.defaults.headers.common['Authorization'] = `Bearer None`
-    authenticated.value = false
-    user.value = {}
+    clearAuth()
     console.log('logged out')
     router.push('/login')
   }
