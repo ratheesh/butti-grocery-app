@@ -1,6 +1,7 @@
 import axios from 'axios'
 // import { useRouter } from 'vue-router'
 import router from '@/router/index.js'
+import { useAuthStore } from '@/stores/authstore.js'
 
 const axiosClient = axios.create({
   baseURL: 'http://localhost:5000',
@@ -13,22 +14,18 @@ const axiosClient = axios.create({
   }
 })
 
-// const router = useRouter()
-
 // Response interceptor
 axiosClient.interceptors.response.use(
   (response) => {
-    // Handle the response here
-    // console.log('hello in response')
     // console.log(response)
     return response
   },
   (error) => {
-    // Handle errors here
-    // console.log('hello in error')
     // console.error(error)
     if (error.response.status === 401) {
+      const auth = useAuthStore()
       console.log('invalid/expired token')
+      auth.clearAuth()
       router.push('/login')
     }
     return Promise.reject(error)
