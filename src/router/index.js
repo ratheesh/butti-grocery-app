@@ -100,6 +100,7 @@ const routes = [
     path: '/order/:id',
     name: 'order',
     component: OrderPage,
+    props: true,
     meta: {
       title: 'Order Info',
       requiresAuth: true
@@ -131,22 +132,23 @@ router.beforeResolve((to, from, next) => {
   const auth = useAuthStore()
   if (to.meta.requiresAuth) {
     if (auth.authenticated) {
-      // console.log('authenticated', to.meta.role, auth.user.role, to.path)
+      console.log('authenticated', to.meta.role, auth.user.role, to.path)
       if (to.meta.role && auth.user.role !== to.meta.role) {
         console.log('not authorized')
         router.push('/forbidden')
       } else {
-        if (to.path === '/') {
-          console.log('to home page', auth.user.role)
-          // redirect to correct homepage based on role
-          if (auth.user.role === 'admin') {
-            router.push('/admin')
-          } else if (auth.user.role === 'manager') {
-            router.push('/manager')
-          } else {
-            router.push('/')
-          }
-        } else next()
+        // if (to.path === '/') {
+        //   console.log('to home page', auth.user.role)
+        //   // redirect to correct homepage based on role
+        //   if (auth.user.role === 'admin') {
+        //     router.push('/admin')
+        //   } else if (auth.user.role === 'manager') {
+        //     router.push('/manager')
+        //   } else {
+        //     router.push('/')
+        //   }
+        // } else next()
+        next()
       }
     } else {
       // console.log('to login page')
