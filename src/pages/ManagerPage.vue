@@ -1,8 +1,12 @@
 <template>
   <dashboard-layout>
-    <h2 class="text-center">Dash Board!</h2>
+    <div class="container">
+      <div class="row justify-content-center mt-5">
+        <h2 v-if="user.approved" class="text-center">Dash Board!</h2>
+      </div>
+    </div>
     <template v-slot:sidebar>
-      <div>
+      <div v-if="user.approved">
         <div class="row">
           <div class="d-flex flex-column justify-content-between col-auto bg-dark min-vh-100">
             <ul class="nav nav-pills flex-column mt-2 mt-sm-0" id="menu">
@@ -51,33 +55,55 @@
         </div>
       </div>
     </template>
-    <suspense timeout="0">
-      <template #default>
-        <!-- <user-management></user-management> -->
-        <component :is="component"></component>
-      </template>
-      <template #fallback>
-        <loading-indicator></loading-indicator>
-      </template>
-    </suspense>
+    <div v-if="!user.approved">
+      <div class="row col-md-6 m-auto">
+        <div class="card card-body justify-content-center m-auto shadow-sm">
+          <div class="fs-4">
+                <div class="row col-md-6 m-auto">
+                  <p class="text-center">
+                    <span class="bold">You account is not approved yet! </span>
+                    <br/>
+                    <span class="bold">Please wait for the admin to approve your account.</span>
+                  </p>
+                </div>
+                <div class="row col-md-6 m-auto">
+                  <a href="javascript:void(0)" class="btn btn-sm btn-primary" @click="auth.logout">Logout</a>
+                </div>
+          </div>
+      </div>
+      </div>
+    </div>
+    <div v-else>
+      <suspense timeout="0">
+        <template #default>
+          <!-- <user-management></user-management> -->
+          <component :is="component"></component>
+        </template>
+        <template #fallback>
+          <loading-indicator></loading-indicator>
+        </template>
+      </suspense>
+    </div>
   </dashboard-layout>
 </template>
 
 <script setup>
 // import axiosClient from "@/js/axios.js";
 // import MainLayout from "@/layouts/MainLayout.vue";
+import { storeToRefs } from 'pinia'
+import router from '@/router'
+import { useAuthStore } from '../stores/authstore'
 import DashboardLayout from '@/layouts/DashboardLayout.vue'
 import CategoryManagement from '@/components/manager/CategoryManagement.vue'
 import ProductManagement from '@/components/manager/ProductManagement.vue'
 import OrdersManagement from '@/components/OrdersManagement.vue'
 import DashBoard from '@/components/manager/DashBoard.vue'
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
-import { onMounted } from 'vue'
-import { useAuthStore } from '@/stores/authstore.js'
-import router from '../router/index.js'
 import { shallowRef } from 'vue'
 
+
 const auth = useAuthStore()
+const { user } = storeToRefs(auth)
 
 const component = shallowRef('DashBoard')
 </script>
