@@ -1,5 +1,4 @@
 <template>
-  <div>
     <!-- <h2 class="text-center">Your Cart</h2> -->
     <div class="card card-body col-md-8 col-lg-10 m-auto p-0">
       <div class="row col-12 justify-content-center m-auto p-0">
@@ -60,11 +59,13 @@
           </table>
         </div>
         <div v-else>
-          <h2 class="text-center mt-5">Your Cart is Empty!</h2>
+          <div class="row justify-content-center align-items-center ">
+            <h2 class="text-center my-5">Your Cart is Empty!</h2>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  
 </template>
 
 <script setup>
@@ -77,12 +78,12 @@ const total = computed(() => cart.items.reduce((y, x) => (y += x.quantity * x.un
 const deleteItem = (id) => {
   console.log('delete item event')
   cart.items.splice(id, 1)
-  cart.updateItems()
+  cart.update()
 }
 
 const clearCart = () => {
   cart.items = []
-  cart.updateItems()
+  cart.update()
 }
 
 const updateCount = (item, add) => {
@@ -95,7 +96,7 @@ const updateCount = (item, add) => {
       item.quantity--
     }
   }
-  cart.updateItems()
+  cart.update()
 }
 </script>
 

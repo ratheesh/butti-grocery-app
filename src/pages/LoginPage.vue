@@ -20,7 +20,7 @@
                         </span>
                         <input
                           type="text"
-                          class="form-control"
+                          class="form-control rounded-end"
                           :class="{ 'form-control':true, 'is-invalid':errors.username }"
                           placeholder="username"
                           id="username"
@@ -42,7 +42,7 @@
                         </span>
                         <input
                           type="password"
-                          class="form-control"
+                          class="form-control rounded-end"
                           v-model="password"
                           id="password"
                           :class="{ 'form-control':true, 'is-invalid':errors.password }"
@@ -107,7 +107,7 @@ const login = async () => {
         router.push(router.currentRoute.value.query.redirect)
         return
       }
-      if (auth.role === 'admin') {
+      if (auth.user.role === 'admin') {
         router.push('/admin')
       } else if (auth.user.role === 'manager') {
         router.push('/manager')

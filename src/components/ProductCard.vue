@@ -6,6 +6,7 @@
         :src="`data:image/png;base64,${data.image}`"
         alt="product image"
         height="150"
+        @click="() => $router.push(`/product/${data.category_id}/${data.id}`)"
       />
       <div class="card-body">
         <div class="row justify-content-between">
@@ -77,7 +78,7 @@ const updateCount = (add) => {
       quantity.value--
     }
   }
-  // cart.updateItems()
+  // cart.update()
 }
 
 const cart = useCartStore()
@@ -94,7 +95,7 @@ function addToCart(product) {
     // cart.items.splice(index, 1, _item)
     const item = cart.items[index]
     item.quantity += quantity.value
-    cart.updateItems()
+    cart.update()
     return
   }
 
@@ -107,7 +108,7 @@ function addToCart(product) {
 
   cart.items.push(item)
   console.log('add to cart')
-  cart.updateItems()
+  cart.update()
 }
 </script>
 

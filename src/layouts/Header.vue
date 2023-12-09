@@ -39,7 +39,7 @@
                 </button>
               </router-link>
             </li>
-            <li v-if="user.role=='user'" class="nav-item">
+            <li v-if="user && user.role=='user'" class="nav-item">
               <router-link :to="{ name: 'cart' }" class="nav-link">
                 <button class="btn btn-sm btn-outline-rosy-brown">
                   <mdicon name="cart" :size="20" />
@@ -159,10 +159,10 @@ import { RouterLink } from 'vue-router'
 import { useAuthStore } from '../stores/authstore'
 import { useCartStore } from '../stores/cartstore'
 import { storeToRefs } from 'pinia';
+import { onMounted } from 'vue';
 
 const auth = useAuthStore()
 const cart = useCartStore()
-
 
 const { user, authenticated } = storeToRefs(auth)
 

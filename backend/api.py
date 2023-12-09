@@ -572,7 +572,7 @@ order_request_parse.add_argument("name", type=str, required=True)
 order_request_parse.add_argument("address", type=str, required=True)
 order_request_parse.add_argument("phone_number", type=int, required=True)
 order_request_parse.add_argument("items",type=str,action='append',location='json', required=True)
-order_request_parse.add_argument("total_amount", type=float, required=True)
+order_request_parse.add_argument("total_amount", type=int, required=True)
 order_request_parse.add_argument("delivery_date", type=valid_date, required=True)
 # order_request_parse.add_argument("user_id", type=int)
 class OrderAPI(Resource):

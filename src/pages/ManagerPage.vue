@@ -91,7 +91,7 @@
 // import axiosClient from "@/js/axios.js";
 // import MainLayout from "@/layouts/MainLayout.vue";
 import { storeToRefs } from 'pinia'
-import router from '@/router'
+// import router from '@/router'
 import { useAuthStore } from '../stores/authstore'
 import DashboardLayout from '@/layouts/DashboardLayout.vue'
 import CategoryManagement from '@/components/manager/CategoryManagement.vue'

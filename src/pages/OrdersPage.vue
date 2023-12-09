@@ -30,9 +30,9 @@
                         <td>{{ formatDate(order.created_timestamp) }}</td>
                         <td>{{ order.items.length }}</td>
                         <td>{{ order.total_amount }}</td>
-                        <td>{{ order.delivery_date }}</td>
+                        <td>{{ formatDate(order.delivery_date) }}</td>
                         <td>
-                          <button class="btn btn-sm btn-primary">
+                          <button class="btn btn-sm btn-primary" @click="router.push(`/order/${order.id}`)">
                             <mdicon
                               name="format-list-bulleted"
                               :width="18"
@@ -57,17 +57,20 @@
       </div>
       <div class="d-inline-flex justify-content-end my-2">
         <a href="#" class="btn btn-sm btn-primary">
-          <mdicon name="home" class="text-white" />
-          Go Home
+          <div class="d-inline-flex justify-content-center align-items-end">
+            <mdicon name="home" class="text-white" />
+            <span>Go Home</span>
+          </div>
         </a>
       </div>
     </div>
-    <pre>{{ orders }}</pre>
+    <!-- <pre>{{ orders }}</pre> -->
   </main-layout>
 </template>
 
 <script setup>
 import { ref, reactive } from 'vue'
+import router from '@/router/index.js'
 import axiosClient from '@/js/axios.js'
 import MainLayout from '@/layouts/MainLayout.vue'
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
@@ -86,8 +89,6 @@ function formatDate(timestamp) {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
     timeZone: 'Asia/Kolkata'
   }
   return date.toLocaleDateString('en-IN', options)

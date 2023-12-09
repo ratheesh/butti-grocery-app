@@ -138,12 +138,19 @@ class Item(db.Model):
     order_id = db.Column(db.Integer, db.ForeignKey("order.id"), nullable=False)
 
     def to_dict(self):
+        product = Product.query.filter_by(id=self.product_id).first()
+        image=None
+        basedir = os.path.abspath(os.path.dirname(__file__))
+        image_file= basedir + '/static/images/products/' + product.image_name
+        if os.path.isfile(image_file):
+            with open(image_file, 'rb') as f:
+                self.image = base64.b64encode(f.read()).decode('utf-8')
         return {
             "id": self.id,
+            "product": product.to_dict(),
             "quantity": self.quantity,
             "created_timestamp": self.created_timestamp,
             "updated_timestamp": self.updated_timestamp,
-            # "products": [product.to_dict() for product in self.products],
             "product_id": self.product_id,
             "order_id": self.order_id,
         }

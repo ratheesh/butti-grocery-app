@@ -27,6 +27,7 @@ axiosClient.interceptors.response.use(
       console.log('invalid/expired token')
       auth.clearAuth()
       router.push('/login')
+      return error
     }
     return Promise.reject(error)
   }

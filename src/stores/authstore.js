@@ -12,7 +12,13 @@ export const useAuthStore = defineStore('authStore', () => {
 
   // variables
   const authenticated = ref(!!localStorage.getItem('access_token'))
-  const user = ref(JSON.parse(localStorage.getItem('user')))
+  const defaultUser = {
+    role: 'user',
+    image: null,
+    image_name: ''
+  }
+
+  const user = ref(JSON.parse(localStorage.getItem('user')) || defaultUser)
 
   // functions
   function setUser(_user) {

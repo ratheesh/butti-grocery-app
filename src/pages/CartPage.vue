@@ -1,17 +1,18 @@
 <template>
   <main-layout>
     <h2 class="text-center">Your Cart</h2>
-    <div class="row col-md-8 m-auto">
+    <div class="row col-md-8 col-lg-10 m-auto">
       <div class="my-1">
         <cart-component></cart-component>
       </div>
-      <div class="col-md-10 col-md-12 d-inline-flex justify-content-end m-auto mt-2 g-2">
+      <div class="col-md-8 col-lg-10 d-inline-flex justify-content-end m-auto mt-2 g-2">
         <button type="button" class="btn btn-sm btn-secondary mx-2" @click="router.push('/')">
           <mdicon name="home" :height="20" />Goto Home
         </button>
         <button
           type="button"
           class="btn btn-sm btn-primary ml-auto"
+          :disabled="cart.items.length === 0"
           @click="router.push('/checkout')"
         >
           <svg
@@ -37,10 +38,14 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
+import { useCartStore } from '@/stores/cartstore.js'
 import MainLayout from '@/layouts/MainLayout.vue'
 import CartComponent from '@/components/CartComponent.vue'
 
 const router = useRouter()
+
+const cart = useCartStore()
+
 </script>
 
 <style scoped>
