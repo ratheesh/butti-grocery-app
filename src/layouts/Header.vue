@@ -39,7 +39,7 @@
                 </button>
               </router-link>
             </li>
-            <li class="nav-item">
+            <li v-if="user.role=='user'" class="nav-item">
               <router-link :to="{ name: 'cart' }" class="nav-link">
                 <button class="btn btn-sm btn-outline-rosy-brown">
                   <mdicon name="cart" :size="20" />
@@ -48,7 +48,7 @@
                 </button>
               </router-link>
             </li>
-            <li v-if="!auth.authenticated" class="nav-link">
+            <li v-if="!authenticated" class="nav-link">
               <router-link :to="{ name: 'login' }" class="nav-link">
                 <button class="btn btn-outline-info btn-sm">
                   <!-- <mdicon class="text-white" name="login" :size="20" /> -->
@@ -78,8 +78,16 @@
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
               >
-                <mdicon name="account" :size="20" />
-                {{ auth.user.username }}
+                <!-- <mdicon name="account" :size="20" /> -->
+                <img
+                  :src="`data:image/png;base64,${user.image}`"
+                  alt="avatar"
+                  class="rounded-circle"
+                  width="28"
+                  height="28"
+                  style="border: 50%;"
+                  >
+                <span class="ms-2 fs-6">{{ user.username }}</span>
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
                 <a class="dropdown-item" href="javascript:void(0)">
@@ -88,7 +96,7 @@
                     Profile
                   </router-link>
                 </a>
-                <li>
+                <li v-if="user.role=='user'">
                   <a class="dropdown-item" href="javascript:void(0)" style="text-decoration-none">
                     <router-link :to="{ name: 'orders' }" class="dropdown-item">
                       <svg
@@ -126,7 +134,7 @@
                   </a>
                 </li>
                 <li><hr class="dropdown-divider" /></li>
-                <li class="nav-item mx-2" v-if="!auth.authenticated">
+                <li class="nav-item mx-2" v-if="!authenticated">
                   <router-link :to="{ name: 'login' }" class="dropdown-item"> Login </router-link>
                 </li>
                 <li class="nav-item mx-2" v-else>
@@ -150,9 +158,14 @@
 import { RouterLink } from 'vue-router'
 import { useAuthStore } from '../stores/authstore'
 import { useCartStore } from '../stores/cartstore'
+import { storeToRefs } from 'pinia';
 
 const auth = useAuthStore()
 const cart = useCartStore()
+
+
+const { user, authenticated } = storeToRefs(auth)
+
 </script>
 
 <style scoped></style>
