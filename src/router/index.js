@@ -11,7 +11,8 @@ import ProfilePage from '@/pages/ProfilePage.vue'
 import CartPage from '@/pages/CartPage.vue'
 import CheckoutPage from '@/pages/CheckoutPage.vue'
 import OrdersPage from '@/pages/OrdersPage.vue'
-import ProductPage from '@/pages/ProductPage.vue'
+import OrderPage from '@/pages/OrderPage.vue'
+import UnauthorizedPage from '@/pages/UnauthorizedPage.vue'
 
 const routes = [
   {
@@ -53,37 +54,63 @@ const routes = [
     component: AdminPage,
     meta: {
       title: 'Admin',
-      requiresAuth: true
+      requiresAuth: true,
+      role: 'admin'
     }
   },
   {
     path: '/manager',
     name: 'manager',
-    component: ManagerPage
+    component: ManagerPage,
+    meta: {
+      title: 'Manager',
+      requiresAuth: true,
+      role: 'manager'
+    }
   },
   {
     path: '/cart',
     name: 'cart',
-    component: CartPage
+    component: CartPage,
+    meta: {
+      title: 'Cart',
+      requiresAuth: true
+    }
   },
   {
     path: '/checkout',
     name: 'checkout',
-    component: CheckoutPage
+    component: CheckoutPage,
+    meta: {
+      title: 'Checkout',
+      requiresAuth: true
+    }
   },
   {
     path: '/orders',
     name: 'orders',
-    component: OrdersPage
+    component: OrdersPage,
+    meta: {
+      title: 'Orders',
+      requiresAuth: true,
+      role: 'user'
+    }
   },
   {
-    path: '/product/:id',
-    name: 'product_id',
-    component: ProductPage,
-    props: true,
+    path: '/order/:id',
+    name: 'order',
+    component: OrderPage,
     meta: {
-      title: 'Product',
+      title: 'Order Info',
       requiresAuth: true
+    }
+  },
+  {
+    path: '/forbidden',
+    name: 'forbidden',
+    component: UnauthorizedPage,
+    meta: {
+      title: 'Unauthorized'
     }
   },
   {
@@ -98,17 +125,38 @@ const router = createRouter({
   routes
 })
 
-router.beforeResolve((to, from) => {
-  console.log('Coming from:', from.path)
-  if (to.meta.requiresAuth && !localStorage.getItem('access_token')) {
-    const auth = useAuthStore()
-    auth.clearAuth()
-    return {
-      path: '/login',
-      query: { redirect: to.fullPath }
+router.beforeResolve((to, from, next) => {
+  // console.log('Coming from:', from.path)
+  // console.log('Going to:', to.path)
+  const auth = useAuthStore()
+  if (to.meta.requiresAuth) {
+    if (auth.authenticated) {
+      // console.log('authenticated', to.meta.role, auth.user.role, to.path)
+      if (to.meta.role && auth.user.role !== to.meta.role) {
+        console.log('not authorized')
+        router.push('/forbidden')
+      } else {
+        if (to.path === '/') {
+          console.log('to home page', auth.user.role)
+          // redirect to correct homepage based on role
+          if (auth.user.role === 'admin') {
+            router.push('/admin')
+          } else if (auth.user.role === 'manager') {
+            router.push('/manager')
+          } else {
+            router.push('/')
+          }
+        } else next()
+      }
+    } else {
+      // console.log('to login page')
+      let redirect = { redirect: to.path }
+      next({ name: 'login' }, redirect)
     }
+  } else {
+    next()
+    // console.log('Going to:', to.path)
   }
-  console.log('Going to:', to.path)
 })
 
 export default router
