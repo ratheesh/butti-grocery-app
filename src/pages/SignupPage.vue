@@ -1,8 +1,13 @@
 <template>
   <form-layout>
     <div class="container">
-      <div class="row justify-content-center mb-3">
+      <div class="row justify-content-center vh-auto">
         <div class="col-md-6">
+          <div class="row col-md-12 col-lg-12 m-auto mt-3 px-0 d-inline-flex justify-content-center">
+            <div class="col-8 d-flex align-items-end justify-content-center ">
+              <mdicon name="basket" class="text-center text-primary mx-2" height="90" width="90" />
+            </div>
+          </div>
           <div class="card shadow-sm m-auto">
             <h3 class="text-center mt-2">Signup</h3>
             <hr />

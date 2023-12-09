@@ -3,6 +3,11 @@
     <div class="container">
       <div class="row justify-content-center vh-auto">
         <div class="col-md-5">
+          <div class="row col-md-12 col-lg-12 m-auto mt-3 px-0 d-inline-flex justify-content-center">
+            <div class="col-8 d-flex align-items-end justify-content-center ">
+              <mdicon name="basket" class="text-center text-primary mx-2" height="90" width="90" />
+            </div>
+          </div>
           <div class="card shadow-sm m-auto">
             <h3 class="text-center mt-3">Login</h3>
             <hr />
@@ -57,9 +62,10 @@
                 </div>
                 <hr class="mt-1 mx-0" />
                 <div class="mb-3 text-center">
-                  <button type="submit" class="btn btn-sm btn-outline-primary">
-                    <span v-if="loading" class="spinner-border spinner-border-sm"></span>
-                    <span v-if="!loading" class="mx-1"><mdicon name="login" :size="18" /></span>Login
+                  <button type="submit" class="btn btn-sm btn-outline-primary d-inline-flex align-items-center">
+                    <span v-if="loading" class="spinner-border spinner-border-sm mx-1"></span>
+                    <span v-if="!loading" class="mx-1"><mdicon name="login" :size="18" /></span>
+                    <span>Login</span>
                   </button>
                   <span class="text-muted mx-2">Not a Member?</span>
                   <a @click.prevent="signup" href="">Signup</a>
