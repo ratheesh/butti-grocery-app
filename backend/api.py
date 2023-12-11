@@ -242,6 +242,8 @@ class UserAPI(Resource):
 category_request_parse = reqparse.RequestParser(bundle_errors=True)
 category_request_parse.add_argument("name", type=str, required=True)
 category_request_parse.add_argument("approved", type=bool)
+category_request_parse.add_argument("request_type", type=str)
+category_request_parse.add_argument("request_data", type=str)
 class CategoryAPI(Resource):
     '''Category Object for managing categories'''
     @jwt_required()
@@ -335,19 +337,21 @@ class CategoryAPI(Resource):
 
             category.name = name
             
-            if category.approved is False and approved is True:
-                if category.request_type == 'delete':
-                    return self.delete(category.id)
-                elif category.request_type == 'add' or request_type == 'edit':
-                    if category.request_data != "":
-                        category.name = category.request_data
+            if approved is not None:
+                request_type = args.get("request_type", None)
+                if category.approved is False and approved is True:
+                    if category.request_type == 'delete':
+                        return self.delete(category.id)
+                    elif category.request_type == 'add' or request_type == 'edit':
+                        if category.request_data != "":
+                            category.name = category.request_data
+                        else:
+                            raise BadRequest("category request data is empty")
+                        category.approved = True
                     else:
-                        raise BadRequest("category request data is empty")
-                    category.approved = True
+                        raise BadRequest("category request type is invalid")
                 else:
-                    raise BadRequest("category request type is invalid")
-            else:
-                raise BadRequest("category is already approved")
+                    raise BadRequest("category is already approved")
 
             category.updated_timestamp = datetime.now()
 
