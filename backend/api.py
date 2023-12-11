@@ -241,6 +241,7 @@ class UserAPI(Resource):
 
 category_request_parse = reqparse.RequestParser(bundle_errors=True)
 category_request_parse.add_argument("name", type=str, required=True)
+category_request_parse.add_argument("approved", type=bool)
 class CategoryAPI(Resource):
     '''Category Object for managing categories'''
     @jwt_required()
@@ -259,7 +260,6 @@ class CategoryAPI(Resource):
 
     @jwt_required()
     def post(self):
-        
         user_id = get_jwt_identity()
         if user_id is None:
             raise NotFound("user id is missing in token")
@@ -267,19 +267,17 @@ class CategoryAPI(Resource):
         user = User.query.filter_by(id=user_id).first()
         if user is None:
             raise NotFound("user not found")
-
-        if user.role != 'admin':
-            approved = False
-        else:
+            
+        if user.role == 'admin':
             approved = True
+        else:
+            approved = False
 
         args = category_request_parse.parse_args(strict=True)
         name = args.get("name", None)
         if name is None:
             raise BadRequest("name not provided")
         name = name.capitalize()
-        
-        
 
         category = Category.query.filter_by(name=name).first()
         if category is not None:
@@ -288,10 +286,13 @@ class CategoryAPI(Resource):
 
         category = Category(
             name=name,
+            request_type="add",
+            request_data=name,
             approved=approved,
             created_timestamp=datetime.now(),
             updated_timestamp=datetime.now(),
         )
+
         if category is None:
             raise InternalError(message="error creating category")
 
@@ -305,6 +306,13 @@ class CategoryAPI(Resource):
     
     @jwt_required()
     def put(self, category_id):
+        user_id = get_jwt_identity()
+        if user_id is None:
+            raise NotFound("user id is missing in token")
+        user = User.query.filter_by(id=user_id).first()
+        if user is None:
+            raise NotFound("user not found")
+
         if category_id is None:
             raise NotFound("category id is missing")
 
@@ -319,8 +327,28 @@ class CategoryAPI(Resource):
                 raise BadRequest("name is empty")
             else:
                 name = name.capitalize()
+            
+            approved = args.get("approved", None)
+            
+            if approved is True and user.role != 'admin':
+                raise BadRequest('only admin can approve categories')
 
             category.name = name
+            
+            if category.approved is False and approved is True:
+                if category.request_type == 'delete':
+                    return self.delete(category.id)
+                elif category.request_type == 'add' or request_type == 'edit':
+                    if category.request_data != "":
+                        category.name = category.request_data
+                    else:
+                        raise BadRequest("category request data is empty")
+                    category.approved = True
+                else:
+                    raise BadRequest("category request type is invalid")
+            else:
+                raise BadRequest("category is already approved")
+
             category.updated_timestamp = datetime.now()
 
             try:

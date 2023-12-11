@@ -22,7 +22,7 @@
                   <span class="ms-2 fs-6">Users</span>
                 </a>
               </li>
-              <li class="nav-item d-inline-flex align-items-center" @click="component=CategoryRequests">
+              <li class="nav-item d-inline-flex align-items-center" @click="component=CategoryManagement">
                 <a href="javascript:void(0)" class="nav-link text-white" aria-current="page">
                   <mdicon name="shape" class="text-white" />
                   <span class="ms-2 fs-6">Categories</span>
@@ -56,7 +56,7 @@
 // import MainLayout from "@/layouts/MainLayout.vue";
 import DashboardLayout from "@/layouts/DashboardLayout.vue";
 import UserManagement from "@/components/admin/UserManagement.vue";
-import CategoryRequests from "@/components/admin/CategoryRequests.vue";
+import CategoryManagement from "@/components/manager/CategoryManagement.vue";
 import Analytics from "@/components/admin/AnalyticsComponent.vue";
 import LoadingIndicator from '@/components/LoadingIndicator.vue';
 import DashBoard from '@/components/admin/DashBoard.vue';

@@ -61,6 +61,8 @@ class Category(db.Model):
     __tablename__ = "category"
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     name = db.Column(db.String(32), nullable=False)
+    request_type = db.Column(db.String(32))
+    request_data = db.Column(db.String(64))
     approved = db.Column(db.Boolean, nullable=False, default=False)
     created_timestamp = db.Column(
         db.DateTime, nullable=False, default=datetime.now())
@@ -74,6 +76,8 @@ class Category(db.Model):
             "id": self.id,
             "name": self.name,
             "approved": self.approved,
+            "request_type": self.request_type,
+            "request_data": self.request_data,
             "created_timestamp": self.created_timestamp,
             "updated_timestamp": self.updated_timestamp,
             # "products": [product.to_dict() for product in self.products],
@@ -207,7 +211,7 @@ class Order(db.Model):
         }
 
 
-def create_admin_user(db):
+def create_initial_data(db):
     '''create admin user'''
     admin = User(
         name="Admin",
@@ -220,6 +224,21 @@ def create_admin_user(db):
         created_timestamp=datetime.now(),
         updated_timestamp=datetime.now(),
     )
+    
+    category_types = [ "Fruits", "Vegetables", "Grocery", "Dairy", "Bakery", "Meat", "SeaFood", "Beverages", "Snacks", "Others"]
+    categories = []
+    for category_type in category_types:
+        category = Category(
+            name=category_type,
+            request_type="GET",
+            request_data="",
+            approved=True,
+            created_timestamp=datetime.now(),
+            updated_timestamp=datetime.now(),
+        )
+        categories.append(category)
+
+    db.session.add_all(categories)
     db.session.add(admin)
     db.session.commit()
 

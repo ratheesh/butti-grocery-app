@@ -2,7 +2,7 @@
   <div class="row col-10 m-auto">
     <div class="card shadow-sm mt-4 p-0">
       <div class="card-header m-0 p-0">
-        <div class="row col-10 d-flex justify-content-between m-auto my-2">
+        <div class="row col-10 d-flex justify-content-between align-items-center m-auto my-2">
           <div class="col-auto">
             <span class="text-center fs-6 fw-normal mt-3">Categories</span>
           </div>
@@ -34,32 +34,54 @@
                         <th scope="col"><b>NAME</b></th>
                         <th scope="col"><b>CREATED</b></th>
                         <th scope="col"><b>UPDATED</b></th>
+                        <th scope="col"><b>STATUS</b></th>
                         <th scope="col"><b>ACTIONS</b></th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for="(category, idx) in categories" :id="idx" :key="idx" class="align-middle">
+                      <tr
+                        v-for="(category, idx) in categories"
+                        :id="idx"
+                        :key="idx"
+                        class="align-middle"
+                      >
                         <td>{{ category.id }}</td>
                         <td>{{ category.name }}</td>
                         <td>{{ formatDate(category.created_timestamp) }}</td>
                         <td>{{ formatDate(category.updated_timestamp) }}</td>
+                        <td v-if="category.approved == true">
+                          <span>
+                            <mdicon name="check-circle" class="text-success" :size="16" />
+                          </span>
+                          <span> Approved </span>
+                        </td>
+                        <td v-else>
+                          <span>
+                            <mdicon name="clock-time-four" class="text-purple p-1" :size="16" />
+                          </span>
+                          <span> Pending </span>
+                        </td>
                         <td>
-                          <button class="btn btn-link dropdown-toggle px-0 " data-bs-toggle="dropdown" aria-expanded="false">
+                          <button
+                            class="btn btn-link dropdown-toggle px-0"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false"
+                          >
                             <mdicon name="dots-horizontal" :width="24" :height="24" />
                           </button>
                           <ul class="dropdown-menu">
                             <li>
                               <a class="dropdown-item" href="javascript: void(0)">
-                                <mdicon
-                                  name="eye"
-                                  class="text-gray"
-                                  :size="20"
-                                />
+                                <mdicon name="eye" class="text-gray" :size="20" />
                                 View Details
                               </a>
                             </li>
                             <li>
-                              <a class="dropdown-item" href="javascript: void(0)" @click="handleCategoryAdd(category, true)">
+                              <a
+                                class="dropdown-item"
+                                href="javascript: void(0)"
+                                @click="handleCategoryAdd(category, true)"
+                              >
                                 <!-- <b><mdicon name="shape-square-rounded-plus" class="text-indian-red" :size="16"/></b> -->
                                 <svg
                                   width="20px"
@@ -78,8 +100,33 @@
                                 Edit
                               </a>
                             </li>
+                            <div v-if="role == 'admin'">
+                              <li v-if="!category.approved">
+                                <a
+                                  class="dropdown-item"
+                                  href="javascript: void(0)"
+                                  @click="handleCategoryApprove(category, true)"
+                                >
+                                  <mdicon name="check-circle" class="text-success" :size="20" />
+                                  Approve
+                                </a>
+                              </li>
+                              <li v-if="!category.approved">
+                                <a
+                                  class="dropdown-item"
+                                  href="javascript: void(0)"
+                                  @click="handleCategoryApprove(category, false)"
+                                >
+                                  <mdicon name="close-circle" class="text-warning" :size="20" />
+                                  Reject
+                                </a>
+                              </li>
+                            </div>
                           </ul>
-                          <button class="btn btn-link text-decoration-none px-0 " aria-expanded="false">
+                          <button
+                            class="btn btn-link text-decoration-none px-0"
+                            aria-expanded="false"
+                          >
                             <mdicon
                               name="close-circle"
                               :size="20"
@@ -221,11 +268,15 @@
 <script setup>
 import { ref, onMounted, reactive } from 'vue'
 import axiosClient from '@/js/axios.js'
+import { useAuthStore } from '@/stores/authstore.js'
 // import { useRouter } from 'vue-router'
 import { Modal } from 'bootstrap'
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
 
+const auth = useAuthStore()
+
 // data
+const role = ref(auth.user.role)
 const categories = ref([])
 const errordata = reactive({
   isError: false,
@@ -269,14 +320,38 @@ async function refreshCategories() {
   console.log('refreshing categories')
   main_loading.value = true
   try {
-  const resp = await axiosClient.get('/api/category')
+    const resp = await axiosClient.get('/api/category')
+    console.log(resp)
+    categories.value = resp.data
+  } catch (err) {
+    console.log('Error: ', err)
+  } finally {
+    main_loading.value = false
+  }
+}
+
+async function handleCategoryApprove(category, approve) {
+  console.log('Approve Category:', category.id)
+  loading.value = true
+
+  try {
+    if (approve) {
+      const formData = new FormData()
+      formData.append('name', category.name)
+      formData.append('approved', true)
+      console.log(formData)
+      const resp = await axiosClient.put(`/api/category/${category.id}`, formData)
       console.log(resp)
-  categories.value = resp.data
-  } catch(err)  {
-      console.log('Error: ', err)
-    } finally {
-      main_loading.value = false
+    } else {
+      const resp = await axiosClient.delete(`/api/category/${category.id}`)
+      console.log(resp)
     }
+    refreshCategories()
+  } catch (err) {
+    console.log(err)
+  } finally {
+    loading.value = false
+  }
 }
 
 function handleCategoryAdd(category, isEdit) {
