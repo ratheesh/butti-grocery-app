@@ -3,9 +3,16 @@
     <div class="container">
       <div class="row justify-content-center vh-auto">
         <div class="col-md-5">
-          <div class="row col-md-12 col-lg-12 m-auto mt-3 px-0 d-inline-flex justify-content-center">
-            <div class="col-8 d-flex align-items-end justify-content-center ">
-              <mdicon name="basket" class="text-center text-primary mx-2" height="90" width="90" />
+          <div
+            class="row col-md-12 col-lg-12 m-auto mt-3 px-0 d-inline-flex justify-content-center"
+          >
+            <div class="col-8 d-flex align-items-end justify-content-center">
+              <mdicon
+                name="basket"
+                class="text-center text-primary mx-2"
+                height="90"
+                width="90"
+              />
             </div>
           </div>
           <div class="card shadow-sm m-auto">
@@ -26,7 +33,7 @@
                         <input
                           type="text"
                           class="form-control rounded-end"
-                          :class="{ 'form-control':true, 'is-invalid':errors.username }"
+                          :class="{ 'form-control': true, 'is-invalid': errors.username }"
                           placeholder="username"
                           id="username"
                           v-model="username"
@@ -50,7 +57,7 @@
                           class="form-control rounded-end"
                           v-model="password"
                           id="password"
-                          :class="{ 'form-control':true, 'is-invalid':errors.password }"
+                          :class="{ 'form-control': true, 'is-invalid': errors.password }"
                           placeholder="Enter password"
                         />
                         <div class="invalid-feedback">
@@ -62,9 +69,25 @@
                 </div>
                 <hr class="mt-1 mx-0" />
                 <div class="mb-3 text-center">
-                  <button type="submit" class="btn btn-sm btn-outline-primary d-inline-flex align-items-center">
-                    <span v-if="loading" class="spinner-border spinner-border-sm mx-1"></span>
-                    <span v-if="!loading" class="mx-1"><mdicon name="login" :size="18" /></span>
+                  <a
+                    href="javascript:void(0)"
+                    class="btn btn-sm btn-secondary d-inline-flex align-items-center mx-2"
+                    @click="router.push('/')"
+                  >
+                    <span class="mx-1"><mdicon name="home" :size="18" /></span>
+                    <span>Home</span>
+                  </a>
+                  <button
+                    type="submit"
+                    class="btn btn-sm btn-primary d-inline-flex align-items-center mx-2"
+                  >
+                    <span
+                      v-if="loading"
+                      class="spinner-border spinner-border-sm mx-1"
+                    ></span>
+                    <span v-if="!loading" class="mx-1"
+                      ><mdicon name="login" :size="18"
+                    /></span>
                     <span>Login</span>
                   </button>
                   <span class="text-muted mx-2">Not a Member?</span>
@@ -83,66 +106,64 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
-// import { router } from "@/router";
+import { ref, reactive } from "vue";
 // import axiosClient from '@/js/axios.js'
-import router from '../router/index.js'
-import { useAuthStore } from '@/stores/authstore.js'
-import FormLayout from '@/layouts/FormLayout.vue'
+import router from "../router/index.js";
+import { useAuthStore } from "@/stores/authstore.js";
+import FormLayout from "@/layouts/FormLayout.vue";
 
-const username = ref('')
-const password = ref('')
-let loading = ref(false)
-const iserr = ref(false)
-const errmsg = ref('')
+const username = ref("");
+const password = ref("");
+let loading = ref(false);
+const iserr = ref(false);
+const errmsg = ref("");
 const errors = reactive({
   username: false,
   password: false,
-})
+});
 
-const auth = useAuthStore()
+const auth = useAuthStore();
 
 const login = async () => {
-  loading.value = true
+  loading.value = true;
   try {
-    const res = await auth.login(username.value, password.value)
+    const res = await auth.login(username.value, password.value);
     if (res.status === 200) {
-      console.log(`${auth.user.name} logged in as ${auth.user.role}`)
+      console.log(`${auth.user.name} logged in as ${auth.user.role}`);
 
       if (router.currentRoute.value.query.redirect) {
-        router.push(router.currentRoute.value.query.redirect)
-        return
+        router.push(router.currentRoute.value.query.redirect);
+        return;
       }
-      if (auth.user.role === 'admin') {
-        router.push('/admin')
-      } else if (auth.user.role === 'manager') {
-        router.push('/manager')
+      if (auth.user.role === "admin") {
+        router.push("/admin");
+      } else if (auth.user.role === "manager") {
+        router.push("/manager");
       } else {
-        router.push('/')
+        router.push("/");
       }
-
     } else {
-      console.log('Login Error')
-      console.log(res)
-      iserr.value = true
-      errmsg.value = res.data
-      errors.username = errmsg.value.includes('user')
-      errors.password = errmsg.value.includes('password')
+      console.log("Login Error");
+      console.log(res);
+      iserr.value = true;
+      errmsg.value = res.data;
+      errors.username = errmsg.value.includes("user");
+      errors.password = errmsg.value.includes("password");
     }
   } catch (err) {
-    console.log('Login Error')
-    console.log(err)
-    iserr.value = true
-    errmsg.value = err.data
+    console.log("Login Error");
+    console.log(err);
+    iserr.value = true;
+    errmsg.value = err.data;
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 const signup = () => {
-  console.log('Signup')
-  router.push('/signup')
-}
+  console.log("Signup");
+  router.push("/signup");
+};
 </script>
 
 <style scoped></style>

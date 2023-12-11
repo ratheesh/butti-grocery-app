@@ -3,9 +3,16 @@
     <div class="container">
       <div class="row justify-content-center vh-auto">
         <div class="col-md-6">
-          <div class="row col-md-12 col-lg-12 m-auto mt-3 px-0 d-inline-flex justify-content-center">
-            <div class="col-8 d-flex align-items-end justify-content-center ">
-              <mdicon name="basket" class="text-center text-primary mx-2" height="90" width="90" />
+          <div
+            class="row col-md-12 col-lg-12 m-auto mt-3 px-0 d-inline-flex justify-content-center"
+          >
+            <div class="col-8 d-flex align-items-end justify-content-center">
+              <mdicon
+                name="basket"
+                class="text-center text-primary mx-2"
+                height="90"
+                width="90"
+              />
             </div>
           </div>
           <div class="card shadow-sm m-auto">
@@ -25,7 +32,7 @@
                         </span>
                         <input
                           type="text"
-                          :class="{ 'form-control':true, 'is-invalid':errors.name }"
+                          :class="{ 'form-control': true, 'is-invalid': errors.name }"
                           placeholder="Kumar"
                           id="name"
                           v-model="userdata.name"
@@ -46,7 +53,7 @@
                           class="form-control"
                           placeholder="username"
                           id="username"
-                          :class="{ 'form-control':true, 'is-invalid':errors.username }"
+                          :class="{ 'form-control': true, 'is-invalid': errors.username }"
                           v-model="userdata.username"
                           autofocus
                         />
@@ -65,7 +72,7 @@
                           id="email"
                           class="form-control"
                           placeholder="username@user.com"
-                          :class="{ 'form-control':true, 'is-invalid':errors.email }"
+                          :class="{ 'form-control': true, 'is-invalid': errors.email }"
                           v-model="userdata.email"
                         />
                       </div>
@@ -82,10 +89,14 @@
                           name="role"
                           id="role"
                           class="form-control"
-                          :class="{ 'form-control':true, 'is-invalid':errors.role }"
+                          :class="{ 'form-control': true, 'is-invalid': errors.role }"
                           v-model="userdata.role"
                         >
-                          <option v-for="(option, idx) in options" :key="idx" :value="option">
+                          <option
+                            v-for="(option, idx) in options"
+                            :key="idx"
+                            :value="option"
+                          >
                             {{ option }}
                           </option>
                         </select>
@@ -101,7 +112,7 @@
                         </span>
                         <input
                           type="password"
-                          :class="{ 'form-control':true, 'is-invalid':errors.password }"
+                          :class="{ 'form-control': true, 'is-invalid': errors.password }"
                           v-model="userdata.password"
                           id="password"
                           class="form-control"
@@ -119,7 +130,7 @@
                         </span>
                         <input
                           type="password"
-                          :class="{ 'form-control':true, 'is-invalid':errors.password }"
+                          :class="{ 'form-control': true, 'is-invalid': errors.password }"
                           v-model="userdata.password2"
                           id="password2"
                           class="form-control"
@@ -128,8 +139,13 @@
                       </div>
                     </div>
                     <div class="mb-2">
-                      <input type="file" class="form-control" id="profileImage" placeholder="Profile Image" accept="image/png, image/jpeg"
-                      value=""
+                      <input
+                        type="file"
+                        class="form-control"
+                        id="profileImage"
+                        placeholder="Profile Image"
+                        accept="image/png, image/jpeg"
+                        value=""
                         @change="handleImage"
                       />
                     </div>
@@ -137,7 +153,15 @@
                 </div>
                 <hr class="mt-1 mx-0" />
                 <div class="mb-3 text-center">
-                  <button type="submit" class="btn btn-sm btn-outline-primary mx-2">
+                  <a
+                    href="javascript:void(0)"
+                    class="btn btn-sm btn-secondary d-inline-flex align-items-center mx-2"
+                    @click="router.push('/')"
+                  >
+                    <span class="mx-1"><mdicon name="home" :size="18" /></span>
+                    <span>Home</span>
+                  </a>
+                  <button type="submit" class="btn btn-sm btn-primary mx-2">
                     <span v-if="loading" class="spinner-border spinner-border-sm"></span>
                     <span v-if="!loading"><mdicon name="account-plus" :size="18" /></span>
                     Signup
@@ -146,7 +170,11 @@
                   <a @click.prevent="handleLogin" href="#">Login</a>
                 </div>
               </form>
-              <div class="alert alert-danger mx-3 text-center" role="alert" v-if="errorinfo.iserr">
+              <div
+                class="alert alert-danger mx-3 text-center"
+                role="alert"
+                v-if="errorinfo.iserr"
+              >
                 {{ errorinfo.errmsg }}
               </div>
             </div>
@@ -158,122 +186,121 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
-import axiosClient from '@/js/axios.js'
-import { useRouter } from 'vue-router'
-import FormLayout from '@/layouts/FormLayout.vue'
+import { ref, reactive } from "vue";
+import axiosClient from "@/js/axios.js";
+import { useRouter } from "vue-router";
+import FormLayout from "@/layouts/FormLayout.vue";
 
-const options = ['user', 'manager']
+const options = ["user", "manager"];
 
 const userdata = reactive({
-  name: '',
-  username: '',
-  email: '',
-  role: 'user',
-  password: '',
-  password2: ''
-})
+  name: "",
+  username: "",
+  email: "",
+  role: "user",
+  password: "",
+  password2: "",
+});
 
 const errorinfo = reactive({
   iserr: false,
-  errmsg: ''
-})
+  errmsg: "",
+});
 
-const loading = ref(false)
-const iserr = ref(false)
-const errmsg = ref('')
+const loading = ref(false);
+const iserr = ref(false);
+const errmsg = ref("");
 const errors = reactive({
-  name:false,
+  name: false,
   username: false,
-  email:false,
+  email: false,
   role: false,
   password: false,
-})
+});
 
-const router = useRouter()
+const router = useRouter();
 
 const handleImage = (e) => {
-  console.log('modal: handle Image')
+  console.log("modal: handle Image");
   // console.log(e)
   if (e.target.files.length === 0) {
-    console.log('cancel file selection')
-    userdata.image_name = null
-    userdata.image = null
-    return
+    console.log("cancel file selection");
+    userdata.image_name = null;
+    userdata.image = null;
+    return;
   }
 
-  userdata.image = e.target.files[0]
-  userdata.image_name = userdata.image.name
-  console.log(userdata.image)
-  createBase64Image(userdata.image)
-}
+  userdata.image = e.target.files[0];
+  userdata.image_name = userdata.image.name;
+  console.log(userdata.image);
+  createBase64Image(userdata.image);
+};
 
 function createBase64Image(fObj) {
-  const reader = new FileReader()
+  const reader = new FileReader();
   reader.onload = (e) => {
-    userdata.image = e.target.result.split(',')[1]
-  }
-  reader.readAsDataURL(fObj)
+    userdata.image = e.target.result.split(",")[1];
+  };
+  reader.readAsDataURL(fObj);
 }
 
 const handleSignup = async () => {
-  errorinfo.iserr = false
-  errorinfo.errmsg = ''
-  errors.name=false 
-  errors.username=false
-  errors.email= false
-  errors.role=false
-  errors.password=false
+  errorinfo.iserr = false;
+  errorinfo.errmsg = "";
+  errors.name = false;
+  errors.username = false;
+  errors.email = false;
+  errors.role = false;
+  errors.password = false;
 
   if (userdata.password != userdata.password2) {
-    iserr.value = true
-    errmsg.value = 'Password does not match'
-    userdata.password = userdata.password2 = ''
-    return
+    iserr.value = true;
+    errmsg.value = "Password does not match";
+    userdata.password = userdata.password2 = "";
+    return;
   }
 
-    const formData = new FormData()
-    formData.append('name', userdata.name)
-    formData.append('username', userdata.username)
-    formData.append('email', userdata.email)
-    formData.append('role', userdata.role)
-    formData.append('password', userdata.password)
-    formData.append('image_name', userdata.image_name)
-    formData.append('image', userdata.image)
+  const formData = new FormData();
+  formData.append("name", userdata.name);
+  formData.append("username", userdata.username);
+  formData.append("email", userdata.email);
+  formData.append("role", userdata.role);
+  formData.append("password", userdata.password);
+  formData.append("image_name", userdata.image_name);
+  formData.append("image", userdata.image);
 
-    loading.value = true
-    try {
-      const res = await axiosClient.post('/api/user', formData)
-      console.log(res)
-      if (res.status == 201) { 
-       console.log(`user ${userdata.username} signed up!`)
-       router.push('/login')
+  loading.value = true;
+  try {
+    const res = await axiosClient.post("/api/user", formData);
+    console.log(res);
+    if (res.status == 201) {
+      console.log(`user ${userdata.username} signed up!`);
+      router.push("/login");
+    } else {
+      console.log("Signup Error");
+      errorinfo.iserr = true;
+      errorinfo.errmsg = res.data;
+      errors.name = errorinfo.errmsg.includes("name");
+      errors.username = errorinfo.errmsg.includes("user");
+      errors.email = errorinfo.errmsg.includes("email");
+      errors.password = errorinfo.errmsg.includes("password");
     }
-      else {
-        console.log('Signup Error')
-        errorinfo.iserr = true
-        errorinfo.errmsg = res.data
-        errors.name = errorinfo.errmsg.includes('name')
-        errors.username = errorinfo.errmsg.includes('user')
-        errors.email = errorinfo.errmsg.includes('email')
-        errors.password = errorinfo.errmsg.includes('password')
-      }
-    } catch (err) {
-      console.log(err)
-        errorinfo.iserr = true
-        errorinfo.errmsg = err.response.data
-        errors.name = errorinfo.errmsg.includes('name')
-        errors.username = errorinfo.errmsg.includes('user')
-        errors.email = errorinfo.errmsg.includes('email')
-        errors.password = errorinfo.errmsg.includes('password')
-    } finally {
-      loading.value = false
-    }
+  } catch (err) {
+    console.log(err);
+    errorinfo.iserr = true;
+    errorinfo.errmsg = err.response.data;
+    errors.name = errorinfo.errmsg.includes("name");
+    errors.username = errorinfo.errmsg.includes("user");
+    errors.email = errorinfo.errmsg.includes("email");
+    errors.password = errorinfo.errmsg.includes("password");
+  } finally {
+    loading.value = false;
   }
+};
 
 const handleLogin = () => {
-  router.push('/login')
-}
+  router.push("/login");
+};
 </script>
 
 <style scoped></style>

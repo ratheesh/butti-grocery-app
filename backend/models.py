@@ -61,6 +61,7 @@ class Category(db.Model):
     __tablename__ = "category"
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     name = db.Column(db.String(32), nullable=False)
+    approved = db.Column(db.Boolean, nullable=False, default=False)
     created_timestamp = db.Column(
         db.DateTime, nullable=False, default=datetime.now())
     updated_timestamp = db.Column(
@@ -72,6 +73,7 @@ class Category(db.Model):
         return {
             "id": self.id,
             "name": self.name,
+            "approved": self.approved,
             "created_timestamp": self.created_timestamp,
             "updated_timestamp": self.updated_timestamp,
             # "products": [product.to_dict() for product in self.products],

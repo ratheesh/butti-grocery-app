@@ -8,7 +8,7 @@ import json
 # from sqlalchemy import desc, func, or_, and_
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_required, get_jwt_identity)
-from .models import User
+from .models import User,Product, Category
 from .jwt import access
 from .db import db
 
@@ -38,17 +38,12 @@ def login():
 @jwt_required()
 def logout():
     return "logged out",200
-
-# @routes.route("/<path:path>", methods=["GET"])
-# def send_image(path):
-#     '''serve images'''
-#     img_path=os.path.join(app.config["UPLOAD_FOLDER"], path)
-#     print(img_path)
-#     if os.path.isfile(img_path):
-#         return send_file(img_path, mimetype='image/png')
-#     else:
-#         return jsonify("image not found"), 404
     
+@routes.route("/home", methods=["GET"])
+def home():
+    '''home route'''
+    products = Product.query.filter(Product.expiry_date > datetime.now()).all()
+    return make_response(jsonify([product.to_dict() for product in products]), 200)
 
 @routes.route("/approve", methods=["POST"])
 @jwt_required()
@@ -81,3 +76,34 @@ def approve():
             return jsonify("error approving user"), 500
 
         return make_response(jsonify(user=user.to_dict()),200)
+
+@routes.route("/approvecategory", methods=["POST"])
+@jwt_required()
+@access(["admin"])
+def approve_category(id):
+    '''approve category'''
+    current_user_id = get_jwt_identity()
+    current_user = User.query.get(current_user_id)
+    if current_user.role != "admin":
+        return make_response(jsonify("unauthorized"), 403)
+    else:
+        data = request.get_json()
+        user_id = data.get("user_id")
+        approved = data.get('approved')
+        if approved == 'false':
+            approved = False
+        else:
+            approved = True
+
+        if user_id is None or approved is None:
+            return make_response(jsonify("invalid request"), 400)
+
+        category = Category.query.get(id)
+        category.approved = approved
+        try:
+            db.session.add(category)
+            db.session.commit()
+        except:
+            return jsonify("error approving category"), 500
+
+        return make_response(jsonify(category=category.to_dict()),200)

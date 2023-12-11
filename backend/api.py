@@ -14,6 +14,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from .db import db
 from .models import User, Category, Product, Item, Bookmark, Order
+from .jwt import access
 
 api = Blueprint("api", __name__)
 
@@ -258,12 +259,27 @@ class CategoryAPI(Resource):
 
     @jwt_required()
     def post(self):
-        args = category_request_parse.parse_args(strict=True)
         
+        user_id = get_jwt_identity()
+        if user_id is None:
+            raise NotFound("user id is missing in token")
+        
+        user = User.query.filter_by(id=user_id).first()
+        if user is None:
+            raise NotFound("user not found")
+
+        if user.role != 'admin':
+            approved = False
+        else:
+            approved = True
+
+        args = category_request_parse.parse_args(strict=True)
         name = args.get("name", None)
         if name is None:
             raise BadRequest("name not provided")
         name = name.capitalize()
+        
+        
 
         category = Category.query.filter_by(name=name).first()
         if category is not None:
@@ -272,6 +288,7 @@ class CategoryAPI(Resource):
 
         category = Category(
             name=name,
+            approved=approved,
             created_timestamp=datetime.now(),
             updated_timestamp=datetime.now(),
         )

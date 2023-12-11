@@ -31,47 +31,45 @@
 </template>
 
 <script setup>
-import MainLayout from '@/layouts/MainLayout.vue'
-import ProductCard from '@/components/ProductCard.vue'
-import LoadingIndicator from '@/components/LoadingIndicator.vue'
+import MainLayout from "@/layouts/MainLayout.vue";
+import ProductCard from "@/components/ProductCard.vue";
+import LoadingIndicator from "@/components/LoadingIndicator.vue";
 
-import { ref, onMounted } from 'vue'
-import axiosClient from '@/js/axios.js'
-import router from '@/router/index.js'
-import { storeToRefs } from 'pinia'
-import { useAuthStore } from '../stores/authstore'
+import { ref, onMounted } from "vue";
+import axiosClient from "@/js/axios.js";
+import router from "@/router/index.js";
+import { storeToRefs } from "pinia";
+import { useAuthStore } from "../stores/authstore";
 
-const products = ref([])
-const loading = ref(true)
+const products = ref([]);
+const loading = ref(true);
 
 onMounted(() => {
-  const auth = useAuthStore()
-  const { user, authenticated } = storeToRefs(auth)
+  const auth = useAuthStore();
+  const { user, authenticated } = storeToRefs(auth);
   if (authenticated) {
-    if (user.value.role === 'admin') {
-      router.push({ name: 'admin' })
-    } else if (user.value.role === 'manager') {
-      router.push({ name: 'manager' })
+    if (user.value.role === "admin") {
+      router.push({ name: "admin" });
+    } else if (user.value.role === "manager") {
+      router.push({ name: "manager" });
     }
-    //  else {
-    //   router.push({ name: 'user' })
-    // }
   }
-})
+});
 
 async function fetchData() {
-  console.log('Fetching data...')
-  loading.value = true
+  console.log("Fetching data...");
+  loading.value = true;
   try {
-    const resp = await axiosClient.get('/api/product')
-    console.log(resp)
-    products.value = resp.data
+    const resp = await axiosClient.get("/home");
+    console.log(resp);
+    products.value = resp.data;
+    // products.value = products.value.filter((x) => new Date(x.expiry_date) > Date.now());
   } catch (err) {
-    console.log(err)
+    console.log(err);
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 
-fetchData()
+fetchData();
 </script>
