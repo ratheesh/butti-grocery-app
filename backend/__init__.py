@@ -10,7 +10,7 @@ from datetime import datetime,timedelta
 from .api import api, UserAPI, CategoryAPI, ProductAPI, OrderAPI
 from .routes import routes
 from .db import db
-from .models import User, create_admin_user
+from .models import User, create_initial_data
 from flask_jwt_extended import JWTManager
 
 
@@ -38,10 +38,10 @@ cache = Cache(app, config={'CACHE_TYPE': 'simple'})
 dbfile = os.path.join(basedir, DB_FILE)
 if not os.path.exists(dbfile):
     print("db file: ", dbfile)
-    print("==== DB FILE DOES NOT EXIST, CREATING ONE =====")
+    print("==== DB File does not exist, Creating one =====")
     db.create_all()
-    print("==== CREATING ADMIN USER =====")
-    create_admin_user(db)
+    print("==== Creating Admin and Common Categories =====")
+    create_initial_data(db)
 
 jwt = JWTManager(app)
 @jwt.user_identity_loader
