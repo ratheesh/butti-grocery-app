@@ -1,5 +1,4 @@
 import os
-from flask import current_app as app
 from flask import request, jsonify,abort, make_response, send_file
 from datetime import datetime, timedelta
 from functools import wraps
@@ -71,6 +70,7 @@ def approve():
         user.approved = approved
         try:
             db.session.add(user)
+            cache.clear()
             db.session.commit()
         except:
             return jsonify("error approving user"), 500
@@ -102,6 +102,7 @@ def approve_category(id):
         category.approved = approved
         try:
             db.session.add(category)
+            cache.clear()
             db.session.commit()
         except:
             return jsonify("error approving category"), 500

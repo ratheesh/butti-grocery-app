@@ -13,8 +13,11 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from .db import db
+from .config import UPLOAD_FOLDER
 from .models import User, Category, Product, Item, Bookmark, Order
 from .jwt import access
+from flask import current_app as app
+from .cache import cache
 
 api = Blueprint("api", __name__)
 
@@ -59,6 +62,7 @@ class UserAPI(Resource):
     User Object for managing users
     """
     @jwt_required()
+    @cache.memoize()
     def get(self, username=None):
         if username:
             user = User.query.filter_by(username=username).first()
@@ -143,7 +147,7 @@ class UserAPI(Resource):
 
                 file_data = base64.b64decode(image)
                 basedir = os.path.abspath(os.path.dirname(__file__))
-                filename= basedir + '/static/images/users/' + image_name
+                filename= UPLOAD_FOLDER + '/images/users/' + image_name
                 print('Image filename to be saved: ', filename)
 
                 # with open(filename, 'wb') as f:
@@ -198,8 +202,7 @@ class UserAPI(Resource):
                         image_name = user.image_name
                     
                     file_data = base64.b64decode(image)
-                    basedir = os.path.abspath(os.path.dirname(__file__))
-                    filename = basedir + '/static/images/users/' + image_name
+                    filename = UPLOAD_FOLDER + '/images/users/' + image_name
                     print('user image file to be saved:', filename)
                     
                     img = Image.open(BytesIO(file_data))
@@ -250,6 +253,7 @@ category_request_parse.add_argument("request_data", type=str)
 class CategoryAPI(Resource):
     '''Category Object for managing categories'''
     @jwt_required()
+    @cache.memoize()
     def get(self, category_id=None):
         if category_id is None:
             categories = Category.query.all()
@@ -428,6 +432,7 @@ product_request_parse.add_argument("image", type=str)
 class ProductAPI(Resource):
     '''Product Object for managing products'''
 
+    @cache.memoize()
     def get(self, category_id=None, product_id=None):
         if category_id is None:
             products = Product.query.all()
@@ -518,8 +523,7 @@ class ProductAPI(Resource):
                 product.image_name = image_name
 
                 file_data = base64.b64decode(image)
-                basedir = os.path.abspath(os.path.dirname(__file__))
-                filename= basedir + '/static/images/products/' + image_name
+                filename= UPLOAD_FOLDER + '/images/products/' + image_name
                 print('Image filename to be saved: ', filename)
 
                 # with open(filename, 'wb') as f:
@@ -585,8 +589,7 @@ class ProductAPI(Resource):
                             image_name = product.image_name
 
                         file_data = base64.b64decode(image)
-                        basedir = os.path.abspath(os.path.dirname(__file__))
-                        filename= basedir + '/static/images/products/' + image_name
+                        filename= UPLOAD_FOLDER + '/images/products/' + image_name
                         print('Image filename to be saved: ', filename)
 
                         # with open(filename, 'wb') as f:
@@ -634,8 +637,7 @@ class ProductAPI(Resource):
                 db.session.commit()
                 
                 if image_name != 'default.png':
-                    basedir = os.path.abspath(os.path.dirname(__file__))
-                    filename= basedir + '/static/images/products/' + image_name
+                    filename= UPLOAD_FOLDER + '/images/products/' + image_name
                     if os.path.isfile(filename):
                         try:
                             os.remove(filename)
@@ -660,6 +662,7 @@ class OrderAPI(Resource):
     '''Order Object for managing orders'''
     # @marshal_with(order_response_fields)
     @jwt_required()
+    @cache.memoize()
     def get(self, id=None):
         user_id = get_jwt_identity()
         if user_id is None:

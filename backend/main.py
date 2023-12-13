@@ -6,36 +6,29 @@ from flask_cors import CORS
 from flask_restful import Api
 from flask_caching import Cache
 from datetime import datetime,timedelta
-
-from .api import api, UserAPI, CategoryAPI, ProductAPI, OrderAPI
-from .routes import routes
-from .db import db
-from .models import User, create_initial_data
+from celery.schedules import crontab
 from flask_jwt_extended import JWTManager
 
+from application.config import Config,dbfile
+from application.routes import routes
+from application.db import db
+from application.cache import cache
+from application.models import User, create_initial_data
+from application.celery_worker import celery_init_app
+from application.tasks import send_daily_reminder, send_monthly_reminder
 
-DB_FILE = "butti.sqlite3"
-basedir = os.path.abspath(os.path.dirname(__file__))
-db_file = "sqlite:///" + os.path.join(basedir, DB_FILE)
 app = Flask(__name__, template_folder="templates")
+app.config.from_object(Config)
 app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 app.debug = True
-
-app.config["SECRET_KEY"] = "butti000"
-app.config['JWT_SECRET_KEY'] = base64.b64decode(app.config['SECRET_KEY'])
-app.config["SQLALCHEMY_DATABASE_URI"] = db_file
-app.config["UPLOAD_FOLDER"] = basedir
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=30)
-app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=10)
+app.app_context().push()
 
 CORS(app)
-hapi = Api(app)
 db.init_app(app)
+cache.init_app(app)
+celery = celery_init_app(app)
 app.app_context().push()
-cache = Cache(app, config={'CACHE_TYPE': 'simple'})
 
-dbfile = os.path.join(basedir, DB_FILE)
 if not os.path.exists(dbfile):
     print("db file: ", dbfile)
     print("==== DB File does not exist, Creating one =====")
@@ -60,14 +53,16 @@ def invalid_token_callback(msg):
 @jwt.invalid_token_loader
 def invalid_token_callback(msg):
     return make_response('token expired', 401)
+    
 
-app.register_blueprint(routes, url_prefix="/")
-app.register_blueprint(api, url_prefix="/api")
-
+from application.api import api, UserAPI, CategoryAPI, ProductAPI, OrderAPI
+hapi = Api(app)
 hapi.add_resource(UserAPI, "/api/user", "/api/user/<username>")
 hapi.add_resource(CategoryAPI, "/api/category", "/api/category/<int:category_id>")
 hapi.add_resource(ProductAPI, "/api/product", "/api/product/<int:category_id>", "/api/product/<int:category_id>/<int:product_id>")
-# hapi.add_resource(BookmarkAPI, "/api/bookmark/<int:product_id>", "/api/bookmark/<int:product_id>/<int:bookmark_id>")
 hapi.add_resource(OrderAPI, "/api/order", "/api/order/<int:id>")
+app.register_blueprint(api, url_prefix="/api")
+app.register_blueprint(routes, url_prefix="/")
 
-# End of File
+if __name__ == "__main__":
+    app.run(host='0.0.0.0')

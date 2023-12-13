@@ -7,6 +7,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import backref,relationship
 from werkzeug.security import generate_password_hash
 from .db import db
+from .config import UPLOAD_FOLDER
 
 class User(db.Model):
     '''User Model'''
@@ -31,8 +32,7 @@ class User(db.Model):
 
     def to_dict(self):
         self.image=None
-        basedir = os.path.abspath(os.path.dirname(__file__))
-        image_file= basedir + '/static/images/users/' + self.image_name
+        image_file= UPLOAD_FOLDER + '/images/users/' + self.image_name
         if os.path.isfile(image_file):
             with open(image_file, 'rb') as f:
                 self.image = base64.b64encode(f.read()).decode('utf-8')
@@ -107,8 +107,7 @@ class Product(db.Model):
 
     def to_dict(self):
         self.image=None
-        basedir = os.path.abspath(os.path.dirname(__file__))
-        image_file= basedir + '/static/images/products/' + self.image_name
+        image_file= UPLOAD_FOLDER + '/images/products/' + self.image_name
         if os.path.isfile(image_file):
             with open(image_file, 'rb') as f:
                 self.image = base64.b64encode(f.read()).decode('utf-8')
@@ -146,8 +145,7 @@ class Item(db.Model):
     def to_dict(self):
         product = Product.query.filter_by(id=self.product_id).first()
         image=None
-        basedir = os.path.abspath(os.path.dirname(__file__))
-        image_file= basedir + '/static/images/products/' + product.image_name
+        image_file= UPLOAD_FOLDER + '/images/products/' + product.image_name
         if os.path.isfile(image_file):
             with open(image_file, 'rb') as f:
                 self.image = base64.b64encode(f.read()).decode('utf-8')
