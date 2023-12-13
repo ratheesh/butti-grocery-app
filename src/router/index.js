@@ -13,6 +13,10 @@ import CheckoutPage from '@/pages/CheckoutPage.vue'
 import OrdersPage from '@/pages/OrdersPage.vue'
 import OrderPage from '@/pages/OrderPage.vue'
 import UnauthorizedPage from '@/pages/UnauthorizedPage.vue'
+import AdminDashboard from '@/components/admin/DashBoard.vue'
+import AdminUserManagement from '@/components/admin/UserManagement.vue'
+import AdminCategoryManagement from '@/components/manager/CategoryManagement.vue'
+import AdminAnalytics from '@/components/admin/AnalyticsComponent.vue'
 
 const routes = [
   {
@@ -52,6 +56,28 @@ const routes = [
     path: '/admin',
     name: 'admin',
     component: AdminPage,
+    children: [
+      {
+        path: 'dashboard',
+        name: 'admindashboard',
+        component: AdminDashboard
+      },
+      {
+        path: 'users',
+        name: 'adminusers',
+        component: AdminUserManagement
+      },
+      {
+        path: 'category',
+        name: 'admincategories',
+        component: AdminCategoryManagement
+      },
+      {
+        path: 'analytics',
+        name: 'adminanalytics',
+        component: AdminAnalytics
+      }
+    ],
     meta: {
       title: 'Admin',
       requiresAuth: true,

@@ -13,7 +13,7 @@
                 <span class="fs-3 text-warning text-center">Admin</span>
               </a>
               <hr class="text-white p-0" />
-              <li class="nav-item d-inline-flex align-items-center" @click="component = DashBoard">
+              <li class="nav-item d-inline-flex align-items-center" @click="handleNav('admindashboard')">
                 <a href="javascript:void(0)" class="nav-link text-white" aria-current="page">
                   <mdicon name="gauge" class="text-white" />
                   <span class="ms-2 fs-6">Dashboard</span>
@@ -21,7 +21,7 @@
               </li>
               <li
                 class="nav-item d-inline-flex align-items-center"
-                @click="component = UserManagement"
+                @click="handleNav('adminusers')"
               >
                 <a href="javascript:void(0)" class="nav-link text-white" aria-current="page">
                   <mdicon name="account-multiple" class="text-white" />
@@ -30,14 +30,14 @@
               </li>
               <li
                 class="nav-item d-inline-flex align-items-center"
-                @click="component = CategoryManagement"
+                @click="handleNav('admincategories')"
               >
                 <a href="javascript:void(0)" class="nav-link text-white" aria-current="page">
                   <mdicon name="shape" class="text-white" />
                   <span class="ms-2 fs-6">Categories</span>
                 </a>
               </li>
-              <li class="nav-item d-inline-flex align-items-center" @click="component = Analytics">
+              <li class="nav-item d-inline-flex align-items-center" @click="handleNav('adminanalytics')">
                 <a href="javascript:void(0)" class="nav-link text-white" aria-current="page">
                   <mdicon name="chart-line" class="text-white" />
                   <span class="ms-2 fs-6">Analytics</span>
@@ -50,8 +50,8 @@
     </template>
     <suspense timeout="0">
       <template #default>
-        <!-- <user-management></user-management> -->
-        <component :is="component"></component>
+        <!-- <component :is="component"></component> -->
+        <router-view></router-view>
       </template>
       <template #fallback>
         <loading-indicator></loading-indicator>
@@ -61,32 +61,28 @@
 </template>
 
 <script setup>
-// import axiosClient from "@/js/axios.js";
-// import MainLayout from "@/layouts/MainLayout.vue";
-import DashboardLayout from '@/layouts/DashboardLayout.vue'
-import UserManagement from '@/components/admin/UserManagement.vue'
-import CategoryManagement from '@/components/manager/CategoryManagement.vue'
-import Analytics from '@/components/admin/AnalyticsComponent.vue'
-import LoadingIndicator from '@/components/LoadingIndicator.vue'
-import DashBoard from '@/components/admin/DashBoard.vue'
 import { onMounted } from 'vue'
+import { RouterView } from 'vue-router'
 import { useAuthStore } from '@/stores/authstore.js'
 import router from '../router/index.js'
-import { shallowRef } from 'vue'
+import DashboardLayout from '@/layouts/DashboardLayout.vue'
+import LoadingIndicator from '@/components/LoadingIndicator.vue'
 
 const auth = useAuthStore()
-
-const component = shallowRef('DashBoard')
 
 onMounted(() => {
   if (auth.user.role !== 'admin') {
     router.push({ name: 'login' })
-  }
+  } 
 })
+
+const handleNav = (route) => {
+  router.push({ name: route })
+}
 </script>
 
 <style scoped>
-.nav-pills .nav-link.active {
+.nav-pills .nav-item.active {
   background-color: #374151;
   border-radius: 5px;
 }
