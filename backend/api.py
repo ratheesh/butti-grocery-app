@@ -26,9 +26,12 @@ class AlreadyExists(HTTPException):
     def __init__(self, message):
         self.response = make_response(message, 409)
 
-class Unauthorized(HTTPException):
+class AuthenticationError(HTTPException):
     def __init__(self, message):
         self.response = make_response(message, 401)
+class AuthorizationError(HTTPException):
+    def __init__(self, message):
+        self.response = make_response(message, 403)
 
 
 class NotFound(HTTPException):
@@ -92,7 +95,7 @@ class UserAPI(Resource):
             raise BadRequest("role not provided")
         else:
             if role == 'admin':
-                raise BadRequest("admin role can not be created")
+                raise AuthorizationError("admin role can not be created")
         if password is None or password == '':
             raise BadRequest("password not provided")
         # if len(password) < 4:
@@ -183,7 +186,7 @@ class UserAPI(Resource):
             user = User.query.filter_by(username=username).first()
             if user is not None:
                 if user.username == "admin":
-                    raise Unauthorized(message="admin profile can not modified")
+                    raise AuthorizationError(message="admin profile can not modified")
             else:
                 raise NotFound(message="user not found")
             
@@ -229,7 +232,7 @@ class UserAPI(Resource):
                 raise NotFound(message="User not found")
 
             if user.username == 'admin':
-                raise BadRequest('admin user can not be deleted')
+                raise AuthorizationError('admin user can not be deleted')
             try:
                 db.session.delete(user)
                 db.session.commit()
@@ -330,28 +333,35 @@ class CategoryAPI(Resource):
             else:
                 name = name.capitalize()
             
+            request_type = args.get("request_type", None)
             approved = args.get("approved", None)
             
             if approved is True and user.role != 'admin':
                 raise BadRequest('only admin can approve categories')
 
-            category.name = name
+            # category.name = name
             
-            if approved is not None:
-                request_type = args.get("request_type", None)
-                if category.approved is False and approved is True:
-                    if category.request_type == 'delete':
-                        return self.delete(category.id)
-                    elif category.request_type == 'add' or request_type == 'edit':
-                        if category.request_data != "":
+            if user.role == 'admin':
+                if approved is not None:
+                    if category.approved is False and approved is True:
+                        if category.request_type == 'delete':
+                            return self.delete(category.id)
+                        elif category.request_type == 'add' or category.request_type == 'edit':
                             category.name = category.request_data
+                            category.approved = True
                         else:
-                            raise BadRequest("category request data is empty")
-                        category.approved = True
+                            raise BadRequest("category request type is invalid")
                     else:
-                        raise BadRequest("category request type is invalid")
-                else:
-                    raise BadRequest("category is already approved")
+                        raise BadRequest("category is already approved")
+            elif user.role == 'manager':
+                if category.approved is False:
+                    raise BadRequest("category is already in approval stage")
+                if request_type == 'edit':
+                    category.request_type = request_type
+                    category.request_data = name
+                    category.approved = False
+            else:
+                raise AuthorizationError(message="only admin can approve categories")
 
             category.updated_timestamp = datetime.now()
 
@@ -367,18 +377,40 @@ class CategoryAPI(Resource):
     def delete(self, category_id):
         if id is None:
             raise BadRequest("category id is missing")
+        
+        user_id = get_jwt_identity()
+        if user_id is None:
+            raise NotFound("user id is missing in token")
+        else:
+            user = User.query.filter_by(id=user_id).first()
+            if user is None:
+                raise NotFound("user not found")
 
         category = Category.query.filter_by(id=category_id).first()
         if category is None:
-            raise NotFound(message="Category not found")
-        else:
+            raise NotFound(message="category not found")
+
+        if user.role == 'manager':
+            category.request_type='delete'
+            category.approved=False
+            try:
+                db.session.add(category)
+                db.session.commit()
+            except:
+                raise InternalError(message="error requesting category deletion")
+
+            return f'category {category.name} deletion sent for review successfully', 200
+        elif user.role == 'admin':
             try:
                 db.session.delete(category)
                 db.session.commit()
             except:
                 raise InternalError(message="error deleting category")
+        else:
+            raise AuthorizationError(message="only admin can delete categories")
 
         return f'category {category.name} deleted successfully', 200
+
             
 def valid_date(s):
     return datetime.strptime(s, "%Y-%m-%d %H:%M")

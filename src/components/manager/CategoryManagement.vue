@@ -35,6 +35,7 @@
                         <th scope="col"><b>CREATED</b></th>
                         <th scope="col"><b>UPDATED</b></th>
                         <th scope="col"><b>STATUS</b></th>
+                        <th scope="col"><b>REQUEST</b></th>
                         <th scope="col"><b>ACTIONS</b></th>
                       </tr>
                     </thead>
@@ -46,7 +47,12 @@
                         class="align-middle"
                       >
                         <td>{{ category.id }}</td>
-                        <td>{{ category.name }}</td>
+                        <td v-if="!category.approved && category.request_type=='edit'">
+                          <s><span class="text-danger fw-bold">{{ category.name }}</span></s>
+                          <mdicon name="arrow-right" class="text-black fw-bolder" :size="16" />
+                          <span class="text-success fw-bold">{{ category.request_data }}</span>
+                        </td>
+                        <td v-else>{{ category.name }}</td>
                         <td>{{ formatDate(category.created_timestamp) }}</td>
                         <td>{{ formatDate(category.updated_timestamp) }}</td>
                         <td v-if="category.approved == true">
@@ -60,6 +66,11 @@
                             <mdicon name="clock-time-four" class="text-purple p-1" :size="16" />
                           </span>
                           <span> Pending </span>
+                        </td>
+                        <td>
+                          <span>
+                            <span v-html="getCategoryType(category)"></span>
+                          </span>
                         </td>
                         <td>
                           <button
@@ -316,6 +327,23 @@ onMounted(async () => {
   })
 })
 
+function getCategoryType(category) {
+  if (category.approved)
+    return '<span class=text-secondary><b>NA</b></span>'
+  else {
+    if (category.request_type == 'add') {
+      return '<span class="text-success border-success border border-2 rounded-1 px-3 py-1"><b>ADD</b></span>'
+    } else if (category.request_type == 'edit') {
+      return '<span class="text-purple border-purple border border-1 rounded-1 px-3 py-1"><b>EDIT</b></span>'
+    } else if (category.request_type == 'delete') {
+      return '<span class="text-danger border-danger border border-2 rounded-1 px-3 py-1"><b>DELETE</b></span>'
+    } else {
+      return ''
+    }
+
+  }
+}
+
 async function refreshCategories() {
   console.log('refreshing categories')
   main_loading.value = true
@@ -335,10 +363,10 @@ async function handleCategoryApprove(category, approve) {
   loading.value = true
 
   try {
-    if (approve) {
+    if (approve || category.request_type == 'edit') {
       const formData = new FormData()
       formData.append('name', category.name)
-      formData.append('approved', true)
+      formData.append('approved', approve)
       console.log(formData)
       const resp = await axiosClient.put(`/api/category/${category.id}`, formData)
       console.log(resp)
@@ -357,6 +385,9 @@ async function handleCategoryApprove(category, approve) {
 function handleCategoryAdd(category, isEdit) {
   console.log('Add/Edit Category:', category)
 
+  errordata.isError = false
+  errordata.msg = ''
+
   if (isEdit) {
     data.id = category.id
     data.name = category.name
@@ -371,6 +402,9 @@ function handleCategoryAdd(category, isEdit) {
 
 const handleCategoryDelete = async (id) => {
   console.log('Delete Category:', id)
+  errordata.isError = false
+  errordata.msg = ''
+
   data.id = id
   modalDelete.show()
 }
@@ -387,6 +421,11 @@ async function handleCategoryModalEdit(edit) {
 
   const formData = new FormData()
   formData.append('name', data.name)
+  if (edit) { 
+    formData.append('request_type', 'edit')
+ }
+  else
+    formData.append('request_type', 'add')
 
   loading.value = true
   let resp = {}
