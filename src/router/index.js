@@ -16,7 +16,6 @@ import UnauthorizedPage from '@/pages/UnauthorizedPage.vue'
 import AdminDashboard from '@/components/admin/DashBoard.vue'
 import AdminUserManagement from '@/components/admin/UserManagement.vue'
 import AdminCategoryManagement from '@/components/manager/CategoryManagement.vue'
-import AdminAnalytics from '@/components/admin/AnalyticsComponent.vue'
 
 const routes = [
   {
@@ -56,6 +55,7 @@ const routes = [
     path: '/admin',
     name: 'admin',
     component: AdminPage,
+    redirect: { name: 'admindashboard' },
     children: [
       {
         path: 'dashboard',
@@ -71,11 +71,6 @@ const routes = [
         path: 'category',
         name: 'admincategories',
         component: AdminCategoryManagement
-      },
-      {
-        path: 'analytics',
-        name: 'adminanalytics',
-        component: AdminAnalytics
       }
     ],
     meta: {

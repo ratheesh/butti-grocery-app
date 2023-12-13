@@ -37,12 +37,6 @@
                   <span class="ms-2 fs-6">Categories</span>
                 </a>
               </li>
-              <li class="nav-item d-inline-flex align-items-center" @click="handleNav('adminanalytics')">
-                <a href="javascript:void(0)" class="nav-link text-white" aria-current="page">
-                  <mdicon name="chart-line" class="text-white" />
-                  <span class="ms-2 fs-6">Analytics</span>
-                </a>
-              </li>
             </ul>
           </div>
         </div>
