@@ -329,14 +329,14 @@ onMounted(async () => {
 
 function getCategoryType(category) {
   if (category.approved)
-    return '<span class=text-secondary><b>NA</b></span>'
+    return '<span class="badge rounded-pill bg-secondary"><b>OK</b></span>'
   else {
     if (category.request_type == 'add') {
-      return '<span class="text-success border-success border border-2 rounded-1 px-3 py-1"><b>ADD</b></span>'
+      return '<span class="badge rounded-pill bg-success"><b>ADD</b></span>'
     } else if (category.request_type == 'edit') {
-      return '<span class="text-purple border-purple border border-1 rounded-1 px-3 py-1"><b>EDIT</b></span>'
+      return '<span class="badge rounded-pill text-dark bg-warning"><b>EDIT</b></span>'
     } else if (category.request_type == 'delete') {
-      return '<span class="text-danger border-danger border border-2 rounded-1 px-3 py-1"><b>DELETE</b></span>'
+      return '<span class="badge rounded-pill bg-danger"><b>DELETE</b></span>'
     } else {
       return ''
     }
