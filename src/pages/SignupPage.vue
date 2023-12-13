@@ -7,12 +7,7 @@
             class="row col-md-12 col-lg-12 m-auto mt-3 px-0 d-inline-flex justify-content-center"
           >
             <div class="col-8 d-flex align-items-end justify-content-center">
-              <mdicon
-                name="basket"
-                class="text-center text-primary mx-2"
-                height="90"
-                width="90"
-              />
+              <mdicon name="basket" class="text-center text-primary mx-2" height="90" width="90" />
             </div>
           </div>
           <div class="card shadow-sm m-auto">
@@ -92,11 +87,7 @@
                           :class="{ 'form-control': true, 'is-invalid': errors.role }"
                           v-model="userdata.role"
                         >
-                          <option
-                            v-for="(option, idx) in options"
-                            :key="idx"
-                            :value="option"
-                          >
+                          <option v-for="(option, idx) in options" :key="idx" :value="option">
                             {{ option }}
                           </option>
                         </select>
@@ -170,11 +161,7 @@
                   <a @click.prevent="handleLogin" href="#">Login</a>
                 </div>
               </form>
-              <div
-                class="alert alert-danger mx-3 text-center"
-                role="alert"
-                v-if="errorinfo.iserr"
-              >
+              <div class="alert alert-danger mx-3 text-center" role="alert" v-if="errorinfo.iserr">
                 {{ errorinfo.errmsg }}
               </div>
             </div>
@@ -186,121 +173,123 @@
 </template>
 
 <script setup>
-import { ref, reactive } from "vue";
-import axiosClient from "@/js/axios.js";
-import { useRouter } from "vue-router";
-import FormLayout from "@/layouts/FormLayout.vue";
+import { ref, reactive } from 'vue'
+import axiosClient from '@/js/axios.js'
+import { useRouter } from 'vue-router'
+import FormLayout from '@/layouts/FormLayout.vue'
 
-const options = ["user", "manager"];
+const options = ['user', 'manager']
 
 const userdata = reactive({
-  name: "",
-  username: "",
-  email: "",
-  role: "user",
-  password: "",
-  password2: "",
-});
+  name: '',
+  username: '',
+  email: '',
+  role: 'user',
+  password: '',
+  password2: '',
+  image: null,
+  image_name: null
+})
 
 const errorinfo = reactive({
   iserr: false,
-  errmsg: "",
-});
+  errmsg: ''
+})
 
-const loading = ref(false);
-const iserr = ref(false);
-const errmsg = ref("");
+const loading = ref(false)
+const iserr = ref(false)
+const errmsg = ref('')
 const errors = reactive({
   name: false,
   username: false,
   email: false,
   role: false,
-  password: false,
-});
+  password: false
+})
 
-const router = useRouter();
+const router = useRouter()
 
 const handleImage = (e) => {
-  console.log("modal: handle Image");
+  console.log('modal: handle Image')
   // console.log(e)
   if (e.target.files.length === 0) {
-    console.log("cancel file selection");
-    userdata.image_name = null;
-    userdata.image = null;
-    return;
+    console.log('cancel file selection')
+    userdata.image_name = null
+    userdata.image = null
+    return
   }
 
-  userdata.image = e.target.files[0];
-  userdata.image_name = userdata.image.name;
-  console.log(userdata.image);
-  createBase64Image(userdata.image);
-};
+  userdata.image = e.target.files[0]
+  userdata.image_name = userdata.image.name
+  console.log(userdata.image)
+  createBase64Image(userdata.image)
+}
 
 function createBase64Image(fObj) {
-  const reader = new FileReader();
+  const reader = new FileReader()
   reader.onload = (e) => {
-    userdata.image = e.target.result.split(",")[1];
-  };
-  reader.readAsDataURL(fObj);
+    userdata.image = e.target.result.split(',')[1]
+  }
+  reader.readAsDataURL(fObj)
 }
 
 const handleSignup = async () => {
-  errorinfo.iserr = false;
-  errorinfo.errmsg = "";
-  errors.name = false;
-  errors.username = false;
-  errors.email = false;
-  errors.role = false;
-  errors.password = false;
+  errorinfo.iserr = false
+  errorinfo.errmsg = ''
+  errors.name = false
+  errors.username = false
+  errors.email = false
+  errors.role = false
+  errors.password = false
 
   if (userdata.password != userdata.password2) {
-    iserr.value = true;
-    errmsg.value = "Password does not match";
-    userdata.password = userdata.password2 = "";
-    return;
+    iserr.value = true
+    errmsg.value = 'Password does not match'
+    userdata.password = userdata.password2 = ''
+    return
   }
 
-  const formData = new FormData();
-  formData.append("name", userdata.name);
-  formData.append("username", userdata.username);
-  formData.append("email", userdata.email);
-  formData.append("role", userdata.role);
-  formData.append("password", userdata.password);
-  formData.append("image_name", userdata.image_name);
-  formData.append("image", userdata.image);
+  const formData = new FormData()
+  formData.append('name', userdata.name)
+  formData.append('username', userdata.username)
+  formData.append('email', userdata.email)
+  formData.append('role', userdata.role)
+  formData.append('password', userdata.password)
+  if (userdata.image_name !== null) formData.append('image_name', userdata.image_name)
+  if (userdata.image !== null) formData.append('image', userdata.image)
 
-  loading.value = true;
+  loading.value = true
   try {
-    const res = await axiosClient.post("/api/user", formData);
-    console.log(res);
+    const res = await axiosClient.post('/api/user', formData)
+    console.log(res)
     if (res.status == 201) {
-      console.log(`user ${userdata.username} signed up!`);
-      router.push("/login");
+      console.log(`user ${userdata.username} signed up!`)
+      router.push('/login')
     } else {
-      console.log("Signup Error");
-      errorinfo.iserr = true;
-      errorinfo.errmsg = res.data;
-      errors.name = errorinfo.errmsg.includes("name");
-      errors.username = errorinfo.errmsg.includes("user");
-      errors.email = errorinfo.errmsg.includes("email");
-      errors.password = errorinfo.errmsg.includes("password");
+      console.log('Signup Error')
+      errorinfo.iserr = true
+      errorinfo.errmsg = res.data
+      errors.name = errorinfo.errmsg.includes('name')
+      errors.username = errorinfo.errmsg.includes('user')
+      errors.email = errorinfo.errmsg.includes('email')
+      errors.password = errorinfo.errmsg.includes('password')
     }
   } catch (err) {
-    console.log(err);
-    errorinfo.iserr = true;
-    errorinfo.errmsg = err.response.data;
-    errors.name = errorinfo.errmsg.includes("name");
-    errors.username = errorinfo.errmsg.includes("user");
-    errors.email = errorinfo.errmsg.includes("email");
-    errors.password = errorinfo.errmsg.includes("password");
+    console.log(err)
+    errorinfo.iserr = true
+    errorinfo.errmsg = err.response.data
+    errors.name = errorinfo.errmsg.includes('name')
+    errors.username = errorinfo.errmsg.includes('user')
+    errors.email = errorinfo.errmsg.includes('email')
+    errors.password = errorinfo.errmsg.includes('password')
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 
 const handleLogin = () => {
-  router.push("/login");
-};
+  router.push('/login')
+}
 </script>
 
 <style scoped></style>
