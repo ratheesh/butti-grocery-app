@@ -1,6 +1,8 @@
 <template>
   <dashboard-layout>
-    <!-- <h2 class="text-center">Admin Dash Board!</h2> -->
+    <div class="row justify-content-center mt-5">
+      <h2 class="text-center">Admin's Home!</h2>
+    </div>
     <template v-slot:sidebar>
       <div>
         <div class="row">
