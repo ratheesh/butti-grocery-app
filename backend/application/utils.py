@@ -5,7 +5,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart, MIMEBase
 from email.mime.application import MIMEApplication
 
-def send_email(address, subject, message, attachment=None, filename=None, subtype=None):
+def send_email(address, subject, message, attachment=None, filename=None):
     SMTP_SERVER_HOST = "localhost"
     SMTP_SERVER_PORT = 1025
     SENDER_EMAIL = "admin@butti.com"
@@ -16,7 +16,6 @@ def send_email(address, subject, message, attachment=None, filename=None, subtyp
     msg["To"] = address
     msg["Subject"] = subject
     msg.attach(MIMEText(message, "html"))
-    message.add_header('reply-to', SENDER_EMAIL)
 
     if attachment:
         part = MIMEApplication(attachment.read(), _subtype=subtype)

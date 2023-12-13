@@ -15,9 +15,9 @@ class Config():
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=30)
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=10)
-    broker_url = "redis://localhost:6379/0"
-    result_backend = "redis://localhost:6379/0"
-    broker_connection_retry_on_startup = True
+    CELERY_BROKER_URL = "redis://localhost:6379/0"
+    CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
+    CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
     CACHE_TYPE='RedisCache'
     CACHE_REDIS_URL='redis://localhost:6379/2'
     CACHE_DEFAULT_TIMEOUT=200

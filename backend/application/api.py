@@ -165,6 +165,7 @@ class UserAPI(Resource):
 
         try:
             db.session.add(user)
+            cache.clear()
             db.session.commit()
         except:
             raise InternalError(message="error in creating user")
@@ -218,6 +219,7 @@ class UserAPI(Resource):
 
             try:
                 db.session.add(user)
+                cache.clear()
                 db.session.commit()
             except:
                 raise InternalError(message="error in updating User")
@@ -238,6 +240,7 @@ class UserAPI(Resource):
                 raise AuthorizationError('admin user can not be deleted')
             try:
                 db.session.delete(user)
+                cache.clear()
                 db.session.commit()
             except:
                 raise InternalError(message="Error deleting User")
@@ -307,6 +310,7 @@ class CategoryAPI(Resource):
 
         try:
             db.session.add(category)
+            cache.clear()
             db.session.commit()
         except:
             raise InternalError(message="error creating category")
@@ -371,6 +375,7 @@ class CategoryAPI(Resource):
 
             try:
                 db.session.add(category)
+                cache.clear()
                 db.session.commit()
             except:
                 raise InternalError(message="error in updating category")
@@ -399,6 +404,7 @@ class CategoryAPI(Resource):
             category.approved=False
             try:
                 db.session.add(category)
+                cache.clear()
                 db.session.commit()
             except:
                 raise InternalError(message="error requesting category deletion")
@@ -407,6 +413,7 @@ class CategoryAPI(Resource):
         elif user.role == 'admin':
             try:
                 db.session.delete(category)
+                cache.clear()
                 db.session.commit()
             except:
                 raise InternalError(message="error deleting category")
@@ -541,6 +548,7 @@ class ProductAPI(Resource):
 
         try:
             db.session.add(product)
+            cache.clear()
             db.session.commit()
         except:
             raise InternalError(message="error creating product")
@@ -614,6 +622,7 @@ class ProductAPI(Resource):
 
                 try:
                     db.session.add(product)
+                    cache.clear()
                     db.session.commit()
                 except:
                     raise InternalError(message="Error in updating product")
@@ -634,6 +643,7 @@ class ProductAPI(Resource):
             try:
                 image_name = product.image_name
                 db.session.delete(product)
+                cache.clear()
                 db.session.commit()
                 
                 if image_name != 'default.png':
@@ -757,6 +767,7 @@ class OrderAPI(Resource):
                 db.session.add_all(items_list)
                 db.session.add_all(product_list)
                 db.session.add(order)
+                cache.clear()
                 db.session.commit()
             except:
                 raise InternalError(message="error creating order")
@@ -794,6 +805,7 @@ class OrderAPI(Resource):
         try:
             db.session.add(order)
             db.session.add_all(items)
+            cache.clear()
             db.session.commit()
         except:
             raise InternalError(message="Error in updating order")
@@ -808,6 +820,7 @@ class OrderAPI(Resource):
         order=Order.query.filter_by(id=id).first()
         try:
             db.session.delete(order)
+            cache.clear()
             db.session.commit()
         except:
             raise InternalError(message="Error deleting order")

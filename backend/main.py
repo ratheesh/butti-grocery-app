@@ -14,8 +14,8 @@ from application.routes import routes
 from application.db import db
 from application.cache import cache
 from application.models import User, create_initial_data
-from application.celery_worker import celery_init_app
 from application.tasks import send_daily_reminder, send_monthly_reminder
+from application import celery_worker
 
 app = Flask(__name__, template_folder="templates")
 app.config.from_object(Config)
@@ -26,7 +26,16 @@ app.app_context().push()
 CORS(app)
 db.init_app(app)
 cache.init_app(app)
-celery = celery_init_app(app)
+celery=celery_worker.celery
+celery.conf.update(
+        broker_url=app.config["CELERY_BROKER_URL"],
+        result_backend=app.config["CELERY_RESULT_BACKEND"],
+        broker_connection_retry_on_startup=app.config["CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP"]
+        )
+celery.Task = celery_worker.FlaskTask
+app.app_context().push()
+app.extensions["celery"] = celery
+
 app.app_context().push()
 
 if not os.path.exists(dbfile):

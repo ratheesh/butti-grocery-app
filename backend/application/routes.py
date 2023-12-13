@@ -7,9 +7,11 @@ import json
 # from sqlalchemy import desc, func, or_, and_
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_required, get_jwt_identity)
-from .models import User,Product, Category
-from .jwt import access
-from .db import db
+
+from application.models import User,Product, Category
+from application.jwt import access
+from application.db import db
+from application.cache import cache
 
 routes = Blueprint("controller", __name__)
 
