@@ -49,7 +49,7 @@
                 </button>
               </router-link>
             </li>
-            <li v-if="!authenticated" class="nav-link">
+            <li v-if="!authenticated" class="nav-link me-3">
               <router-link :to="{ name: 'login' }" class="nav-link">
                 <button class="btn btn-outline-info btn-sm">
                   <mdicon name="login" :size="20" />
@@ -57,7 +57,7 @@
                 </button>
               </router-link>
             </li>
-            <li v-else class="nav-link dropdown">
+            <li v-else class="nav-link dropdown me-3">
               <a
                 class="nav-link dropdown-toggle text-white p-0"
                 href="javascript:void(0)"
