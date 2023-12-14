@@ -9,6 +9,14 @@
           <div class="col-6 d-inline-flex justify-content-end m-auto me-0">
             <div class="col-auto mx-2">
               <button
+                class="btn btn-sm btn-secondary mx-2"
+                v-show="categories.length > 0"
+                @click="refresh"
+              >
+                <mdicon name="refresh" class="text-dark" :size="18" />
+                Refresh
+              </button>
+              <button
                 class="btn btn-sm btn-success"
                 v-show="categories.length > 0"
                 @click="handleProductAdd({}, false)"
@@ -178,162 +186,179 @@
             aria-label="Close"
           ></button>
         </div>
-        <div class="modal-body">
-          <div class="form-floating mb-3">
-            <input
-              type="text"
-              class="form-control"
-              id="productName"
-              placeholder="apple/bananas"
-              v-model="data.name"
-              required
-            />
-            <label for="productName">Name</label>
-          </div>
-          <div class="form-floating mb-3">
-            <textarea
-              type="text"
-              class="form-control"
-              id="productDescription"
-              placeholder="Description"
-              v-model="data.description"
-              required
-            ></textarea>
-            <label for="productDescription">Description</label>
-          </div>
-          <div class="form-floating mb-3">
-            <select
-              class="form-select"
-              id="productCategory"
-              aria-label="Category"
-              v-model="category_id"
-            >
-              <option v-for="category in data.categories" :key="category.id" :value="category.id">
-                {{ category.name }}
-              </option>
-            </select>
-            <label for="productCategory">Category</label>
-          </div>
-          <div class="form-floating mb-3">
-            <select
-              class="form-select"
-              id="productUnit"
-              aria-label="Unit"
-              required
-              v-model="data.unit"
-            >
-              <option v-for="(unit, idx) in units" :key="idx" :value="unit">{{ unit }}</option>
-            </select>
-            <label for="productUnit">Unit</label>
-          </div>
-          <div class="form-floating mb-3">
-            <input
-              type="integer"
-              class="form-control"
-              id="productPrice"
-              placeholder="Price"
-              v-model="data.price"
-              min="1"
-              required
-            />
-            <label for="productPrice">Price</label>
-          </div>
-          <div class="form-floating mb-3">
-            <input
-              type="integer"
-              class="form-control"
-              id="productStock"
-              placeholder="Stock"
-              v-model="data.stock"
-              min="1"
-              step="5"
-              required
-            />
-            <label for="productStock">Stock</label>
-          </div>
-          <div class="form-group mb-3">
-            <div class="input-group">
-              <span class="input-group-text" id="username">
-                <mdicon name="calendar-today" :size="20" />
-              </span>
+        <form
+          @submit.prevent="handleProductModalEdit"
+          needs-validation
+          novalidate
+          :class="{ 'was-validated': wasValidated }"
+        >
+          <div class="modal-body">
+            <div class="form-floating mb-3">
               <input
-                type="date"
+                type="text"
                 class="form-control"
-                id="productExpiryDate"
-                placeholder="Expiry Date"
-                v-model="data.expiry_date"
+                :class="{ 'form-control': true, 'is-invalid': errors.name }"
+                id="productName"
+                placeholder="apple/bananas"
+                v-model="data.name"
                 required
+              />
+              <label for="productName">Name</label>
+              <div class="invalid-feedback">
+                <span>Name should be given</span>
+              </div>
+            </div>
+            <div class="form-floating mb-3">
+              <textarea
+                type="text"
+                class="form-control"
+                :class="{ 'form-control': true, 'is-invalid': errors.description }"
+                id="productDescription"
+                placeholder="Description"
+                v-model="data.description"
+                required
+              ></textarea>
+              <label for="productDescription">Description</label>
+              <div class="invalid-feedback">
+                <span>Description should be present</span>
+              </div>
+            </div>
+            <div class="form-floating mb-3">
+              <select
+                class="form-select"
+                id="productCategory"
+                aria-label="Category"
+                v-model="category_id"
+              >
+                <option v-for="category in data.categories" :key="category.id" :value="category.id">
+                  {{ category.name }}
+                </option>
+              </select>
+              <label for="productCategory">Category</label>
+            </div>
+            <div class="form-floating mb-3">
+              <select
+                class="form-select"
+                id="productUnit"
+                aria-label="Unit"
+                required
+                v-model="data.unit"
+              >
+                <option v-for="(unit, idx) in units" :key="idx" :value="unit">{{ unit }}</option>
+              </select>
+              <label for="productUnit">Unit</label>
+            </div>
+            <div class="form-floating mb-3">
+              <input
+                type="integer"
+                class="form-control"
+                :class="{ 'form-control': true, 'is-invalid': errors.price }"
+                id="productPrice"
+                placeholder="Price"
+                v-model="data.price"
+                min="1"
+                required
+              />
+              <label for="productPrice">Price</label>
+              <div class="invalid-feedback">
+                <span>Price can not be zero</span>
+              </div>
+            </div>
+            <div class="form-floating mb-3">
+              <input
+                type="integer"
+                class="form-control"
+                :class="{ 'form-control': true, 'is-invalid': errors.stock }"
+                id="productStock"
+                placeholder="Stock"
+                v-model="data.stock"
+                min="1"
+                step="5"
+                required
+              />
+              <label for="productStock">Stock</label>
+              <div class="invalid-feedback">
+                <span>Stock can not zero</span>
+              </div>
+            </div>
+            <div class="form-group mb-3">
+              <div class="input-group">
+                <span class="input-group-text" id="expiry_date">
+                  <mdicon name="calendar-today" :size="20" />
+                </span>
+                <input
+                  type="date"
+                  class="form-control rounded-end"
+                  :class="{ 'form-control': true, 'is-invalid': errors.expiry_date }"
+                  id="productExpiryDate"
+                  placeholder="Expiry Date"
+                  v-model="data.expiry_date"
+                  required
+                />
+                <div class="invalid-feedback">
+                  <span>Expiry Date can not be in past tense</span>
+                </div>
+              </div>
+            </div>
+            <div class="mb-0">
+              <input
+                type="file"
+                class="form-control"
+                id="productImage"
+                placeholder="Product Image"
+                accept="image/png, image/jpeg"
+                value=""
+                @change="handleImage"
               />
             </div>
           </div>
-          <div class="mb-0">
-            <input
-              type="file"
-              class="form-control"
-              id="productImage"
-              placeholder="Product Image"
-              accept="image/png, image/jpeg"
-              value=""
-              @change="handleImage"
-            />
+          <div class="modal-footer text-center">
+            <button v-if="edit" type="submit" class="btn btn-sm btn-warning">
+              <span v-if="loading" class="spinner-border spinner-border-sm"></span>
+              <span v-else>
+                <!-- <mdicon name="pencil" class="text-white" :size="16" /> -->
+                <svg
+                  width="16px"
+                  height="16px"
+                  viewBox="0 0 24 24"
+                  fill="#fff"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    clip-rule="evenodd"
+                    d="M21.1213 2.70705C19.9497 1.53548 18.0503 1.53547 16.8787 2.70705L15.1989 4.38685L7.29289 12.2928C7.16473 12.421 7.07382 12.5816 7.02986 12.7574L6.02986 16.7574C5.94466 17.0982 6.04451 17.4587 6.29289 17.707C6.54127 17.9554 6.90176 18.0553 7.24254 17.9701L11.2425 16.9701C11.4184 16.9261 11.5789 16.8352 11.7071 16.707L19.5556 8.85857L21.2929 7.12126C22.4645 5.94969 22.4645 4.05019 21.2929 2.87862L21.1213 2.70705ZM18.2929 4.12126C18.6834 3.73074 19.3166 3.73074 19.7071 4.12126L19.8787 4.29283C20.2692 4.68336 20.2692 5.31653 19.8787 5.70705L18.8622 6.72357L17.3068 5.10738L18.2929 4.12126ZM15.8923 6.52185L17.4477 8.13804L10.4888 15.097L8.37437 15.6256L8.90296 13.5112L15.8923 6.52185ZM4 7.99994C4 7.44766 4.44772 6.99994 5 6.99994H10C10.5523 6.99994 11 6.55223 11 5.99994C11 5.44766 10.5523 4.99994 10 4.99994H5C3.34315 4.99994 2 6.34309 2 7.99994V18.9999C2 20.6568 3.34315 21.9999 5 21.9999H16C17.6569 21.9999 19 20.6568 19 18.9999V13.9999C19 13.4477 18.5523 12.9999 18 12.9999C17.4477 12.9999 17 13.4477 17 13.9999V18.9999C17 19.5522 16.5523 19.9999 16 19.9999H5C4.44772 19.9999 4 19.5522 4 18.9999V7.99994Z"
+                    fill="#000"
+                  />
+                </svg>
+              </span>
+              Update
+            </button>
+            <button v-else type="submit" class="btn btn-sm btn-success">
+              <span v-if="loading" class="spinner-border spinner-border-sm"></span>
+              <span v-else
+                ><b><mdicon name="shape-square-rounded-plus" class="text-white" :size="18" /></b
+              ></span>
+              Add
+            </button>
+            <button
+              type="button"
+              class="btn btn-sm btn-danger"
+              id="productModalClose"
+              data-bs-dismiss="modal"
+            >
+              <mdicon name="window-close" class="text-white" :size="18" />
+              Close
+            </button>
           </div>
-        </div>
-        <div class="modal-footer text-center">
-          <button
-            v-if="edit"
-            @click="handleProductModalEdit(true)"
-            type="button"
-            class="btn btn-sm btn-warning"
-          >
-            <span v-if="loading" class="spinner-border spinner-border-sm"></span>
-            <span v-else>
-              <!-- <mdicon name="pencil" class="text-white" :size="16" /> -->
-              <svg
-                width="16px"
-                height="16px"
-                viewBox="0 0 24 24"
-                fill="#fff"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fill-rule="evenodd"
-                  clip-rule="evenodd"
-                  d="M21.1213 2.70705C19.9497 1.53548 18.0503 1.53547 16.8787 2.70705L15.1989 4.38685L7.29289 12.2928C7.16473 12.421 7.07382 12.5816 7.02986 12.7574L6.02986 16.7574C5.94466 17.0982 6.04451 17.4587 6.29289 17.707C6.54127 17.9554 6.90176 18.0553 7.24254 17.9701L11.2425 16.9701C11.4184 16.9261 11.5789 16.8352 11.7071 16.707L19.5556 8.85857L21.2929 7.12126C22.4645 5.94969 22.4645 4.05019 21.2929 2.87862L21.1213 2.70705ZM18.2929 4.12126C18.6834 3.73074 19.3166 3.73074 19.7071 4.12126L19.8787 4.29283C20.2692 4.68336 20.2692 5.31653 19.8787 5.70705L18.8622 6.72357L17.3068 5.10738L18.2929 4.12126ZM15.8923 6.52185L17.4477 8.13804L10.4888 15.097L8.37437 15.6256L8.90296 13.5112L15.8923 6.52185ZM4 7.99994C4 7.44766 4.44772 6.99994 5 6.99994H10C10.5523 6.99994 11 6.55223 11 5.99994C11 5.44766 10.5523 4.99994 10 4.99994H5C3.34315 4.99994 2 6.34309 2 7.99994V18.9999C2 20.6568 3.34315 21.9999 5 21.9999H16C17.6569 21.9999 19 20.6568 19 18.9999V13.9999C19 13.4477 18.5523 12.9999 18 12.9999C17.4477 12.9999 17 13.4477 17 13.9999V18.9999C17 19.5522 16.5523 19.9999 16 19.9999H5C4.44772 19.9999 4 19.5522 4 18.9999V7.99994Z"
-                  fill="#000"
-                />
-              </svg>
-            </span>
-            Update
-          </button>
-          <button
-            v-else
-            @click="handleProductModalEdit(false)"
-            type="button"
-            class="btn btn-sm btn-success"
-          >
-            <span v-if="loading" class="spinner-border spinner-border-sm"></span>
-            <span v-else
-              ><b><mdicon name="shape-square-rounded-plus" class="text-white" :size="18" /></b
-            ></span>
-            Add
-          </button>
-          <button
-            type="button"
-            class="btn btn-sm btn-danger"
-            id="productModalClose"
-            data-bs-dismiss="modal"
-          >
-            <mdicon name="window-close" class="text-white" :size="18" />
-            Close
-          </button>
-        </div>
-        <div class="row d-flex justify-content-center" v-if="errordata.isError">
-          <div class="col-11 text-center">
-            <div class="alert alert-danger" role="alert">
-              {{ errordata.msg }}
+          <div class="row d-flex justify-content-center" v-if="errordata.isError">
+            <div class="col-11 text-center">
+              <div class="alert alert-danger" role="alert">
+                {{ errordata.msg }}
+              </div>
             </div>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   </div>
@@ -391,6 +416,15 @@ const errordata = reactive({
   isError: false,
   msg: ''
 })
+const errors = reactive({
+  name: false,
+  description: false,
+  price: false,
+  stock: false,
+  expiry_date: false
+})
+const wasValidated = ref(false)
+
 let modal
 let modalDelete
 const main_loading = ref(true)
@@ -425,6 +459,10 @@ async function refreshData() {
   } finally {
     main_loading.value = false
   }
+}
+
+const refresh = async () => {
+  await refreshData()
 }
 
 onMounted(async () => {
@@ -469,8 +507,6 @@ async function refreshCategories() {
 }
 
 function handleProductAdd(product, isEdit) {
-  console.log('Add/Edit Product:', product)
-
   if (isEdit) {
     data.id = product.id
     data.name = product.name
@@ -509,6 +545,15 @@ function handleProductAdd(product, isEdit) {
   edit.value = isEdit
   document.getElementById('productImage').value = ''
 
+  errordata.isError = false
+  errordata.msg = ''
+  errors.name = false
+  errors.description = false
+  errors.price = false
+  errors.stock = false
+  errors.expiry_date = false
+  wasValidated.value = false
+
   modal.show()
 }
 
@@ -544,12 +589,54 @@ function createBase64Image(fObj) {
   reader.readAsDataURL(fObj)
 }
 
-async function handleProductModalEdit(edit) {
-  if (data.name === '') {
+async function handleProductModalEdit() {
+  console.log('handleProductModalEdit')
+  wasValidated.value = false
+  errordata.isError = false
+  errordata.msg = ''
+  errors.name = false
+  errors.description = false
+  errors.price = false
+  errors.stock = false
+  errors.expiry_date = false
+
+  if (!data.name || !data.description || !data.price || !data.stock || !data.expiry_date) {
     errordata.isError = true
-    errordata.msg = 'Product name cannot be empty'
+    errordata.msg = 'All fields are required'
+    errors.name = !data.name
+    errors.description = !data.description
+    errors.price = !data.price
+    errors.stock = !data.stock
+    errors.expiry_date = !data.expiry_date
     return
   }
+
+  if (data.price <= 0) {
+    errors.price = true
+    return
+  }
+
+  if (data.stock <= 0) {
+    errors.stock = true
+    return
+  }
+
+  // if (Number.isInteger(data.stock)) {
+  //   if (data.stock <= 0) {
+  //     errors.stock = true
+  //     return
+  //   }
+  // } else {
+  //   errors.stock = true
+  //   return
+  // }
+
+  if (data.expiry_date < new Date().toISOString().split('T')[0]) {
+    errors.expiry_date = true
+    return
+  }
+
+  wasValidated.value = true
 
   const formData = new FormData()
   formData.append('name', data.name)
@@ -565,24 +652,27 @@ async function handleProductModalEdit(edit) {
   loading.value = true
   let resp = {}
   try {
-    if (edit) resp = await axiosClient.put(`/api/product/${category_id.value}/${data.id}`, formData)
+    if (edit.value)
+      resp = await axiosClient.put(`/api/product/${category_id.value}/${data.id}`, formData)
     else resp = await axiosClient.post(`/api/product/${category_id.value}`, formData)
 
     console.log(resp)
     console.log('modal: closing modal')
     document.getElementById('productModalClose').click()
     modal.hide()
-    loading.value = true
     refreshData()
-    loading.value = false
   } catch (err) {
     console.log(err)
     errordata.isError = true
     errordata.msg = err.response.data.message
+    errors.name = errordata.msg.contains('name')
+    errors.description = errordata.msg.contains('description')
+    errors.price = errordata.msg.contains('price')
+    errors.stock = errordata.msg.contains('stock')
+    errors.expiry_date = errordata.msg.contains('expiry_date')
   } finally {
+    wasValidated.value = false
     loading.value = false
-    errordata.isError = false
-    errordata.msg = ''
   }
 }
 
