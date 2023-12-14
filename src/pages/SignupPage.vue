@@ -222,8 +222,6 @@ const errorinfo = reactive({
 })
 
 const loading = ref(false)
-const iserr = ref(false)
-const errmsg = ref('')
 const errors = reactive({
   name: false,
   username: false,
