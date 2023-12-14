@@ -42,6 +42,7 @@ class User(db.Model):
             "name": self.name,
             "username": self.username,
             "email": self.email,
+            "password": self.password,
             "approved": self.approved,
             "role": self.role,
             "image_name": self.image_name,
