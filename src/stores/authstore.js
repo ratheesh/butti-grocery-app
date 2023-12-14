@@ -12,22 +12,14 @@ export const useAuthStore = defineStore('authStore', () => {
 
   // variables
   const authenticated = ref(!!localStorage.getItem('access_token'))
-  const defaultUser = {
-    role: 'user',
-    image: null,
-    image_name: ''
-  }
-
-  const user = ref(JSON.parse(localStorage.getItem('user')) || defaultUser)
+  // const user = ref(JSON.parse(localStorage.getItem('user')) || defaultUser)
+  const user = ref({})
 
   // functions
   function setUser(_user) {
-    console.log(_user)
     if (_user) {
-      authenticated.value = true
       user.value = _user
     } else {
-      authenticated.value = false
       user.value = {}
     }
   }
@@ -66,6 +58,7 @@ export const useAuthStore = defineStore('authStore', () => {
         user.value = res.data.user
         localStorage.setItem('access_token', res.data.access_token)
         localStorage.setItem('user', JSON.stringify(res.data.user))
+        // setUser('user', user.value)
         axiosClient.defaults.headers.common['Authorization'] = `Bearer ${res.data.access_token}`
         // console.log('Logged in!')
         return res
