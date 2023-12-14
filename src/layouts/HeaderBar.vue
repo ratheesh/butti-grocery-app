@@ -20,11 +20,12 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <form class="d-flex" role="search">
+          <form class="d-flex" role="search" @submit.prevent="handleSearch">
             <input
               class="form-control-sm me-1 border-2"
               type="search"
               placeholder="Search"
+              v-model="query"
               aria-label="Search"
             />
             <button class="btn btn-sm btn-outline-success" type="submit">
@@ -73,7 +74,7 @@
                   height="28"
                   style="border: 50%"
                 />
-                <span class="ms-2 fs-6">{{ user.username }}</span>
+                <span class="ms-2 fs-6">{{ user.name }}</span>
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
                 <a class="dropdown-item" href="javascript:void(0)">
@@ -83,11 +84,7 @@
                   </router-link>
                 </a>
                 <li v-if="user.role == 'user'">
-                  <a
-                    class="dropdown-item"
-                    href="javascript:void(0)"
-                    style="text-decoration-none"
-                  >
+                  <a class="dropdown-item" href="javascript:void(0)" style="text-decoration-none">
                     <router-link :to="{ name: 'orders' }" class="dropdown-item">
                       <svg
                         fill="#000000"
@@ -125,9 +122,7 @@
                 </li>
                 <li><hr class="dropdown-divider" /></li>
                 <li class="nav-item mx-2" v-if="!authenticated">
-                  <router-link :to="{ name: 'login' }" class="dropdown-item">
-                    Login
-                  </router-link>
+                  <router-link :to="{ name: 'login' }" class="dropdown-item"> Login </router-link>
                 </li>
                 <li class="nav-item mx-2" v-else>
                   <a class="dropdown-item" href="javascript:void(0)">
@@ -147,16 +142,26 @@
 </template>
 
 <script setup>
-import { RouterLink } from "vue-router";
-import { useAuthStore } from "../stores/authstore";
-import { useCartStore } from "../stores/cartstore";
-import { storeToRefs } from "pinia";
+import { ref } from 'vue'
+import { RouterLink } from 'vue-router'
+import { useAuthStore } from '../stores/authstore'
+import { useCartStore } from '../stores/cartstore'
+import { storeToRefs } from 'pinia'
+import router from '../router/index.js'
 // import { onMounted } from 'vue';
 
-const auth = useAuthStore();
-const cart = useCartStore();
+const query = ref('')
+const auth = useAuthStore()
+const cart = useCartStore()
 
-const { user, authenticated } = storeToRefs(auth);
+const { user, authenticated } = storeToRefs(auth)
+
+const handleSearch = () => {
+  if (query.value) {
+    console.log('searching for', query.value)
+    router.push({ name: 'search', params: { query: query.value } })
+  }
+}
 </script>
 
 <style scoped></style>

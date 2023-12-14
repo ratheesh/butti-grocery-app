@@ -118,17 +118,36 @@
                   </div>
                 </div>
                 <div class="form-group mb-3">
+                  <label for="email"
+                    >E-Mail<span class="text-danger"><b>*</b></span></label
+                  >
+                  <div class="input-group">
+                    <span class="input-group-text" id="email">
+                      <mdicon name="form-textbox-password" :size="20" />
+                    </span>
+                    <input
+                      type="email"
+                      :class="{ 'form-control': true, 'is-invalid': errors.email }"
+                      v-model="user.email"
+                      id="password"
+                      class="form-control"
+                      placeholder="user@butti.com"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="form-group mb-3">
                   <label for="password"
                     >Password<span class="text-danger"><b>*</b></span></label
                   >
                   <div class="input-group">
-                    <span class="input-group-text" id="username">
+                    <span class="input-group-text" id="password">
                       <mdicon name="form-textbox-password" :size="20" />
                     </span>
                     <input
                       type="password"
                       :class="{ 'form-control': true, 'is-invalid': errors.password }"
-                      v-model="user.password"
+                      v-model="passwd"
                       id="password"
                       class="form-control"
                       placeholder="Enter Password"
@@ -140,13 +159,13 @@
                     >Re-enter Password<span class="text-danger"><b>*</b></span></label
                   >
                   <div class="input-group">
-                    <span class="input-group-text" id="username">
+                    <span class="input-group-text" id="password2">
                       <mdicon name="form-textbox-password" :size="20" />
                     </span>
                     <input
                       type="password"
                       :class="{ 'form-control': true, 'is-invalid': errors.password }"
-                      v-model="user.password2"
+                      v-model="passwd2"
                       id="password2"
                       class="form-control"
                       placeholder="Re-enter Password"
@@ -271,17 +290,8 @@ const auth = useAuthStore()
 const component_loading = ref(true)
 const loading = ref(false)
 const user = ref({})
-const data = reactive({
-  id: 0,
-  name: '',
-  email: '',
-  password: '',
-  password2: '',
-  image_name: null,
-  image: null,
-  created_timestamp: '',
-  updated_timestamp: ''
-})
+const passwd = ref('')
+const passwd2 = ref('')
 const errors = reactive({
   name: false,
   username: false,
@@ -295,10 +305,10 @@ const errordata = reactive({
 })
 let image_changed = false
 
-let image
-let image_name
-let modal
-let modalDelete
+let image = null
+// let image_name = null
+let modal = null
+let modalDelete = null
 
 onMounted(async () => {
   if (auth.authenticated === false) {
@@ -346,14 +356,14 @@ const handleImage = (e) => {
   // console.log(e)
   if (e.target.files.length === 0) {
     console.log('cancel file selection')
-    image_name = null
+    // image_name = null
     image = null
     image_changed = false
     return
   }
 
   image = e.target.files[0]
-  image_name = image.name
+  // image_name = image.name
   console.log(image)
   createBase64Image(image)
 }
@@ -366,32 +376,33 @@ function createBase64Image(fObj) {
   reader.readAsDataURL(fObj)
   image_changed = true
 }
-const handleModalEditProfile = () => {
-  data.id = user.value.id
-  data.name = user.value.name
-  data.email = user.value.email
-  data.password = user.value.password
-  data.password2 = user.value.password2
-  // data.image_name = user.value.image_name
-  // data.image = user.value.image
-
+const handleModalEditProfile = async () => {
+  // console.log(user.value)
+  loading.value = true
   try {
-    loading.value = true
     const formData = new FormData()
-    formData.append('name', data.name)
-    if (data.password === '' && data.password2 === '') formData.append('password', null)
-    else {
-      if (data.password !== data.password2) {
-        errors.password = true
-      }
-    }
+    formData.append('name', user.value.name)
+    formData.append('username', user.value.username)
+    formData.append('email', user.value.email)
 
-    if (image_name !== null) formData.append('image_name', image_name)
+    if (passwd.value !== '' && passwd2.value !== '')
+      if (passwd.value === passwd2.value) {
+        user.value.password = passwd.value
+        formData.append('password', user.value.password)
+      } else {
+        errordata.isError = true
+        errordata.msg = 'Passwords do not match'
+        return
+      }
+
+    formData.append('image_name', user.value.image_name)
     if (image !== null && image_changed) formData.append('image', image)
 
-    const resp = axiosClient.put(`/api/user/${auth.user.username}`)
+    // console.log('Form data: ', formData)
+    const resp = await axiosClient.put(`/api/user/${user.value.username}`, formData)
     console.log(resp)
     user.value = resp.data
+    auth.setUser(user.value)
     document.getElementById('modalEditUserClose').click()
   } catch (err) {
     console.log(err)

@@ -36,10 +36,10 @@ class AuthorizationError(HTTPException):
     def __init__(self, message):
         self.response = make_response(message, 403)
 
-
 class NotFound(HTTPException):
     def __init__(self, message):
-        self.response = make_response(message, 404)
+        # self.response = make_response(message, 404)
+        self.response = make_response(jsonify(message), 404)
 
 
 class InternalError(HTTPException):
@@ -52,8 +52,8 @@ user_request_parse.add_argument("name", type=str, required=True)
 user_request_parse.add_argument("username", type=str, required=True)
 user_request_parse.add_argument("email", type=str, required=True)
 user_request_parse.add_argument("approved", type=str)
-user_request_parse.add_argument("role", type=str, required=True)
-user_request_parse.add_argument("password", type=str, required=True)
+user_request_parse.add_argument("role", type=str)
+user_request_parse.add_argument("password", type=str)
 user_request_parse.add_argument("image_name", type=str)
 user_request_parse.add_argument("image", type=str)
 
@@ -79,7 +79,7 @@ class UserAPI(Resource):
     def post(self):
         '''Create a new user'''
         args = user_request_parse.parse_args(strict=True)
-        print(args)
+        # print(args)
         name = args.get("name", None)
         username = args.get("username", None)
         email = args.get("email", None)
@@ -115,6 +115,11 @@ class UserAPI(Resource):
             print("=== user already exists === ")
             # raise BadRequest("user already exists")
             abort(Response("user already exists", 400))
+            
+        user = User.query.filter_by(email=email).first()
+        if user is not None:
+            print("==== email already registered ====")
+            abort(Response("email already registered", 400))
         
         isapproved=True
         if role == 'manager':
@@ -148,7 +153,7 @@ class UserAPI(Resource):
                 file_data = base64.b64decode(image)
                 basedir = os.path.abspath(os.path.dirname(__file__))
                 filename= UPLOAD_FOLDER + '/images/users/' + image_name
-                print('Image filename to be saved: ', filename)
+                # print('Image filename to be saved: ', filename)
 
                 # with open(filename, 'wb') as f:
                 #     f.write(file_data)
@@ -179,14 +184,7 @@ class UserAPI(Resource):
             raise BadRequest("username not given")
         else:
             args = user_request_parse.parse_args(strict=True)
-
-            name = args.get("name", None)
-            password = generate_password_hash(args.get("password", None))
-            image = args.get("image",None)
-            image_name = args.get("image_name", None)
-            
-            if image_name is None:
-                image_name = user.image_name
+            # print(args)
 
             user = User.query.filter_by(username=username).first()
             if user is not None:
@@ -194,6 +192,23 @@ class UserAPI(Resource):
                     raise AuthorizationError(message="admin profile can not modified")
             else:
                 raise NotFound(message="user not found")
+
+            name = args.get("name", None)
+            password = args.get("password", None)
+            email = args.get("email", None)
+            image = args.get("image",None)
+            image_name = args.get("image_name", None)
+            
+            if email is None:
+                email = user.email
+            
+            if image_name is None:
+                image_name = user.image_name
+            
+            if password is not None:
+                password = generate_password_hash(password)
+            else:
+                password = user.password
             
             if image is not None:
                 try:
@@ -204,7 +219,7 @@ class UserAPI(Resource):
                     
                     file_data = base64.b64decode(image)
                     filename = UPLOAD_FOLDER + '/images/users/' + image_name
-                    print('user image file to be saved:', filename)
+                    # print('user image file to be saved:', filename)
                     
                     img = Image.open(BytesIO(file_data))
                     img.resize((500, 500))
@@ -213,8 +228,10 @@ class UserAPI(Resource):
                 except:
                     raise InternalError('error saving image')
 
-            user.name = name
+            user.name = name.title()
             user.password = password
+            user.email = email
+            user.image_name = image_name
             user.updated_timestamp = datetime.now()
 
             try:
@@ -224,7 +241,7 @@ class UserAPI(Resource):
             except:
                 raise InternalError(message="error in updating User")
             
-            data = jsonify(user.do_dict())
+            data = jsonify(user.to_dict())
             return make_response(data, 200)
 
     @jwt_required()
@@ -242,6 +259,14 @@ class UserAPI(Resource):
                 db.session.delete(user)
                 cache.clear()
                 db.session.commit()
+                
+                if user.image_name != 'default.png':
+                    filename = UPLOAD_FOLDER + '/images/users/' + user.image_name
+                    if os.path.isfile(filename):
+                        try:
+                            os.remove(filename)
+                        except:
+                            raise InternalError('deleting the image file')
             except:
                 raise InternalError(message="Error deleting User")
 
@@ -531,7 +556,7 @@ class ProductAPI(Resource):
 
                 file_data = base64.b64decode(image)
                 filename= UPLOAD_FOLDER + '/images/products/' + image_name
-                print('Image filename to be saved: ', filename)
+                # print('Image filename to be saved: ', filename)
 
                 # with open(filename, 'wb') as f:
                 #     f.write(file_data)
@@ -569,7 +594,7 @@ class ProductAPI(Resource):
             raise BadRequest("product id is missing")
         else:
             args=product_request_parse.parse_args(strict=True)
-            print(args)
+            # print(args)
             product=Product.query.filter_by(category_id=category_id, id=product_id).first()
             if product is None:
                 raise NotFound("product not found")
@@ -598,7 +623,7 @@ class ProductAPI(Resource):
 
                         file_data = base64.b64decode(image)
                         filename= UPLOAD_FOLDER + '/images/products/' + image_name
-                        print('Image filename to be saved: ', filename)
+                        # print('Image filename to be saved: ', filename)
 
                         # with open(filename, 'wb') as f:
                         #     f.write(file_data)
@@ -701,10 +726,10 @@ class OrderAPI(Resource):
             if user is None:
                 raise NotFound("user not found")
             
-            print('-before parsing args -')
+            # print('-before parsing args -')
             args = order_request_parse.parse_args()
-            print('-after parsing args -')
-            print(args)
+            # print('-after parsing args -')
+            # print(args)
             name=args.get('name', None)
             address=args.get('address', None)
             phone_number=args.get('phone_number', None)
