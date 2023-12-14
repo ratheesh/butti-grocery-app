@@ -8,11 +8,13 @@
           </div>
           <div class="col-10 d-inline-flex justify-content-end m-auto me-0">
             <div class="col-auto mx-2">
-              <button class="btn btn-sm btn-success" @click="handleCategoryAdd({}, false)">
-                <b>
-                  <mdicon name="shape-square-rounded-plus" class="text-white" :size="18" />
-                </b>
-                Add
+              <button class="btn btn-sm btn-secondary mx-2" @click="refresh">
+                <mdicon name="refresh" class="text-black" :size="18" />
+                <span class="ms-1">Refresh</span>
+              </button>
+              <button class="btn btn-sm btn-success mx-2" @click="handleCategoryAdd({}, false)">
+                <mdicon name="shape-square-rounded-plus" class="text-white" :size="18" />
+                <span class="ms-1">Add</span>
               </button>
             </div>
           </div>
@@ -47,8 +49,10 @@
                         class="align-middle"
                       >
                         <td>{{ category.id }}</td>
-                        <td v-if="!category.approved && category.request_type=='edit'">
-                          <s><span class="text-danger fw-bold">{{ category.name }}</span></s>
+                        <td v-if="!category.approved && category.request_type == 'edit'">
+                          <s
+                            ><span class="text-danger fw-bold">{{ category.name }}</span></s
+                          >
                           <mdicon name="arrow-right" class="text-black fw-bolder" :size="16" />
                           <span class="text-success fw-bold">{{ category.request_data }}</span>
                         </td>
@@ -186,55 +190,56 @@
           ></button>
         </div>
         <div class="modal-body">
-          <div class="form-floating mb-3">
-            <input
-              type="text"
-              class="form-control"
-              id="floatingInput"
-              placeholder="Fruits/Vegetables"
-              v-model="data.name"
-              required
-            />
-            <label for="floatingInput">Category</label>
-          </div>
-        </div>
-        <div class="modal-footer text-center">
-          <button
-            v-if="edit"
-            @click="handleCategoryModalEdit(true)"
-            type="button"
-            class="btn btn-sm btn-success"
+          <form
+            @submit.prevent="handleCategoryModalEdit"
+            needs-validation
+            novalidate
+            :class="{ 'was-validated': wasValidated }"
           >
-            <span v-if="loading" class="spinner-border spinner-border-sm"></span>
-            <span v-else><mdicon name="update" class="text-white" :size="18" /></span>
-            Update
-          </button>
-          <button
-            v-else
-            @click="handleCategoryModalEdit(false)"
-            type="button"
-            class="btn btn-sm btn-success"
-          >
-            <span v-if="loading" class="spinner-border spinner-border-sm"></span>
-            <span v-else
-              ><mdicon name="shape-square-rounded-plus" class="text-white" :size="18"
-            /></span>
-            Add
-          </button>
-          <button
-            type="button"
-            class="btn btn-sm btn-danger"
-            id="categoryModalClose"
-            data-bs-dismiss="modal"
-          >
-            <mdicon name="window-close" class="text-white" :size="18" />
-            Close
-          </button>
-        </div>
-        <div class="row d-flex justify-content-center" v-if="errordata.isError">
-          <div class="col-11 text-center">
-            <div class="alert alert-danger" role="alert">
-              {{ errordata.msg }}
+            <div class="form-floating mb-3">
+              <input
+                type="text"
+                class="form-control"
+                :class="{ 'form-control': true, 'is-invalid': errors.name }"
+                id="floatingInput"
+                placeholder="Fruits/Vegetables"
+                v-model="data.name"
+                required
+              />
+              <label for="floatingInput">Category</label>
+              <div class="invalid-feedback">
+                <span>Category name cannot be empty</span>
+              </div>
+            </div>
+            <div class="modal-footer text-center">
+              <button v-if="edit" type="submit" class="btn btn-sm btn-success">
+                <span v-if="loading" class="spinner-border spinner-border-sm"></span>
+                <span v-else><mdicon name="update" class="text-white" :size="18" /></span>
+                Update
+              </button>
+              <button v-else type="submit" class="btn btn-sm btn-success">
+                <span v-if="loading" class="spinner-border spinner-border-sm"></span>
+                <span v-else
+                  ><mdicon name="shape-square-rounded-plus" class="text-white" :size="18"
+                /></span>
+                Add
+              </button>
+              <button
+                type="button"
+                class="btn btn-sm btn-danger"
+                id="categoryModalClose"
+                data-bs-dismiss="modal"
+              >
+                <mdicon name="window-close" class="text-white" :size="18" />
+                Close
+              </button>
+            </div>
+          </form>
+          <div class="row d-flex justify-content-center" v-if="errordata.isError">
+            <div class="col-11 text-center">
+              <div class="alert alert-danger" role="alert">
+                {{ errordata.msg }}
+              </div>
             </div>
           </div>
         </div>
@@ -293,6 +298,9 @@ const errordata = reactive({
   isError: false,
   msg: ''
 })
+const errors = reactive({
+  name: false
+})
 
 function formatDate(timestamp) {
   const date = new Date(timestamp)
@@ -312,7 +320,9 @@ const data = reactive({
   id: 0,
   name: ''
 })
+const category_name = ref('') //keep a copy of the category name during the modal
 const edit = ref(false)
+const wasValidated = ref(false)
 
 // Main Functions
 onMounted(async () => {
@@ -328,8 +338,7 @@ onMounted(async () => {
 })
 
 function getCategoryType(category) {
-  if (category.approved)
-    return '<span class="badge rounded-pill bg-secondary"><b>OK</b></span>'
+  if (category.approved) return '<span class="badge rounded-pill bg-secondary"><b>OK</b></span>'
   else {
     if (category.request_type == 'add') {
       return '<span class="badge rounded-pill bg-success"><b>ADD</b></span>'
@@ -340,7 +349,6 @@ function getCategoryType(category) {
     } else {
       return ''
     }
-
   }
 }
 
@@ -356,6 +364,10 @@ async function refreshCategories() {
   } finally {
     main_loading.value = false
   }
+}
+
+const refresh = async () => {
+  await refreshCategories()
 }
 
 async function handleCategoryApprove(category, approve) {
@@ -387,7 +399,10 @@ function handleCategoryAdd(category, isEdit) {
 
   errordata.isError = false
   errordata.msg = ''
+  wasValidated.value = false
+  errors.name = false
 
+  category_name.value = category.name
   if (isEdit) {
     data.id = category.id
     data.name = category.name
@@ -410,27 +425,34 @@ const handleCategoryDelete = async (id) => {
 }
 
 // Modal Functions
-async function handleCategoryModalEdit(edit) {
-  console.log(`modal (edit : ${edit})`)
+async function handleCategoryModalEdit() {
+  wasValidated.value = false
+  errordata.isError = false
+  errordata.msg = ''
 
   if (data.name === '') {
     errordata.isError = true
     errordata.msg = 'Category name cannot be empty'
+    errors.name = true
     return
   }
 
+  wasValidated.value = true
+
   const formData = new FormData()
-  formData.append('name', data.name)
-  if (edit) { 
+  if (edit.value) {
+    formData.append('name', category_name.value)
     formData.append('request_type', 'edit')
- }
-  else
+  } else {
+    formData.append('name', data.name)
     formData.append('request_type', 'add')
+  }
+  formData.append('request_data', data.name)
 
   loading.value = true
   let resp = {}
   try {
-    if (edit) resp = await axiosClient.put(`/api/category/${data.id}`, formData)
+    if (edit.value) resp = await axiosClient.put(`/api/category/${data.id}`, formData)
     else resp = await axiosClient.post('/api/category', formData)
 
     console.log(resp)
@@ -438,18 +460,15 @@ async function handleCategoryModalEdit(edit) {
     document.getElementById('categoryModalClose').click()
     modal.hide()
     refreshCategories()
-    // force update
-    // const instance = getCurrentInstance();
-    // instance.proxy.$forceUpdate();
   } catch (err) {
     console.log(err)
     errordata.isError = true
     errordata.msg = err.response.data
   } finally {
     data.name = ''
-    data.image = null
-    data.file = null
-    // errordata.isError = false
+    errordata.isError = false
+    errordata.msg = ''
+    wasValidated.value = false
     loading.value = false
   }
 }
@@ -478,9 +497,6 @@ async function handleCategoryModalDelete() {
 
   modalDelete.hide()
   refreshCategories()
-  // force updated
-  // const instance = getCurrentInstance();
-  // return () => instance.proxy.$forceUpdate();
 }
 
 await refreshCategories()

@@ -114,7 +114,7 @@ class UserAPI(Resource):
         if user is not None:
             print("=== user already exists === ")
             # raise BadRequest("user already exists")
-            abort(Response("user already exists", 400))
+            abort(Response("username already exists", 400))
             
         user = User.query.filter_by(email=email).first()
         if user is not None:
@@ -361,38 +361,48 @@ class CategoryAPI(Resource):
             args = category_request_parse.parse_args(strict=True)
 
             name = args.get("name", None)
-            if name == "" or name is None:
-                raise BadRequest("name is empty")
+            if name is None:
+                raise BadRequest("name is not provided")
             else:
                 name = name.capitalize()
             
             request_type = args.get("request_type", None)
+            request_data = args.get("request_data", None)
             approved = args.get("approved", None)
             
             if approved is True and user.role != 'admin':
                 raise BadRequest('only admin can approve categories')
 
-            # category.name = name
+            category.name = name
             
             if user.role == 'admin':
                 if approved is not None:
-                    if category.approved is False and approved is True:
-                        if category.request_type == 'delete':
-                            return self.delete(category.id)
-                        elif category.request_type == 'add' or category.request_type == 'edit':
-                            category.name = category.request_data
-                            category.approved = True
+                    if category.approved is False:
+                        if approved is True:
+                            if category.request_type == 'delete':
+                                return self.delete(category.id)
+                            elif category.request_type == 'add' or category.request_type == 'edit':
+                                category.name = category.request_data
+                                category.approved = True
+                            else:
+                                raise BadRequest("category request type is invalid")
                         else:
-                            raise BadRequest("category request type is invalid")
+                            category.approved = True
                     else:
                         raise BadRequest("category is already approved")
+                else:
+                    category.name=request_data
+                    category.approved = True
             elif user.role == 'manager':
                 if category.approved is False:
                     raise BadRequest("category is already in approval stage")
                 if request_type == 'edit':
-                    category.request_type = request_type
-                    category.request_data = name
-                    category.approved = False
+                    if category.name == request_data:
+                        category.approved = True
+                    else:
+                        category.request_type = request_type
+                        category.request_data = request_data
+                        category.approved = False
             else:
                 raise AuthorizationError(message="only admin can approve categories")
 
