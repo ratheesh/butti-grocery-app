@@ -14,7 +14,13 @@
             <h3 class="text-center mt-2">Signup</h3>
             <hr />
             <div class="card-body m-0 p-0">
-              <form m-0 @submit.prevent="handleSignup">
+              <form
+                m-0
+                @submit.prevent="handleSignup"
+                needs-validation
+                novalidate
+                :class="{ 'was-validated': wasValidated }"
+              >
                 <div class="row justify-content-center m-0 p-0">
                   <div class="col-md-10 m-0 p-0">
                     <div class="form-group mb-3">
@@ -27,12 +33,16 @@
                         </span>
                         <input
                           type="text"
+                          class="form-control rounded-end"
                           :class="{ 'form-control': true, 'is-invalid': errors.name }"
                           placeholder="Kumar"
                           id="name"
                           v-model="userdata.name"
                           autofocus
                         />
+                        <div class="invalid-feedback">
+                          <span>Enter a valid Name</span>
+                        </div>
                       </div>
                     </div>
                     <div class="form-group mb-4">
@@ -45,13 +55,16 @@
                         </span>
                         <input
                           type="text"
-                          class="form-control"
+                          class="form-control rounded-end"
                           placeholder="username"
                           id="username"
                           :class="{ 'form-control': true, 'is-invalid': errors.username }"
                           v-model="userdata.username"
                           autofocus
                         />
+                        <div class="invalid-feedback">
+                          <span>Enter a valid Username</span>
+                        </div>
                       </div>
                     </div>
                     <div class="form-group mb-3">
@@ -65,11 +78,14 @@
                         <input
                           type="text"
                           id="email"
-                          class="form-control"
+                          class="form-control rounded-end"
                           placeholder="username@user.com"
                           :class="{ 'form-control': true, 'is-invalid': errors.email }"
                           v-model="userdata.email"
                         />
+                        <div class="invalid-feedback">
+                          <span>Enter a valid E-Mail</span>
+                        </div>
                       </div>
                     </div>
                     <div class="form-group mb-3">
@@ -83,7 +99,7 @@
                         <select
                           name="role"
                           id="role"
-                          class="form-control"
+                          class="form-control rounded-end"
                           :class="{ 'form-control': true, 'is-invalid': errors.role }"
                           v-model="userdata.role"
                         >
@@ -91,6 +107,9 @@
                             {{ option }}
                           </option>
                         </select>
+                        <div class="invalid-feedback">
+                          <span>Enter a valid Role</span>
+                        </div>
                       </div>
                     </div>
                     <div class="form-group mb-3">
@@ -106,9 +125,12 @@
                           :class="{ 'form-control': true, 'is-invalid': errors.password }"
                           v-model="userdata.password"
                           id="password"
-                          class="form-control"
+                          class="form-control rounded-end"
                           placeholder="Enter Password"
                         />
+                        <div class="invalid-feedback">
+                          <span>Enter valid Password</span>
+                        </div>
                       </div>
                     </div>
                     <div class="form-group mb-3">
@@ -124,9 +146,12 @@
                           :class="{ 'form-control': true, 'is-invalid': errors.password }"
                           v-model="userdata.password2"
                           id="password2"
-                          class="form-control"
+                          class="form-control rounded-end"
                           placeholder="Re-enter Password"
                         />
+                        <div class="invalid-feedback">
+                          <span>Enter valid Password</span>
+                        </div>
                       </div>
                     </div>
                     <div class="mb-2">
@@ -206,6 +231,7 @@ const errors = reactive({
   role: false,
   password: false
 })
+const wasValidated = ref(false)
 
 const router = useRouter()
 
@@ -233,6 +259,11 @@ function createBase64Image(fObj) {
   reader.readAsDataURL(fObj)
 }
 
+const validateEmail = (email) => {
+  var re = /\S+@\S+\.\S+/
+  return re.test(email)
+}
+
 const handleSignup = async () => {
   errorinfo.iserr = false
   errorinfo.errmsg = ''
@@ -242,12 +273,35 @@ const handleSignup = async () => {
   errors.role = false
   errors.password = false
 
-  if (userdata.password != userdata.password2) {
-    iserr.value = true
-    errmsg.value = 'Password does not match'
-    userdata.password = userdata.password2 = ''
+  wasValidated.value = false
+
+  errors.email = !validateEmail(userdata.email)
+  if (
+    !userdata.name ||
+    !userdata.username ||
+    !userdata.email ||
+    !userdata.role ||
+    !userdata.password ||
+    !userdata.password2
+  ) {
+    // errorinfo.iserr = true
+    // errorinfo.errmsg = 'Invalid user data'
+    errors.name = !userdata.name
+    errors.username = !userdata.username
+    errors.email = !userdata.email
+    errors.role = !userdata.role
+    errors.password = !userdata.password
     return
   }
+  if (userdata.password !== userdata.password2) {
+    errorinfo.iserr = true
+    errorinfo.errmsg = 'Passwords does not match'
+    userdata.password = userdata.password2 = ''
+    errors.password = true
+    return
+  }
+
+  wasValidated.value = true
 
   const formData = new FormData()
   formData.append('name', userdata.name)
@@ -275,13 +329,15 @@ const handleSignup = async () => {
       errors.password = errorinfo.errmsg.includes('password')
     }
   } catch (err) {
-    console.log(err)
+    // console.log(err)
+    wasValidated.value = false
     errorinfo.iserr = true
     errorinfo.errmsg = err.response.data
     errors.name = errorinfo.errmsg.includes('name')
-    errors.username = errorinfo.errmsg.includes('user')
+    errors.username = errorinfo.errmsg.includes('username')
     errors.email = errorinfo.errmsg.includes('email')
     errors.password = errorinfo.errmsg.includes('password')
+    errors.role = errorinfo.errmsg.includes('role')
   } finally {
     loading.value = false
   }
