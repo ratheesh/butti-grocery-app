@@ -111,10 +111,13 @@ class Product(db.Model):
         if os.path.isfile(image_file):
             with open(image_file, 'rb') as f:
                 self.image = base64.b64encode(f.read()).decode('utf-8')
+        
+        category = Category.query.filter_by(id=self.category_id).first()
 
         return {
             "id": self.id,
             "name": self.name,
+            "category_name": category.name,
             "description": self.description,
             "unit": self.unit,
             "price": self.price,

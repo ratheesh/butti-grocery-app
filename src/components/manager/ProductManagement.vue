@@ -35,9 +35,9 @@
                       <tr>
                         <th scope="col"><b>#</b></th>
                         <th scope="col"><b>NAME</b></th>
-                        <th scope="col"><b>PRICE</b></th>
-                        <th scope="col"><b>STOCK</b></th>
-                        <th scope="col"><b>STOCK REMANING</b></th>
+                        <th scope="col"><b>UNIT PRICE</b></th>
+                        <th scope="col"><b>TOTAL STOCK</b></th>
+                        <th scope="col"><b>STOCK REMAINING</b></th>
                         <th scope="col"><b>EXPIRY DATE</b></th>
                         <th scope="col"><b>ACTIONS</b></th>
                       </tr>
@@ -51,12 +51,19 @@
                       >
                         <td>{{ product.id }}</td>
                         <td>
-                          <img
-                            class="mx-2"
-                            :src="`data:image/png;base64,${product.image}`"
-                            height="60"
-                            width="60"
-                          />{{ product.name }}
+                          <div class="d-flex align-items-center">
+                            <img
+                              class="mx-2"
+                              :src="`data:image/png;base64,${product.image}`"
+                              height="60"
+                              width="60"
+                            />
+                            <span class="d-inline-block align-items-center">
+                              <span>{{ product.name }}</span>
+                              <br />
+                              <small>{{ product.category_name }}</small>
+                            </span>
+                          </div>
                         </td>
                         <td><b>₹</b>{{ product.price }}/{{ product.unit }}</td>
                         <td>
@@ -455,6 +462,7 @@ async function refreshCategories() {
   try {
     const resp = await axiosClient.get('/api/category')
     categories.value = resp.data
+    categories.value = categories.value.filter((category) => category.approved == true)
   } catch (err) {
     console.log('Error: ', err)
   }
@@ -485,7 +493,7 @@ function handleProductAdd(product, isEdit) {
     data.id = 0
     data.name = ''
     data.description = ''
-    data.unit = ''
+    data.unit = 'piece'
     data.price = 0
     data.stock = 0
     data.expiry_date = new Date().toISOString().split('T')[0]
@@ -497,12 +505,6 @@ function handleProductAdd(product, isEdit) {
     for (const category of categories.value) {
       data.categories.push(category)
     }
-
-    // force reset the previous file if selected
-
-    //set date input field to today
-    // document.getElementById('productExpiryDate').valueAsDate = new Date()
-    // document.getElementById('productExpiryDate').value = new Date().toISOString().split('T')[0]
   }
   edit.value = isEdit
   document.getElementById('productImage').value = ''
@@ -543,9 +545,6 @@ function createBase64Image(fObj) {
 }
 
 async function handleProductModalEdit(edit) {
-  // console.log('modal: isEdit :', edit)
-  // console.log('modal:add/edit data:', data)
-
   if (data.name === '') {
     errordata.isError = true
     errordata.msg = 'Product name cannot be empty'
