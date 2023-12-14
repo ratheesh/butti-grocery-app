@@ -465,9 +465,9 @@ async function handleCategoryModalEdit() {
     errordata.isError = true
     errordata.msg = err.response.data
   } finally {
-    data.name = ''
-    errordata.isError = false
-    errordata.msg = ''
+    // data.name = ''
+    // errordata.isError = false
+    // errordata.msg = ''
     wasValidated.value = false
     loading.value = false
   }
