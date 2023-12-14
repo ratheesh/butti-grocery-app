@@ -1,7 +1,22 @@
 <template>
-  <div class="row justify-content-center ">
+  <div class="row justify-content-center">
     <div class="col-8">
       <div class="card">
+        <div class="card-header m-0 p-0">
+          <div class="row col-12 d-flex justify-content-between align-items-center m-auto my-2">
+            <div class="col-auto">
+              <span class="text-center fs-6 fw-bold mt-3">User Management</span>
+            </div>
+            <div class="col-6 d-inline-flex justify-content-end m-auto me-0">
+              <div class="col-auto mx-2">
+                <button class="btn btn-sm btn-secondary mx-2" @click="refresh">
+                  <mdicon name="refresh" class="text-dark" :size="18" />
+                  Refresh
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="card-body shadow-sm">
           <div v-if="main_loading">
             <loading-indicator></loading-indicator>
@@ -24,10 +39,18 @@
                     <td>{{ user.id }}</td>
                     <td class="align-items-center">
                       <a class="d-flex align-items-center text-decoration-none">
-                        <img :src="`data:image/png;base64,${user.image}`"
-                          height="40" width="40" class="avatar rounded-circle me-3" alt="profile" />
+                        <img
+                          :src="`data:image/png;base64,${user.image}`"
+                          height="40"
+                          width="40"
+                          class="avatar rounded-circle me-3"
+                          alt="profile"
+                        />
                         <div class="d-block">
                           <span class="fw-bold">{{ user.name }}</span>
+                          <div class="small text-black">
+                            <span>@{{ user.username }}</span>
+                          </div>
                           <div class="small text-gray">
                             <span>{{ user.email }}</span>
                           </div>
@@ -38,53 +61,90 @@
                     <td>{{ formatDate(user.created_timestamp) }}</td>
                     <td v-if="user.approved">
                       <div class="d-flex align-items-center">
-                        <mdicon name="check-circle" :width="16" :height="16" class="text-success p-1"
-                          data-bs-toggle="dropdown" aria-expanded="false" />
+                        <mdicon
+                          name="check-circle"
+                          :width="16"
+                          :height="16"
+                          class="text-success p-1"
+                          data-bs-toggle="dropdown"
+                          aria-expanded="false"
+                        />
                         Active
                       </div>
                     </td>
                     <td v-else>
                       <div class="d-flex align-items-center">
-                        <mdicon name="clock-time-four" :width="16" :height="16" class="text-purple p-1"
-                          data-bs-toggle="dropdown" aria-expanded="false" />
+                        <mdicon
+                          name="clock-time-four"
+                          :width="16"
+                          :height="16"
+                          class="text-purple p-1"
+                          data-bs-toggle="dropdown"
+                          aria-expanded="false"
+                        />
                         <span class="text-purple">Pending</span>
                       </div>
                     </td>
                     <td>
-                      <button class="btn btn-link dropdown-toggle px-0 " data-bs-toggle="dropdown" aria-expanded="false">
+                      <button
+                        class="btn btn-link dropdown-toggle px-0"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                      >
                         <mdicon name="dots-horizontal" :width="24" :height="24" />
                       </button>
                       <ul class="dropdown-menu">
                         <li>
-                          <b><a class="dropdown-item d-flex align-items-center" href="javascript:void(0)" @click="showUser(user)">
+                          <b
+                            ><a
+                              class="dropdown-item d-flex align-items-center"
+                              href="javascript:void(0)"
+                              @click="showUser(user)"
+                            >
                               <mdicon name="eye" class="text-gray me-2" :size="20" />
                               View Details
-                            </a></b>
+                            </a></b
+                          >
                         </li>
                         <li v-if="!user.approved">
-                          <b><a class="dropdown-item d-flex align-items-center" href="javascript:void(0)" @click="approveUser(user, true)">
+                          <b
+                            ><a
+                              class="dropdown-item d-flex align-items-center"
+                              href="javascript:void(0)"
+                              @click="approveUser(user, true)"
+                            >
                               <mdicon name="check-circle" class="text-success me-2" :size="20" />
                               Approve
-                            </a></b>
+                            </a></b
+                          >
                         </li>
                         <li v-else>
-                          <b><a class="dropdown-item d-flex align-items-center" href="javascript:void(0)" @click="approveUser(user, false)">
+                          <b
+                            ><a
+                              class="dropdown-item d-flex align-items-center"
+                              href="javascript:void(0)"
+                              @click="approveUser(user, false)"
+                            >
                               <mdicon name="cancel" class="fw-bold text-danger me-2" :size="20" />
                               Revoke
-                            </a></b>
+                            </a></b
+                          >
                         </li>
                       </ul>
-                      <button class="btn btn-link text-decoration-none px-0 " aria-expanded="false">
-                        <mdicon name="close-circle" class="text-danger" :size="20" @click="deleteUser(user)" />
+                      <button class="btn btn-link text-decoration-none px-0" aria-expanded="false">
+                        <mdicon
+                          name="close-circle"
+                          class="text-danger"
+                          :size="20"
+                          @click="deleteUser(user)"
+                        />
                       </button>
                     </td>
                   </tr>
                 </tbody>
               </table>
             </div>
-            <div v-else>
-              No Users to show!
-            </div>
+            <div v-else>No Users to show!</div>
           </div>
         </div>
       </div>
@@ -98,7 +158,12 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Delete User</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
         </div>
         <div class="modal-body">
           <p>All the data of the user will be deleted. This action is irreversible</p>
@@ -112,7 +177,12 @@
             </span>
             Delete
           </button>
-          <button type="button" class="btn btn-secondary" id="modalUserDeleteClose" data-bs-dismiss="modal">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            id="modalUserDeleteClose"
+            data-bs-dismiss="modal"
+          >
             <mdicon name="window-close" class="text-white me-1" :size="18" />
             Cancel
           </button>
@@ -130,40 +200,45 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import axiosClient from '@/js/axios.js'; 
-import { Modal } from 'bootstrap';
-import LoadingIndicator from '@/components/LoadingIndicator.vue';
+import { ref, onMounted } from 'vue'
+import axiosClient from '@/js/axios.js'
+import { Modal } from 'bootstrap'
+import LoadingIndicator from '@/components/LoadingIndicator.vue'
 
-const users = ref([]);
+const users = ref([])
 const main_loading = ref(true)
 const loading = ref(false)
 const errordata = {
-  isError:false,
-  msg:''
+  isError: false,
+  msg: ''
 }
 
-const current_user=ref('')
+const current_user = ref('')
 
 // let modal
 let modalDelete
 onMounted(() => {
   modalDelete = new Modal(document.getElementById('modalUserDelete'), {
-    keyboard : false
+    keyboard: false
   })
-});
+})
 
 async function fetchUsers() {
   console.log('Fetching Users...')
-  // await new Promise((resolve) => setTimeout(resolve, 3000));
+  main_loading.value = true
   try {
-  const res = await axiosClient .get('/api/user')
-  users.value = res.data
-  } catch(err) {
+    const res = await axiosClient.get('/api/user')
+    users.value = res.data
+  } catch (err) {
     console.log(err)
   } finally {
     main_loading.value = false
   }
+}
+
+const refresh = async () => {
+  console.log('Refreshing Users...')
+  await fetchUsers()
 }
 
 function formatDate(timestamp) {
@@ -176,11 +251,11 @@ function formatDate(timestamp) {
   return date.toLocaleDateString('en-IN', options)
 }
 
-const showUser = (user) => {
-  console.log('show user details')
-}
+// const showUser = (user) => {
+//   console.log('show user details')
+// }
 
-const approveUser = async(user, approved) => {
+const approveUser = async (user, approved) => {
   console.log('approve user')
   const formData = new FormData()
   formData.append('user_id', user.id)
@@ -189,7 +264,7 @@ const approveUser = async(user, approved) => {
   try {
     main_loading.value = true
     await axiosClient.post(`/approve`, formData)
-  } catch(err) {
+  } catch (err) {
     console.log(err)
   } finally {
     main_loading.value = false
@@ -205,27 +280,26 @@ const approveUser = async(user, approved) => {
 const deleteUser = (user) => {
   // console.log('delete user')
   current_user.value = user.username
-  errordata.isError=false
-  errordata.msg=''
+  errordata.isError = false
+  errordata.msg = ''
   modalDelete.show()
 }
 
-const modalUserDelete = async() => {
+const modalUserDelete = async () => {
   console.log('modal: deleting user')
-  errordata.isError=false
-  errordata.msg=''
+  errordata.isError = false
+  errordata.msg = ''
   loading.value = true
-  
+
   try {
     const resp = await axiosClient.delete(`api/user/${current_user.value}`)
     console.log(resp)
     console.log('modal:Closing modal')
     document.getElementById('modalUserDeleteClose').click()
     fetchUsers()
-  } catch(err) {
+  } catch (err) {
     console.log(err)
-    errordata.isError=true,
-    errordata.msg=err.response.data
+    ;(errordata.isError = true), (errordata.msg = err.response.data)
   } finally {
     loading.value = false
   }
