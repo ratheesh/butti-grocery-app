@@ -29,3 +29,7 @@ coverage
 *.sw?
 *.jpg
 *.patch
+*.png
+*.jpg
+celerybeat-schedule
+package-lock.json
