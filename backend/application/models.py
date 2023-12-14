@@ -61,7 +61,7 @@ class Category(db.Model):
     '''Category Model'''
     __tablename__ = "category"
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    name = db.Column(db.String(32), nullable=False)
+    name = db.Column(db.String(32), unique=True, nullable=False)
     request_type = db.Column(db.String(32))
     request_data = db.Column(db.String(64))
     approved = db.Column(db.Boolean, nullable=False, default=False)
