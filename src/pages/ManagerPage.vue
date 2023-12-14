@@ -2,7 +2,7 @@
   <dashboard-layout>
     <div class="container">
       <div class="row justify-content-center mt-5">
-        <h2 v-if="user.approved" class="text-center">Dash Board!</h2>
+        <h2 v-if="user.approved" class="text-center">Manager's Home!</h2>
       </div>
     </div>
     <template v-slot:sidebar>
@@ -17,7 +17,7 @@
                 <span class="fs-3 text-warning text-center">Manager</span>
               </a>
               <hr class="text-white p-0" />
-              <li class="nav-item d-inline-flex align-items-center" @click="component = DashBoard">
+              <li class="nav-item d-inline-flex align-items-center" @click="router.push({name:'managerdashboard'})">
                 <a href="javascript:void(0)" class="nav-link text-white" aria-current="page">
                   <mdicon name="gauge" class="text-white" />
                   <span class="ms-2 fs-6">Dashboard</span>
@@ -25,7 +25,7 @@
               </li>
               <li
                 class="nav-item d-inline-flex align-items-center"
-                @click="component = CategoryManagement"
+                @click="router.push({name:'managercategories'})"
               >
                 <a href="javascript:void(0)" class="nav-link text-white" aria-current="page">
                   <mdicon name="shape" class="text-white" />
@@ -34,20 +34,11 @@
               </li>
               <li
                 class="nav-item d-inline-flex align-items-center"
-                @click="component = ProductManagement"
+                @click="router.push({name:'managerproducts'})"
               >
                 <a href="javascript:void(0)" class="nav-link text-white" aria-current="page">
                   <mdicon name="list-box" class="text-white" />
                   <span class="ms-2 fs-6">Products</span>
-                </a>
-              </li>
-              <li
-                class="nav-item d-inline-flex align-items-center"
-                @click="component = OrdersManagement"
-              >
-                <a href="javascript:void(0)" class="nav-link text-white" aria-current="page">
-                  <mdicon name="format-list-bulleted-type" class="text-white" />
-                  <span class="ms-2 fs-6">Orders</span>
                 </a>
               </li>
             </ul>
@@ -76,8 +67,8 @@
     <div v-else>
       <suspense timeout="0">
         <template #default>
-          <!-- <user-management></user-management> -->
-          <component :is="component"></component>
+          <!-- <component :is="component"></component> -->
+          <router-view></router-view>
         </template>
         <template #fallback>
           <loading-indicator></loading-indicator>
@@ -88,24 +79,17 @@
 </template>
 
 <script setup>
-// import axiosClient from "@/js/axios.js";
-// import MainLayout from "@/layouts/MainLayout.vue";
+import { RouterView } from 'vue-router'
 import { storeToRefs } from 'pinia'
-// import router from '@/router'
 import { useAuthStore } from '../stores/authstore'
+import router from '@/router/index.js'
 import DashboardLayout from '@/layouts/DashboardLayout.vue'
-import CategoryManagement from '@/components/manager/CategoryManagement.vue'
-import ProductManagement from '@/components/manager/ProductManagement.vue'
-import OrdersManagement from '@/components/OrdersManagement.vue'
-import DashBoard from '@/components/manager/DashBoard.vue'
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
-import { shallowRef } from 'vue'
 
 
 const auth = useAuthStore()
 const { user } = storeToRefs(auth)
 
-const component = shallowRef('DashBoard')
 </script>
 
 <style scoped>
