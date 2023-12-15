@@ -49,7 +49,6 @@
     </template>
     <suspense timeout="0">
       <template #default>
-        <!-- <component :is="component"></component> -->
         <router-view></router-view>
       </template>
       <template #fallback>
@@ -68,7 +67,7 @@ import router from '../router/index.js'
 import DashboardLayout from '@/layouts/DashboardLayout.vue'
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
 
-const auth = useAuthStore()
+const auth = useAuthStore() || { role: 'user' }
 const route = useRoute()
 
 onMounted(() => {
