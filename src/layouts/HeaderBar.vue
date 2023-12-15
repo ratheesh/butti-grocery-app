@@ -67,6 +67,7 @@
               >
                 <!-- <mdicon name="account" :size="20" /> -->
                 <img
+                  v-if="user.image"
                   :src="`data:image/png;base64,${user.image}`"
                   alt="avatar"
                   class="rounded-circle"
@@ -77,7 +78,7 @@
                 <span class="ms-2 fs-6">{{ user.name }}</span>
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
-                <a class="dropdown-item" href="javascript:void(0)">
+                <a v-if="user.role !== 'admin'" class="dropdown-item" href="javascript:void(0)">
                   <router-link :to="{ name: 'profile' }" class="dropdown-item">
                     <mdicon name="account" :size="20" />
                     Profile
@@ -120,7 +121,7 @@
                     </router-link>
                   </a>
                 </li>
-                <li><hr class="dropdown-divider" /></li>
+                <li v-if="user.role !== 'admin'"><hr class="dropdown-divider" /></li>
                 <li class="nav-item mx-2" v-if="!authenticated">
                   <router-link :to="{ name: 'login' }" class="dropdown-item"> Login </router-link>
                 </li>
