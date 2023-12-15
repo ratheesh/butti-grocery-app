@@ -222,7 +222,7 @@ class UserAPI(Resource):
                     # print('user image file to be saved:', filename)
                     
                     img = Image.open(BytesIO(file_data))
-                    img.resize((500, 500))
+                    img.resize((200, 200))
                     img.save(filename, format='PNG')
 
                 except:
