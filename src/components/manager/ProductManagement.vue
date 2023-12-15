@@ -250,7 +250,7 @@
             </div>
             <div class="form-floating mb-3">
               <input
-                type="integer"
+                type="number"
                 class="form-control"
                 :class="{ 'form-control': true, 'is-invalid': errors.price }"
                 id="productPrice"
@@ -266,7 +266,7 @@
             </div>
             <div class="form-floating mb-3">
               <input
-                type="integer"
+                type="number"
                 class="form-control"
                 :class="{ 'form-control': true, 'is-invalid': errors.stock }"
                 id="productStock"
@@ -611,25 +611,15 @@ async function handleProductModalEdit() {
     return
   }
 
-  if (data.price <= 0) {
+  if (data.price <= 0 || data.price > 10000) {
     errors.price = true
     return
   }
 
-  if (data.stock <= 0) {
+  if (data.stock <= 0 || data.stock > 10000) {
     errors.stock = true
     return
   }
-
-  // if (Number.isInteger(data.stock)) {
-  //   if (data.stock <= 0) {
-  //     errors.stock = true
-  //     return
-  //   }
-  // } else {
-  //   errors.stock = true
-  //   return
-  // }
 
   if (data.expiry_date < new Date().toISOString().split('T')[0]) {
     errors.expiry_date = true
@@ -665,11 +655,11 @@ async function handleProductModalEdit() {
     console.log(err)
     errordata.isError = true
     errordata.msg = err.response.data.message
-    errors.name = errordata.msg.contains('name')
-    errors.description = errordata.msg.contains('description')
-    errors.price = errordata.msg.contains('price')
-    errors.stock = errordata.msg.contains('stock')
-    errors.expiry_date = errordata.msg.contains('expiry_date')
+    errors.name = errordata.msg.includes('name')
+    errors.description = errordata.msg.includes('description')
+    errors.price = errordata.msg.includes('price')
+    errors.stock = errordata.msg.includes('stock')
+    errors.expiry_date = errordata.msg.includes('expiry_date')
   } finally {
     wasValidated.value = false
     loading.value = false
