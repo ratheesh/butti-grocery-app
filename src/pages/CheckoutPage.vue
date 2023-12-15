@@ -136,6 +136,13 @@
                   Place Order
                 </button>
               </div>
+              <div
+                v-if="errorinfo.isErr"
+                class="alert alert-danger mx-2 text-center d-flex justify-content-center"
+                role="alert"
+              >
+                {{ errorinfo.msg }}
+              </div>
             </div>
           </form>
         </div>
@@ -205,6 +212,13 @@ const placeOrder = async () => {
     return
   }
 
+  if (delivery_info.phone_number < 1000000000 || delivery_info.phone_number > 9999999999) {
+    errors.phone_number = true
+    errorinfo.isErr = true
+    errorinfo.msg = 'Provide valid phone number'
+    return
+  }
+
   if (delivery_info.delivery_date < new Date().toISOString().split('T')[0]) {
     errors.delivery_date = true
     errorinfo.isErr = true
@@ -240,6 +254,8 @@ const placeOrder = async () => {
     router.push('/orders')
   } catch (err) {
     console.log(err)
+    errorinfo.isErr = true
+    errorinfo.msg = err.response.data.message
   } finally {
     loading.value = false
     wasValidated.value = false
