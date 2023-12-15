@@ -233,18 +233,19 @@ const placeOrder = async () => {
   formData.append('name', delivery_info.name)
   formData.append('address', delivery_info.address)
   formData.append('phone_number', parseInt(delivery_info.phone_number))
-  for (const item of cart.items) {
-    formData.append('items', JSON.stringify(item))
-  }
+  // for (const item of cart.items) {
+  //   formData.append('items', JSON.stringify(item))
+  // }
+  formData.append('items', JSON.stringify(cart.items))
   const deliverydate = new Date(delivery_info.delivery_date)
     .toISOString()
     .slice(0, 16)
     .replace('T', ' ')
-  console.log(deliverydate)
+  // console.log(deliverydate)
   formData.append('delivery_date', deliverydate)
-  console.log(cart.totalAmount)
+  // console.log(cart.totalAmount)
   formData.append('total_amount', cart.totalAmount)
-  // console.table(formData)
+  // console.log(formData)
 
   try {
     loading.value = true

@@ -738,10 +738,8 @@ class OrderAPI(Resource):
             if user is None:
                 raise NotFound("user not found")
             
-            # print('-before parsing args -')
             args = order_request_parse.parse_args()
-            # print('-after parsing args -')
-            print(args)
+            # print(args)
             name=args.get('name', None)
             address=args.get('address', None)
             phone_number=args.get('phone_number', None)
@@ -781,23 +779,20 @@ class OrderAPI(Resource):
 
             items_list = []
             product_list = []
-            for item in items:
-                item = json.loads(item)
-                print(item)
-
-                product = Product.query.filter_by(id=item.get('id')).first()
-                print('product stock:', product.stock, 'product stock available:', product.stock_available)
-                if product.stock_available < item.get('quantity'):
+            for item in json.loads(items[0]):
+                product = Product.query.filter_by(id=item['id']).first()
+                # print('product stock:', product.stock, 'product stock available:', product.stock_available)
+                if product.stock_available < item['quantity']:
                     raise BadRequest("quantity requested is more than stock")
 
                 new_item = Item(
-                    quantity=item.get('quantity'),
-                    product_id=item.get('id'),
+                    quantity=item['quantity'],
+                    product_id=item['id'],
                     order_id=order.id,
                     created_timestamp=datetime.now(),
                     updated_timestamp=datetime.now(),
                 )
-                product.stock_available = product.stock_available - item.get('quantity')
+                product.stock_available = product.stock_available - item['quantity']
                 items_list.append(new_item)
                 product_list.append(product)
             
