@@ -20,7 +20,12 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <form class="d-flex" role="search" @submit.prevent="handleSearch">
+          <form
+            v-if="user.role == 'user'"
+            class="d-flex"
+            role="search"
+            @submit.prevent="handleSearch"
+          >
             <input
               class="form-control-sm me-1 border-2"
               type="search"
@@ -156,6 +161,7 @@ const auth = useAuthStore()
 const cart = useCartStore()
 
 const { user, authenticated } = storeToRefs(auth)
+user.value = user.value || { role: 'user' }
 
 const handleSearch = () => {
   if (query.value) {
