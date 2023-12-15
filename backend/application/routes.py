@@ -114,3 +114,41 @@ def approve_category(id):
             return jsonify("error approving category"), 500
 
         return make_response(jsonify(category=category.to_dict()),200)
+
+@routes.route("/search", methods=["GET"])
+@jwt_required()
+@access(["user"])
+def search():
+    '''search products'''
+    current_user_id = get_jwt_identity()
+    current_user = User.query.get(current_user_id)
+    if current_user.role != "user":
+        return make_response(jsonify("unauthorized"), 403)
+    else:
+        query = request.args.get('query')
+        if query is None:
+            return make_response(jsonify("empty search"), 400)
+
+        categories = Category.query.filter(
+            and_(Category.approved == True , Category.name.ilike("%" + query + "%"))
+            ).all()
+
+        category_products = []
+        print(categories)
+        for category in categories:
+            category_products.extend([product for product in category.products if product.expiry_date >= datetime.now()])
+            print(category_products)
+            # category_products.extend(filter( lambda x: x.expiry_date >= datetime.now(), categories.products))
+
+        products = Product.query.filter(
+            and_(Product.expiry_date >= datetime.now() ,
+            or_(Product.name.ilike("%" + query + "%") ,
+            Product.description.ilike("%" + query + "%") ,
+            Product.unit.ilike("%" + query + "%") ,
+            Product.expiry_date.ilike("%" + query + "%") ,
+            Product.price.ilike("%" + query + "%")))
+            ).all()
+        
+        data = jsonify([category_product.to_dict() for category_product in category_products],
+                       [product.to_dict() for product in products])
+        return make_response(data, 200)

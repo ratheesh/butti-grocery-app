@@ -128,6 +128,12 @@ const routes = [
     }
   },
   {
+    path: '/search/:query',
+    name: 'search',
+    component: SearchPage,
+    props: true
+  },
+  {
     path: '/forbidden',
     name: 'forbidden',
     component: UnauthorizedPage,
