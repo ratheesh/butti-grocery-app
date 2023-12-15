@@ -12,7 +12,12 @@
           <h4 class="text-center">Delivery Information</h4>
         </div>
         <div class="card-body mt-3 p-0">
-          <form>
+          <form
+            @submit.prevent="placeOrder"
+            needs-validation
+            novalidate
+            :class="{ 'was-validated ': wasValidated }"
+          >
             <div class="col-md-6 col-lg-8 m-auto">
               <div class="form-group mb-4">
                 <label for="name"
@@ -24,7 +29,11 @@
                   </span>
                   <input
                     type="text"
-                    :class="{ 'form-control': true, 'rounded-end':true, 'is-invalid': errors.name }"
+                    :class="{
+                      'form-control': true,
+                      'rounded-end': true,
+                      'is-invalid': errors.name
+                    }"
                     placeholder="Receipt Name"
                     id="name"
                     v-model="delivery_info.name"
@@ -46,7 +55,11 @@
                   </span>
                   <textarea
                     type="text"
-                    :class="{ 'form-control': true, 'rounded-end':true, 'is-invalid': errors.address }"
+                    :class="{
+                      'form-control': true,
+                      'rounded-end': true,
+                      'is-invalid': errors.address
+                    }"
                     placeholder="Delivery Address"
                     id="address"
                     v-model="delivery_info.address"
@@ -68,7 +81,11 @@
                   </span>
                   <input
                     type="number"
-                    :class="{ 'form-control': true, 'rounded-end':true, 'is-invalid': errors.phone }"
+                    :class="{
+                      'form-control': true,
+                      'rounded-end': true,
+                      'is-invalid': errors.phone_number
+                    }"
                     placeholder="9876543210"
                     id="phone"
                     v-model="delivery_info.phone_number"
@@ -92,7 +109,11 @@
                   </span>
                   <input
                     type="date"
-                    :class="{ 'form-control': true, 'rounded-end':true, 'is-invalid': errors.deliverydate }"
+                    :class="{
+                      'form-control': true,
+                      'rounded-end': true,
+                      'is-invalid': errors.delivery_date
+                    }"
                     placeholder=""
                     id="deliveryDate"
                     v-model="delivery_info.delivery_date"
@@ -100,7 +121,7 @@
                     autofocus
                   />
                   <div class="invalid-feedback">
-                    <p class="text-danger">Provide valid delivery date</p>
+                    <p class="text-danger">Delivery date should be in future</p>
                   </div>
                 </div>
               </div>
@@ -110,7 +131,7 @@
                   <mdicon name="home" :size="18" />
                   Go Home
                 </a>
-                <button class="btn btn-sm btn-primary mx-2" @click="placeOrder">
+                <button type="submit" class="btn btn-sm btn-primary mx-2">
                   <mdicon name="shopping-outline" :size="16" />
                   Place Order
                 </button>
@@ -142,20 +163,58 @@ const delivery_info = reactive({
   name: auth.user.name,
   address: '',
   phone_number: 0,
-  delivery_date: new Date().toISOString().split('T')[0],
+  delivery_date: new Date().toISOString().split('T')[0]
 })
 
+const errorinfo = reactive({
+  isErr: false,
+  msg: ''
+})
 const errors = reactive({
   name: false,
   address: false,
   phone: false,
   delivery_date: false
 })
+const wasValidated = ref(false)
 
 // const router = useRouter()
 const cart = useCartStore()
 
 const placeOrder = async () => {
+  console.log('validating order')
+
+  wasValidated.value = false
+  errorinfo.isErr = false
+  errorinfo.msg = ''
+  errors.name = false
+  errors.address = false
+  errors.phone_number = false
+  errors.delivery_date = false
+
+  if (
+    !delivery_info.name ||
+    !delivery_info.address ||
+    !delivery_info.phone_number ||
+    !delivery_info.delivery_date
+  ) {
+    errors.name = !delivery_info.name
+    errors.address = !delivery_info.address
+    errors.phone_number = !delivery_info.phone_number
+    errors.delivery_date = !delivery_info.delivery_date
+    return
+  }
+
+  if (delivery_info.delivery_date < new Date().toISOString().split('T')[0]) {
+    errors.delivery_date = true
+    errorinfo.isErr = true
+    errorinfo.msg = 'Delivery date should be in future'
+    return
+  }
+
+  wasValidated.value = true
+
+  console.log('Placing order')
   const formData = new FormData()
   formData.append('name', delivery_info.name)
   formData.append('address', delivery_info.address)
@@ -163,10 +222,13 @@ const placeOrder = async () => {
   for (const item of cart.items) {
     formData.append('items', JSON.stringify(item))
   }
-  const deliverydate = new Date(delivery_info.delivery_date).toISOString().slice(0,16).replace('T', ' ')
+  const deliverydate = new Date(delivery_info.delivery_date)
+    .toISOString()
+    .slice(0, 16)
+    .replace('T', ' ')
   console.log(deliverydate)
   formData.append('delivery_date', deliverydate)
-  // console.log(cart.totalAmount)
+  console.log(cart.totalAmount)
   formData.append('total_amount', cart.totalAmount)
   // console.table(formData)
 
@@ -180,6 +242,13 @@ const placeOrder = async () => {
     console.log(err)
   } finally {
     loading.value = false
+    wasValidated.value = false
+    errorinfo.isErr = false
+    errorinfo.msg = ''
+    errors.name = false
+    errors.address = false
+    errors.phone = false
+    errors.delivery_date = false
   }
 }
 </script>

@@ -17,9 +17,9 @@ export const useCartStore = defineStore('cartStore', () => {
   }
 
   function update() {
-    console.log('updating items...')
+    // console.log('updating items...')
     localStorage.setItem('cart', JSON.stringify(items.value))
-    console.log('total:', total.value)
+    // console.log('total:', total.value)
   }
 
   const totalAmount = computed(() =>

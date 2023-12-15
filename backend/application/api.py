@@ -51,7 +51,7 @@ user_request_parse = reqparse.RequestParser(bundle_errors=True)
 user_request_parse.add_argument("name", type=str, required=True)
 user_request_parse.add_argument("username", type=str, required=True)
 user_request_parse.add_argument("email", type=str, required=True)
-user_request_parse.add_argument("approved", type=str)
+user_request_parse.add_argument("approved", type=inputs.boolean)
 user_request_parse.add_argument("role", type=str)
 user_request_parse.add_argument("password", type=str)
 user_request_parse.add_argument("image_name", type=str)
@@ -544,7 +544,7 @@ class ProductAPI(Resource):
             unit=unit,
             price=price,
             stock=stock,
-            stock_remaining=stock,
+            stock_available=stock,
             expiry_date=expiry_date,
             image_name=image_name,
             category_id=category_id,
@@ -741,7 +741,7 @@ class OrderAPI(Resource):
             # print('-before parsing args -')
             args = order_request_parse.parse_args()
             # print('-after parsing args -')
-            # print(args)
+            print(args)
             name=args.get('name', None)
             address=args.get('address', None)
             phone_number=args.get('phone_number', None)
@@ -786,8 +786,9 @@ class OrderAPI(Resource):
                 print(item)
 
                 product = Product.query.filter_by(id=item.get('id')).first()
-                if product.stock_remaining < item.get('quantity'):
-                    raise BadRequest("quantity is more than stock")
+                print('product stock:', product.stock, 'product stock available:', product.stock_available)
+                if product.stock_available < item.get('quantity'):
+                    raise BadRequest("quantity requested is more than stock")
 
                 new_item = Item(
                     quantity=item.get('quantity'),
@@ -796,7 +797,7 @@ class OrderAPI(Resource):
                     created_timestamp=datetime.now(),
                     updated_timestamp=datetime.now(),
                 )
-                product.stock_remaining = product.stock_remaining - item.get('quantity')
+                product.stock_available = product.stock_available - item.get('quantity')
                 items_list.append(new_item)
                 product_list.append(product)
             

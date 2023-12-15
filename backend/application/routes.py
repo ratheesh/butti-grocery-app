@@ -43,7 +43,11 @@ def logout():
 @routes.route("/home", methods=["GET"])
 def home():
     '''home route'''
-    products = Product.query.filter(Product.expiry_date > datetime.now()).all()
+    try:
+        products = Product.query.filter(Product.expiry_date >= datetime.now()).all()
+    except:
+        return make_response(jsonify("error getting products"), 500)
+
     return make_response(jsonify([product.to_dict() for product in products]), 200)
 
 @routes.route("/approve", methods=["POST"])

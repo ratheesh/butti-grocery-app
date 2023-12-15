@@ -25,19 +25,16 @@
             <span class="text-danger">Out of Stock</span>
           </div>
           <div v-else class="p-1">
-            <br/>
+            <br />
           </div>
-          <div class="col d-inline-flex align-items-center" :disabled="outofstock" >
+          <div class="col d-inline-flex align-items-center" :disabled="outofstock">
             <mdicon @click="updateCount()" name="minus-circle" class="text-danger" />
             <label class="text-center" style="width: 2em">{{ quantity }}</label>
             <mdicon @click="updateCount(true)" name="plus-circle" class="text-success" />
           </div>
           <div class="col-auto">
             <form @submit.prevent="addToCart(data)">
-              <button
-               class="btn btn-success btn-sm"
-               :disabled="outofstock"
-              >
+              <button class="btn btn-success btn-sm" :disabled="outofstock">
                 <mdicon name="cart-plus" :size="20" />Add
               </button>
             </form>
@@ -60,7 +57,7 @@ const props = defineProps({
   }
 })
 
-const data = toRef(props, 'data')
+const data = toRef(props, 'data') || {}
 const quantity = ref(1)
 const outofstock = ref(true)
 
@@ -69,9 +66,11 @@ onMounted(() => {
 })
 
 const updateCount = (add) => {
+  if (outofstock.value) return
+
   if (add) {
     if (quantity.value < 1) quantity.value = 1
-    quantity.value++
+    if (quantity.value < data.value.stock_available) quantity.value++
   } else {
     if (quantity.value < 1) quantity.value = 1
     if (quantity.value > 1) {
