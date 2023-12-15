@@ -7,7 +7,7 @@ import json
 
 from PIL import Image
 from flask import Blueprint, make_response, abort, Response, jsonify
-from flask_restful import NotFound, Resource, fields, marshal_with, reqparse, request
+from flask_restful import NotFound, Resource, fields, marshal_with, reqparse, request, inputs
 from werkzeug.exceptions import HTTPException
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -275,7 +275,7 @@ class UserAPI(Resource):
 
 category_request_parse = reqparse.RequestParser(bundle_errors=True)
 category_request_parse.add_argument("name", type=str, required=True)
-category_request_parse.add_argument("approved", type=bool)
+category_request_parse.add_argument("approved", type=inputs.boolean)
 category_request_parse.add_argument("request_type", type=str)
 category_request_parse.add_argument("request_data", type=str)
 class CategoryAPI(Resource):
@@ -359,6 +359,7 @@ class CategoryAPI(Resource):
             return NotFound("category not found")
         else:
             args = category_request_parse.parse_args(strict=True)
+            # print(args)
 
             name = args.get("name", None)
             if name is None:
@@ -373,7 +374,7 @@ class CategoryAPI(Resource):
             if approved is True and user.role != 'admin':
                 raise BadRequest('only admin can approve categories')
 
-            category.name = name
+            # category.name = name
             
             if user.role == 'admin':
                 if approved is not None:
@@ -387,6 +388,7 @@ class CategoryAPI(Resource):
                             else:
                                 raise BadRequest("category request type is invalid")
                         else:
+                            category.name=name
                             category.approved = True
                     else:
                         raise BadRequest("category is already approved")

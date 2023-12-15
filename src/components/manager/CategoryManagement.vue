@@ -371,11 +371,10 @@ const refresh = async () => {
 }
 
 async function handleCategoryApprove(category, approve) {
-  console.log('Approve Category:', category.id)
   loading.value = true
 
   try {
-    if (approve || category.request_type == 'edit') {
+    if (category.request_type == 'edit') {
       const formData = new FormData()
       formData.append('name', category.name)
       formData.append('approved', approve)
