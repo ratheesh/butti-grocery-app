@@ -32,7 +32,7 @@
               </li>
               <li
                 class="nav-item d-inline-flex align-items-center"
-                :class="route.name == 'managercategory' ? 'active' : ''"
+                :class="route.name == 'managercategories' ? 'active' : ''"
               >
                 <router-link to="/manager/category" class="nav-link text-white" aria-current="page">
                   <mdicon name="shape" class="text-white" />
