@@ -277,9 +277,9 @@
                 v-model="data.stock"
                 required
               />
-              <label for="productStock">Stock</label>
+              <label for="productStock">Stock(> {{ data.stock_sold }})</label>
               <div class="invalid-feedback">
-                <span>Stock can not zero</span>
+                <span>Stock size is invalid. must be > {{ data.stock_sold }}</span>
               </div>
             </div>
             <div class="form-group mb-3">
@@ -460,6 +460,7 @@ const data = reactive({
   unit: '',
   price: 0,
   stock: 0,
+  stock_sold: 0,
   expiry_date: '',
   image_name: null,
   image: null,
@@ -541,6 +542,7 @@ function handleProductAdd(product, isEdit) {
     data.unit = product.unit
     data.price = product.price
     data.stock = product.stock
+    data.stock_sold = product.stock_sold
     const date = new Date(product.expiry_date)
     // data.expiry_date = `${date.getFullYear()}-${date.getMonth()}-${date.getDay()}`
     data.expiry_date = date.toISOString().split('T')[0]
@@ -650,7 +652,7 @@ async function handleProductModalEdit() {
     return
   }
 
-  if (data.stock <= 0 || data.stock > 10000) {
+  if (data.stock <= data.stock_sold || data.stock > 10000) {
     errors.stock = true
     return
   }
