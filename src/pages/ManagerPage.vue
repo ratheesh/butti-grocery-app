@@ -17,7 +17,10 @@
                 <span class="fs-3 text-warning text-center">Manager</span>
               </a>
               <hr class="text-white p-0" />
-              <li class="nav-item d-inline-flex align-items-center" @click="router.push({name:'managerdashboard'})">
+              <li
+                class="nav-item d-inline-flex align-items-center"
+                @click="router.push({ name: 'managerdashboard' })"
+              >
                 <a href="javascript:void(0)" class="nav-link text-white" aria-current="page">
                   <mdicon name="gauge" class="text-white" />
                   <span class="ms-2 fs-6">Dashboard</span>
@@ -25,7 +28,7 @@
               </li>
               <li
                 class="nav-item d-inline-flex align-items-center"
-                @click="router.push({name:'managercategories'})"
+                @click="router.push({ name: 'managercategories' })"
               >
                 <a href="javascript:void(0)" class="nav-link text-white" aria-current="page">
                   <mdicon name="shape" class="text-white" />
@@ -34,7 +37,7 @@
               </li>
               <li
                 class="nav-item d-inline-flex align-items-center"
-                @click="router.push({name:'managerproducts'})"
+                @click="router.push({ name: 'managerproducts' })"
               >
                 <a href="javascript:void(0)" class="nav-link text-white" aria-current="page">
                   <mdicon name="list-box" class="text-white" />
@@ -50,24 +53,25 @@
       <div class="row col-md-6 m-auto">
         <div class="card card-body justify-content-center m-auto shadow-sm">
           <div class="fs-4">
-                <div class="row col-md-6 m-auto">
-                  <p class="text-center">
-                    <span class="bold">You account is not approved yet! </span>
-                    <br/>
-                    <span class="bold">Please wait for the admin to approve your account.</span>
-                  </p>
-                </div>
-                <div class="row col-md-6 m-auto">
-                  <a href="javascript:void(0)" class="btn btn-sm btn-primary" @click="auth.logout">Logout</a>
-                </div>
+            <div class="row col-md-6 m-auto">
+              <p class="text-center">
+                <span class="bold">You account is not approved yet! </span>
+                <br />
+                <span class="bold">Please wait for the admin to approve your account.</span>
+              </p>
+            </div>
+            <div class="row col-md-6 m-auto">
+              <a href="javascript:void(0)" class="btn btn-sm btn-primary" @click="auth.logout"
+                >Logout</a
+              >
+            </div>
           </div>
-      </div>
+        </div>
       </div>
     </div>
     <div v-else>
       <suspense timeout="0">
         <template #default>
-          <!-- <component :is="component"></component> -->
           <router-view></router-view>
         </template>
         <template #fallback>
@@ -86,10 +90,8 @@ import router from '@/router/index.js'
 import DashboardLayout from '@/layouts/DashboardLayout.vue'
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
 
-
 const auth = useAuthStore()
 const { user } = storeToRefs(auth)
-
 </script>
 
 <style scoped>
