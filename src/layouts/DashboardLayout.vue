@@ -22,7 +22,7 @@ import Footer from '@/layouts/FooterBar.vue'
 import { useAuthStore } from '../stores/authstore'
 
 const auth = useAuthStore()
-const { user } = storeToRefs(auth)
+const { user } = storeToRefs(auth) || { approved: false }
 </script>
 
 <style lang="scss"></style>
