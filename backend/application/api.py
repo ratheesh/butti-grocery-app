@@ -544,6 +544,7 @@ class ProductAPI(Resource):
             unit=unit,
             price=price,
             stock=stock,
+            stock_sold = 0,
             stock_available=stock,
             expiry_date=expiry_date,
             image_name=image_name,
@@ -646,6 +647,14 @@ class ProductAPI(Resource):
                         img.save(filename, format='PNG')
                     except:
                         raise InternalError(message="Error in saving image")
+                        
+                if (stock < product.stock_sold):
+                    raise BadRequest("new stock can not be less than stock sold")
+
+                if (stock > product.stock):
+                    product.stock_available = product.stock_available + (stock - product.stock)
+                elif (stock < product.stock):
+                    product.stock_available = product.stock_available - (product.stock - stock)
 
                 product.name = name
                 product.description = description
@@ -781,7 +790,8 @@ class OrderAPI(Resource):
             product_list = []
             for item in json.loads(items[0]):
                 product = Product.query.filter_by(id=item['id']).first()
-                # print('product stock:', product.stock, 'product stock available:', product.stock_available)
+                # cache.clear()
+                # print('name:',product.name, 'stock:', product.stock, 'stock available:', product.stock_available, 'stock sold:', product.stock_sold)
                 if product.stock_available < item['quantity']:
                     raise BadRequest("quantity requested is more than stock")
 
@@ -793,6 +803,12 @@ class OrderAPI(Resource):
                     updated_timestamp=datetime.now(),
                 )
                 product.stock_available = product.stock_available - item['quantity']
+                product.stock_sold = product.stock_sold + item['quantity']
+                if (product.stock != (product.stock_available + product.stock_sold)):
+                    raise InternalError(message="error in updating stock")
+
+                # cache.clear()
+                # print('name:', product.name, 'stock:', product.stock, 'stock available:', product.stock_available, 'stock sold:', product.stock_sold)
                 items_list.append(new_item)
                 product_list.append(product)
             
