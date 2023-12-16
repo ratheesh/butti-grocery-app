@@ -137,8 +137,8 @@ def manager():
     
 
 @routes.route("/sendreport", methods=["POST"])
-@jwt_required()
-@access(["manager"])
+# @jwt_required()
+# @access(["manager"])
 def send_report():
     print("In the generatecsv method")
     username = request.json.get('username')

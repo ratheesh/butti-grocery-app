@@ -21,3 +21,8 @@ class Config():
     CACHE_TYPE='RedisCache'
     CACHE_REDIS_URL='redis://localhost:6379/2'
     CACHE_DEFAULT_TIMEOUT=200
+    JWT_SECRET_KEY=SECRET_KEY
+    REDIS_URL = "redis://localhost:6379"
+    broker_url = "redis://localhost:6379/0"
+    result_backend = "redis://localhost:6379/0"
+    broker_connection_retry_on_startup = True
