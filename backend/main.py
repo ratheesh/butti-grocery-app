@@ -14,7 +14,6 @@ from application.routes import routes
 from application.db import db
 from application.cache import cache
 from application.models import User, create_initial_data
-from application.tasks import send_daily_reminder, send_monthly_reminder
 from application import celery_worker
 
 app = Flask(__name__, template_folder="templates")
@@ -58,11 +57,11 @@ def user_lookup_callback(_jwt_header, jwt_data):
 @jwt.invalid_token_loader
 def invalid_token_callback(msg):
     return make_response('invalid token', 401)
-    
+
 @jwt.invalid_token_loader
 def invalid_token_callback(msg):
     return make_response('token expired', 401)
-    
+
 
 from application.api import api, UserAPI, CategoryAPI, ProductAPI, OrderAPI
 hapi = Api(app)

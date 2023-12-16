@@ -1,13 +1,20 @@
 # from celery import shared_task
+import os
+import csv
+from datetime import datetime, timedelta
+import smtplib
+
 from flask import render_template
 from jinja2 import Template
+from flask import render_template
+from sqlalchemy import desc, func, or_, and_
 from celery.schedules import crontab
 from application.celery_worker import celery
 from application.utils import send_email
-from application.models import User, Product
-import csv
-import os
-from datetime import datetime, date
+from application.models import User, Product,Order
+from email.mime.image import MIMEImage
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 @celery.on_after_finalize.connect
 def setup_periodic_tasks(sender, **kwargs):
@@ -64,31 +71,38 @@ def send_daily_reminder():
 
 @celery.task()
 def send_monthly_report():
-    template = """
-    <p>
-        Dear M/s. {{ name }},
-    </p>
-    <br />
-    <p> This is a monthly reminder</p>
-    <br />
-    <p>
-        Best Regards,
-    </p>
-    <p>
-        Butti Grocery Store
-    </p>
-        <small>Eat Healthy, Stay Healthy! </small>
-        """
-    users = User.query.all()
-    template = Template(template)
+    users = User.query.filter_by(role="user").all()
 
     for user in users:
-        user_dict = user.to_dict()
-        if user_dict["role"] == "user":
-            address = user_dict["email"]
-            subject = "Butti Groceries Monthly Report"
-            rendered_template = template.render(name=user_dict["name"])
-            send_email(address, subject, rendered_template)
+        user = user.to_dict()
+        
+        orders = Order.query.filter(Order.user_id==user["id"]).filter(func.date(Order.created_timestamp) > datetime.now().date() - timedelta(days=30)).all()
+        # total_amount = orders.with_entities(func.sum(Order.total_amount)).scalar()
+        orders = [order.to_dict() for order in orders]
+        for order in orders:
+            order['nitems'] = len(order['items'])
+            order['created_timestamp'] = order['created_timestamp'].strftime("%d/%m/%Y %H:%M:%S")
+            order['delivery_date'] = order['delivery_date'].strftime("%d/%m/%Y")
+        total_amount= sum([order['total_amount'] for order in orders])
+        # print('orders len"', len(orders))
+        # print(total_amount)
+
+        SMTP_SERVER_HOST = "localhost"
+        SMTP_SERVER_PORT = 1025
+        SENDER_ADDRESS = "admin@butti.com"
+        SENDER_PASSWORD = ""
+        msg = MIMEMultipart()
+        msg["From"] = SENDER_ADDRESS
+        msg["To"] = user["email"]
+        msg["Subject"] = "[Butti] User Monthly Report"
+
+        template = render_template("user_report.html", user=user["username"], orders=orders, total_amount=total_amount)
+        msg.attach(MIMEText(template, "html"))
+
+        smtp = smtplib.SMTP(host=SMTP_SERVER_HOST, port=SMTP_SERVER_PORT)
+        smtp.login(SENDER_ADDRESS, SENDER_PASSWORD)
+        smtp.send_message(msg)
+        smtp.quit()
 
     return 200
 
