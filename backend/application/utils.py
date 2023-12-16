@@ -5,7 +5,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart, MIMEBase
 from email.mime.application import MIMEApplication
 
-def send_email(address, subject, message, attachment=None, filename=None):
+def send_email(address, subject, message, attachment=None, filename=None, subtype=None):
     SMTP_SERVER_HOST = "localhost"
     SMTP_SERVER_PORT = 1025
     SENDER_EMAIL = "admin@butti.com"
