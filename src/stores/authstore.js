@@ -11,9 +11,17 @@ export const useAuthStore = defineStore('authStore', () => {
   const router = useRouter()
 
   // variables
+  const defaultUserInfo = {
+    name: 'Guest',
+    username: 'guest',
+    image_name: null,
+    image:
+      'https://toppng.com/uploads/preview/user-account-management-logo-user-icon-11562867145a56rus2zwu.png',
+    role: 'user',
+    approved: true
+  }
   const authenticated = ref(!!localStorage.getItem('access_token'))
-  // const user = ref(JSON.parse(localStorage.getItem('user')) || defaultUser)
-  const user = ref({})
+  const user = ref(JSON.parse(localStorage.getItem('user')) || defaultUserInfo)
 
   // functions
   function setUser(_user) {
