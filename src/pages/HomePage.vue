@@ -18,8 +18,14 @@
             </div>
           </div>
           <div v-else>
+            <div class="row col-10 m-auto justify-content-around">
+              <div class="col-12">
+                <h3 class="text-center mt-3">Welcome to Butti Grocery Shop!</h3>
+                <hr />
+              </div>
+            </div>
             <div
-              class="row row-cols-sm-2 row-cols-md-3 rows-cols-lg-3 rows-cols-xl-4 row-cols-xxl-5 gx-5 gy-3"
+              class="row row-cols-sm-2 row-cols-md-3 rows-cols-lg-3 rows-cols-xl-4 row-cols-xxl-5 gx-5 gy-3 mt-3"
             >
               <div v-for="product in products" class="col" :key="product.id">
                 <ProductCard :data="product" />
