@@ -256,7 +256,6 @@
                 id="productPrice"
                 placeholder="Price"
                 v-model="data.price"
-                min="1"
                 required
               />
               <label for="productPrice">Price</label>
@@ -272,8 +271,6 @@
                 id="productStock"
                 placeholder="Stock"
                 v-model="data.stock"
-                min="1"
-                step="5"
                 required
               />
               <label for="productStock">Stock</label>
