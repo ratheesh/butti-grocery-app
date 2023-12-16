@@ -164,6 +164,7 @@ const { user, authenticated } = storeToRefs(auth)
 user.value = user.value || { role: 'user' }
 
 const handleSearch = () => {
+  // console.log('query: ', query.value)
   if (query.value) {
     console.log('searching for', query.value)
     router.push({ name: 'search', params: { query: query.value } })

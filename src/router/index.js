@@ -183,7 +183,7 @@ router.beforeResolve((to, from, next) => {
   const auth = useAuthStore()
   if (to.meta.requiresAuth) {
     if (auth.authenticated) {
-      console.log('authenticated', to.meta.role, auth.user.role, to.path)
+      // console.log('authenticated', to.meta.role, auth.user.role, to.path)
       if (to.meta.role && auth.user.role && auth.user.role !== to.meta.role) {
         console.log('not authorized')
         router.push('/forbidden')

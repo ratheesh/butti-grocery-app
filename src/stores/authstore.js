@@ -35,6 +35,7 @@ export const useAuthStore = defineStore('authStore', () => {
   const getUser = computed(() => user.value)
 
   const fetchUser = async (username) => {
+    console.log('fetching user')
     try {
       const res = await axiosClient.post(`/api/user/${username}`)
       if (res.status === 200) {
