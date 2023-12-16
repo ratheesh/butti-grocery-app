@@ -67,8 +67,7 @@ export const useAuthStore = defineStore('authStore', () => {
         authenticated.value = true
         user.value = res.data.user
         localStorage.setItem('access_token', res.data.access_token)
-        localStorage.setItem('user', JSON.stringify(res.data.user))
-        // setUser('user', user.value)
+        localStorage.setItem('user', JSON.stringify(user.value))
         axiosClient.defaults.headers.common['Authorization'] = `Bearer ${res.data.access_token}`
 
         router.push(returnURL.value || '/')
