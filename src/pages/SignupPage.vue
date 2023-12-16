@@ -273,7 +273,11 @@ const handleSignup = async () => {
 
   wasValidated.value = false
 
-  errors.email = !validateEmail(userdata.email)
+  if (!validateEmail(userdata.email)) {
+    errors.email = true
+    return
+  }
+
   if (
     !userdata.name ||
     !userdata.username ||
