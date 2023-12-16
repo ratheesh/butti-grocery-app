@@ -86,5 +86,5 @@ export const useAuthStore = defineStore('authStore', () => {
     router.push('/login')
   }
 
-  return { authenticated, user, setUser, getUser, login, logout, fetchUser, clearAuth }
+  return { authenticated, user, setUser, getUser, login, logout, fetchUser, clearAuth, returnURL }
 })
