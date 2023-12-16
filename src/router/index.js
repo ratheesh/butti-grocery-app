@@ -12,7 +12,9 @@ import CartPage from '@/pages/CartPage.vue'
 import CheckoutPage from '@/pages/CheckoutPage.vue'
 import OrdersPage from '@/pages/OrdersPage.vue'
 import OrderPage from '@/pages/OrderPage.vue'
+import SearchPage from '@/pages/SearchPage.vue'
 import UnauthorizedPage from '@/pages/UnauthorizedPage.vue'
+
 import AdminDashboard from '@/components/admin/DashBoard.vue'
 import AdminUserManagement from '@/components/admin/UserManagement.vue'
 import AdminCategoryManagement from '@/components/manager/CategoryManagement.vue'
@@ -190,7 +192,8 @@ router.beforeResolve((to, from, next) => {
       }
     } else {
       // console.log('to login page')
-      next({ path: '/signin', query: { redirect: to.fullPath } })
+      auth.returnURL = to.fullPath
+      next({ path: '/login', query: { redirect: to.fullPath } })
     }
   } else {
     next()
