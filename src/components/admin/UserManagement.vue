@@ -94,18 +94,6 @@
                         <mdicon name="dots-horizontal" :width="24" :height="24" />
                       </button>
                       <ul class="dropdown-menu">
-                        <li>
-                          <b
-                            ><a
-                              class="dropdown-item d-flex align-items-center"
-                              href="javascript:void(0)"
-                              @click="showUser(user)"
-                            >
-                              <mdicon name="eye" class="text-gray me-2" :size="20" />
-                              View Details
-                            </a></b
-                          >
-                        </li>
                         <li v-if="!user.approved">
                           <b
                             ><a

@@ -86,12 +86,6 @@
                           </button>
                           <ul class="dropdown-menu">
                             <li>
-                              <a class="dropdown-item" href="javascript: void(0)">
-                                <mdicon name="eye" class="text-gray" :size="20" />
-                                View Details
-                              </a>
-                            </li>
-                            <li>
                               <a
                                 class="dropdown-item"
                                 href="javascript: void(0)"
