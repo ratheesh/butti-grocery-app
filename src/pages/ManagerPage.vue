@@ -19,30 +19,34 @@
               <hr class="text-white p-0" />
               <li
                 class="nav-item d-inline-flex align-items-center"
-                @click="router.push({ name: 'managerdashboard' })"
+                :class="route.name == 'managerdashboard' ? 'active' : ''"
               >
-                <a href="javascript:void(0)" class="nav-link text-white" aria-current="page">
+                <router-link
+                  to="/manager/dashboard"
+                  class="nav-link text-white"
+                  aria-current="page"
+                >
                   <mdicon name="gauge" class="text-white" />
                   <span class="ms-2 fs-6">Dashboard</span>
-                </a>
+                </router-link>
               </li>
               <li
                 class="nav-item d-inline-flex align-items-center"
-                @click="router.push({ name: 'managercategories' })"
+                :class="route.name == 'managercategory' ? 'active' : ''"
               >
-                <a href="javascript:void(0)" class="nav-link text-white" aria-current="page">
+                <router-link to="/manager/category" class="nav-link text-white" aria-current="page">
                   <mdicon name="shape" class="text-white" />
                   <span class="ms-2 fs-6">Categories</span>
-                </a>
+                </router-link>
               </li>
               <li
                 class="nav-item d-inline-flex align-items-center"
-                @click="router.push({ name: 'managerproducts' })"
+                :class="route.name == 'managerproducts' ? 'active' : ''"
               >
-                <a href="javascript:void(0)" class="nav-link text-white" aria-current="page">
+                <router-link to="/manager/products" class="nav-link text-white" aria-current="page">
                   <mdicon name="list-box" class="text-white" />
                   <span class="ms-2 fs-6">Products</span>
-                </a>
+                </router-link>
               </li>
             </ul>
           </div>
@@ -86,16 +90,17 @@
 import { RouterView } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useAuthStore } from '../stores/authstore'
-import router from '@/router/index.js'
+import { useRoute } from 'vue-router'
 import DashboardLayout from '@/layouts/DashboardLayout.vue'
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
 
 const auth = useAuthStore()
+const route = useRoute()
 const { user } = storeToRefs(auth)
 </script>
 
 <style scoped>
-.nav-pills .nav-link.active {
+.nav-pills .nav-item.active {
   background-color: #374151;
   border-radius: 5px;
 }

@@ -17,6 +17,10 @@ import AdminDashboard from '@/components/admin/DashBoard.vue'
 import AdminUserManagement from '@/components/admin/UserManagement.vue'
 import AdminCategoryManagement from '@/components/manager/CategoryManagement.vue'
 
+import ManagerDashboard from '@/components/manager/DashBoard.vue'
+import ManagerCategoryManagement from '@/components/manager/CategoryManagement.vue'
+import ManagerProductManagement from '@/components/manager/ProductManagement.vue'
+
 const routes = [
   {
     path: '/',
@@ -83,6 +87,24 @@ const routes = [
     path: '/manager',
     name: 'manager',
     component: ManagerPage,
+    redirect: { name: 'managerdashboard' },
+    children: [
+      {
+        path: 'dashboard',
+        name: 'managerdashboard',
+        component: ManagerDashboard
+      },
+      {
+        path: 'category',
+        name: 'managercategories',
+        component: ManagerCategoryManagement
+      },
+      {
+        path: 'products',
+        name: 'managerproducts',
+        component: ManagerProductManagement
+      }
+    ],
     meta: {
       title: 'Manager',
       requiresAuth: true,
