@@ -4,11 +4,11 @@ from datetime import datetime, timedelta
 from functools import wraps
 from flask import Blueprint
 import json
-# from sqlalchemy import desc, func, or_, and_
+from sqlalchemy import desc, func, or_, and_
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_required, get_jwt_identity)
 
-from application.models import User,Product, Category
+from application.models import User,Product, Category, Order
 from application.jwt import access
 from application.db import db
 from application.cache import cache
@@ -49,6 +49,61 @@ def home():
         return make_response(jsonify("error getting products"), 500)
 
     return make_response(jsonify([product.to_dict() for product in products]), 200)
+    
+@routes.route("/admin", methods=["GET"])
+@jwt_required()
+@access(["admin"])
+def admin():
+    data = {}
+    data["users"] = User.query.count()
+    data["category"] = Category.query.count()
+    data["products"] = Product.query.count()
+    data["orders_total"] = Order.query.count()
+    data["managers"] = User.query.filter_by(role='manager').count()
+    data["users"] = User.query.filter_by(role='user').count()
+    data["revenue_total"] = Order.query.filter().with_entities(func.sum(Order.total_amount)).scalar()
+    
+    # data["orders_today"] = Order.query.filter(func.date(Order.created_timestamp) == datetime.today().date()).count()
+    
+    # orders from past 7 days
+    orders_data = []
+    for i in range(7):
+        date = datetime.now() - timedelta(days=i)
+        count = Order.query.filter(func.date(Order.created_timestamp) == date.date()).count()
+        orders_data.append({"date":date.date().strftime('%d/%b'), "count": count})
+    data["orders"] = orders_data
+
+    # category wise products
+    category_data = []
+    categories = Category.query.all()
+    for category in categories:
+        category_dict = category.to_dict()
+        category_data.append({'name':category_dict['name'], 'count': len(category.products)})
+        # category_data.append(([category.to_dict(), len(category.products)]))
+    data["categories"] = category_data
+    
+    #Revenue from past 7 days
+    revenue_data = []
+    for i in range(7):
+        date = datetime.now() - timedelta(days=i)
+        revenue = Order.query.filter(func.date(Order.created_timestamp) == date.date()).with_entities(func.sum(Order.total_amount)).scalar()
+        if revenue is None:
+            revenue = 0
+        revenue_data.append({"date":date.date().strftime('%d/%b'), "total":revenue})
+    data["revenue"] = revenue_data
+
+    return jsonify(data), 200
+
+
+@routes.route("/manager", methods=["GET"])
+@jwt_required()
+@access(["manager"])
+def manager():
+    data = {}
+    data["users"] = User.query.all().count()
+    data["categories"] = Category.query.all().count()
+    data["products"] = Product.query.all().count()
+    data["orders"] = Order.query.all().count()
 
 @routes.route("/approve", methods=["POST"])
 @jwt_required()
