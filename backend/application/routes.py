@@ -44,11 +44,13 @@ def logout():
 def home():
     '''home route'''
     try:
+        categories = Category.query.filter(Category.approved==True).all()
         products = Product.query.filter(Product.expiry_date >= datetime.now()).all()
     except:
         return make_response(jsonify("error getting products"), 500)
 
-    return make_response(jsonify([product.to_dict() for product in products]), 200)
+    data = jsonify([category.to_dict() for category in categories], [product.to_dict() for product in products])
+    return make_response(data, 200)
     
 @routes.route("/admin", methods=["GET"])
 @jwt_required()
