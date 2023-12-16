@@ -12,14 +12,14 @@ from datetime import datetime, date
 @celery.on_after_finalize.connect
 def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(
-        crontab(minute='*'), 
+        crontab(minute='0', hour='1' ), 
         send_daily_reminder.s(), 
         name='send daily reminder email'
     )
 
     sender.add_periodic_task(
-        crontab(minute='*/2'), 
-        send_monthly_reminder.s(), 
+        crontab(minute='0', hour='1', day_of_month='1'), 
+        send_monthly_report.s(), 
         name='send monthly reminder email'
     )
 
@@ -63,7 +63,7 @@ def send_daily_reminder():
 
 
 @celery.task()
-def send_monthly_reminder():
+def send_monthly_report():
     template = """
     <p>
         Dear M/s. {{ name }},
