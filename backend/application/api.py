@@ -808,42 +808,7 @@ class OrderAPI(Resource):
     
     @jwt_required()
     def put(self,id, user_id, items):
-        if user_id is None:
-            raise BadRequest("User id is missing")
-
-        order=Order.query.filter_by(id=id).first()
-        if order is None:
-            raise NotFound("Order not found")
-        user = User.query.filter_by(id=user_id).first()
-        if user is None:
-            raise NotFound("User not found")
-        if items.len() == 0:
-            raise BadRequest("Items list is empty")
-        
-        args = order_request_parse.parse_args(strict=True)
-        id = args.get('id', None)
-        items = args.get('items', None)
-        total_amount = args.get('total_amount', None)
-
-        if id is None:
-            raise BadRequest("Order id is missing")
-        if items is None:
-            raise BadRequest("Items are missing")
-        if total_amount is None:
-            raise BadRequest("total_amount is missing")
-        order.total_amount = total_amount
-        order.items = items
-        order.updated_timestamp = datetime.now()
-
-        try:
-            db.session.add(order)
-            db.session.add_all(items)
-            cache.clear()
-            db.session.commit()
-        except:
-            raise InternalError(message="Error in updating order")
-        
-        return order, 200
+        return "put method not implemented", 501
     
     @jwt_required()
     def delete(self, id):
