@@ -229,7 +229,7 @@ def create_initial_data(db):
         updated_timestamp=datetime.now(),
     )
     
-    category_types = [ "Fruits", "Vegetables", "Grocery", "Dairy", "Bakery", "Meat", "SeaFood", "Beverages", "Snacks", "Others"]
+    category_types = [ "Fruits", "Vegetables", "Grocery", "Dairy", "Bakery", "Meat", "Beverages", "Snacks", "Others"]
     categories = []
     for category_type in category_types:
         category = Category(
