@@ -172,6 +172,7 @@ class UserAPI(Resource):
             db.session.add(user)
             cache.clear()
             db.session.commit()
+            cache.clear()
         except:
             raise InternalError(message="error in creating user")
 
@@ -238,6 +239,7 @@ class UserAPI(Resource):
                 db.session.add(user)
                 cache.clear()
                 db.session.commit()
+                cache.clear()
             except:
                 raise InternalError(message="error in updating User")
             
@@ -259,6 +261,7 @@ class UserAPI(Resource):
                 db.session.delete(user)
                 cache.clear()
                 db.session.commit()
+                cache.clear()
                 
                 if user.image_name != 'default.png':
                     filename = UPLOAD_FOLDER + '/images/users/' + user.image_name
@@ -337,6 +340,7 @@ class CategoryAPI(Resource):
             db.session.add(category)
             cache.clear()
             db.session.commit()
+            cache.clear()
         except:
             raise InternalError(message="error creating category")
 
@@ -414,6 +418,7 @@ class CategoryAPI(Resource):
                 db.session.add(category)
                 cache.clear()
                 db.session.commit()
+                cache.clear()
             except:
                 raise InternalError(message="error in updating category")
 
@@ -443,6 +448,7 @@ class CategoryAPI(Resource):
                 db.session.add(category)
                 cache.clear()
                 db.session.commit()
+                cache.clear()
             except:
                 raise InternalError(message="error requesting category deletion")
 
@@ -452,6 +458,7 @@ class CategoryAPI(Resource):
                 db.session.delete(category)
                 cache.clear()
                 db.session.commit()
+                cache.clear()
             except:
                 raise InternalError(message="error deleting category")
         else:
@@ -588,6 +595,7 @@ class ProductAPI(Resource):
             db.session.add(product)
             cache.clear()
             db.session.commit()
+            cache.clear()
         except:
             raise InternalError(message="error creating product")
 
@@ -670,6 +678,7 @@ class ProductAPI(Resource):
                     db.session.add(product)
                     cache.clear()
                     db.session.commit()
+                    cache.clear()
                 except:
                     raise InternalError(message="Error in updating product")
 
@@ -691,6 +700,7 @@ class ProductAPI(Resource):
                 db.session.delete(product)
                 cache.clear()
                 db.session.commit()
+                cache.clear()
                 
                 if image_name != 'default.png':
                     filename= UPLOAD_FOLDER + '/images/products/' + image_name
@@ -818,6 +828,7 @@ class OrderAPI(Resource):
                 db.session.add(order)
                 cache.clear()
                 db.session.commit()
+                cache.clear()
             except:
                 raise InternalError(message="error creating order")
             return make_response(order.to_dict(), 201)
@@ -836,6 +847,7 @@ class OrderAPI(Resource):
             db.session.delete(order)
             cache.clear()
             db.session.commit()
+            cache.clear()
         except:
             raise InternalError(message="Error deleting order")
         return "Order deleted successfully", 200
