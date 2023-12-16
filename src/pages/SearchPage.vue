@@ -54,8 +54,8 @@ onMounted(async () => {
   try {
     const resp = await axiosClient.get('/search', { params: { query: query.value } })
     console.log(resp)
-    categories.value = resp.data[0]
-    products.value = resp.data[1]
+    categories.value = resp.data[0] || []
+    products.value = resp.data[1] || []
     search_results.value = [...categories.value, ...products.value]
   } catch (err) {
     console.log(err)
