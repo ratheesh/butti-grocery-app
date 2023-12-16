@@ -100,10 +100,40 @@ def admin():
 @access(["manager"])
 def manager():
     data = {}
-    data["users"] = User.query.all().count()
-    data["categories"] = Category.query.all().count()
-    data["products"] = Product.query.all().count()
-    data["orders"] = Order.query.all().count()
+    data["category"] = Category.query.count()
+    data["products"] = Product.query.count()
+    # data["revenue_today"] = 0
+    data["revenue_today"] = Order.query.filter(func.date(Order.created_timestamp) == datetime.today().date()).with_entities(func.sum(Order.total_amount)).scalar()
+    data["orders_today"] = Order.query.filter(func.date(Order.created_timestamp) == datetime.today().date()).count()
+    
+    # orders from past 7 days
+    orders_data = []
+    for i in range(7):
+        date = datetime.now() - timedelta(days=i)
+        count = Order.query.filter(func.date(Order.created_timestamp) == date.date()).count()
+        orders_data.append({"date":date.date().strftime('%d/%b'), "count": count})
+    data["orders"] = orders_data
+
+    # category wise products
+    category_data = []
+    categories = Category.query.all()
+    for category in categories:
+        category_dict = category.to_dict()
+        category_data.append({'name':category_dict['name'], 'count': len(category.products)})
+        # category_data.append(([category.to_dict(), len(category.products)]))
+    data["categories"] = category_data
+    
+    #Revenue from past 7 days
+    revenue_data = []
+    for i in range(7):
+        date = datetime.now() - timedelta(days=i)
+        revenue = Order.query.filter(func.date(Order.created_timestamp) == date.date()).with_entities(func.sum(Order.total_amount)).scalar()
+        if revenue is None:
+            revenue = 0
+        revenue_data.append({"date":date.date().strftime('%d/%b'), "total":revenue})
+    data["revenue"] = revenue_data
+
+    return jsonify(data), 200
 
 @routes.route("/approve", methods=["POST"])
 @jwt_required()
