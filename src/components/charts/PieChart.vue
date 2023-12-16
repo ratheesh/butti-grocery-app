@@ -61,7 +61,28 @@ const pieChartData = ref({
   labels: labels.value,
   datasets: [
     {
-      backgroundColor: ['#41B883', '#E46651', '#00D8FF', '#DD1B16'],
+      backgroundColor: [
+        '#41B883',
+        '#E46651',
+        '#00D8FF',
+        '#DD1B16',
+        '#1E88E5',
+        '#FBBC04',
+        '#F4511E',
+        '#6D4C41',
+        '#546E7A',
+        '#D32F2F',
+        '#7B1FA2',
+        '#303F9F',
+        '#1976D2',
+        '#0288D1',
+        '#0097A7',
+        '#00796B',
+        '#388E3C',
+        '#689F38',
+        '#AFB42B',
+        '#FBC02D'
+      ],
       data: data.value
     }
   ]
