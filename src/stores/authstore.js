@@ -37,7 +37,7 @@ export const useAuthStore = defineStore('authStore', () => {
   const fetchUser = async (username) => {
     console.log('fetching user')
     try {
-      const res = await axiosClient.post(`/api/user/${username}`)
+      const res = await axiosClient.get(`/api/user/${username}`)
       if (res.status === 200) {
         authenticated.value = true
         user.value = res.data.user
