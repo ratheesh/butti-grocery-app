@@ -12,6 +12,7 @@ from application.models import User,Product, Category, Order
 from application.jwt import access
 from application.db import db
 from application.cache import cache
+from application import tasks
 
 routes = Blueprint("controller", __name__)
 
