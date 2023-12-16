@@ -22,6 +22,7 @@ export const useAuthStore = defineStore('authStore', () => {
   }
   const authenticated = ref(!!localStorage.getItem('access_token'))
   const user = ref(JSON.parse(localStorage.getItem('user')) || defaultUserInfo)
+  const returnURL = ref(null)
 
   // functions
   function setUser(_user) {
@@ -69,7 +70,8 @@ export const useAuthStore = defineStore('authStore', () => {
         localStorage.setItem('user', JSON.stringify(res.data.user))
         // setUser('user', user.value)
         axiosClient.defaults.headers.common['Authorization'] = `Bearer ${res.data.access_token}`
-        // console.log('Logged in!')
+
+        router.push(returnURL.value || '/')
         return res
       } else {
         return res
