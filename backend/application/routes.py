@@ -134,6 +134,24 @@ def manager():
     data["revenue"] = revenue_data
 
     return jsonify(data), 200
+    
+
+@routes.route("/sendreport", methods=["POST"])
+@jwt_required()
+@access(["manager"])
+def send_report():
+    print("In the generatecsv method")
+    username = request.json.get('username')
+    # print('username:', username)
+    user = User.query.filter_by(username=username).first()
+    if not user:
+        return "user not found",404
+    if user.role != "manager":
+        return "user not authorized",403
+
+    tasks.send_csv_report.delay(username)
+    return "Report request sent", 200
+
 
 @routes.route("/approve", methods=["POST"])
 @jwt_required()

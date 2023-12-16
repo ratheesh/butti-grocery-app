@@ -2,10 +2,33 @@
   <div class="container-fluid">
     <!-- <h2 class="text-center mt-3">Dashboard</h2> -->
     <div class="row justify-content-end">
+      <div class="row d-flex justify-content-center" v-if="errorinfo.show">
+        <div class="col-8 text-center">
+          <div
+            v-if="errorinfo.error"
+            class="alert alert-danger alert-dismissible fade show"
+            role="alert"
+          >
+            {{ errorinfo.msg }}
+          </div>
+          <div v-else class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ errorinfo.msg }}
+          </div>
+        </div>
+      </div>
       <div class="col-auto me-5">
-        <button class="btn btn-primary" @click="fetchData">
+        <button class="btn btn-rosy-brown mx-2" @click="sendCSVReport">
+          <span
+            v-if="report_loading"
+            class="spinner-border spinner-border-sm text-light"
+            size="16"
+          ></span>
+          <span v-else> <mdicon name="email" size="20" /> </span>
+          <span class="mx-2">Send Report</span>
+        </button>
+        <button class="btn btn-primary mx-2" @click="fetchData">
           <mdicon name="refresh" size="20" />
-          Refresh
+          <span class="mx-2">Refresh</span>
         </button>
       </div>
     </div>
@@ -58,6 +81,7 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import axiosClient from '@/js/axios.js'
+import { useAuthStore } from '@/stores/authstore'
 import InfoPill from '@/components/InfoPill.vue'
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
 import PieChart from '@/components/charts/PieChart.vue'
@@ -65,7 +89,9 @@ import BarChart from '@/components/charts/BarChart.vue'
 
 const data = ref({})
 const loading = ref(false)
+const report_loading = ref(false)
 const errorinfo = reactive({
+  show: false,
   error: false,
   msg: ''
 })
@@ -110,7 +136,40 @@ const revenue_today = reactive({
   count: 0
 })
 
+const auth = useAuthStore()
+const sendCSVReport = async () => {
+  errorinfo.show = false
+  errorinfo.error = false
+  errorinfo.msg = ''
+  report_loading.value = true
+  try {
+    const formData = new FormData()
+    if (auth.user) formData.append('username', auth.user.username)
+    else {
+      errorinfo.show = true
+      errorinfo.error = true
+      errorinfo.msg = 'User not logged in!'
+      return
+    }
+    const resp = await axiosClient.post('/sendreport', formData)
+    console.log(resp.data)
+    errorinfo.show = true
+    errorinfo.error = false
+    errorinfo.msg = 'Report request sent successfully!'
+  } catch (err) {
+    console.log(err)
+    errorinfo.show = true
+    errorinfo.error = true
+    errorinfo.msg = err.response
+  } finally {
+    report_loading.value = false
+  }
+}
+
 const fetchData = async () => {
+  errorinfo.show = false
+  errorinfo.error = false
+  errorinfo.msg = ''
   loading.value = true
   try {
     const resp = await axiosClient.get('/manager')
@@ -150,6 +209,7 @@ const fetchData = async () => {
     })
   } catch (err) {
     console.log(err)
+    errorinfo.show = true
     if (err.response) {
       errorinfo.error = true
       errorinfo.msg = err.response.data.message
@@ -158,8 +218,6 @@ const fetchData = async () => {
       errorinfo.msg = err.message
     }
   } finally {
-    errorinfo.error = false
-    errorinfo.msg = ''
     loading.value = false
   }
 }
