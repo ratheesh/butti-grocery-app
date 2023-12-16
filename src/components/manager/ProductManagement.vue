@@ -98,9 +98,13 @@
                           </button>
                           <ul class="dropdown-menu">
                             <li>
-                              <a class="dropdown-item" href="javascript:void(0)">
+                              <a
+                                class="dropdown-item"
+                                href="javascript:void(0)"
+                                @click="handleViewDescription(product)"
+                              >
                                 <mdicon name="eye" class="text-gray" :size="20" />
-                                View Details
+                                Description
                               </a>
                             </li>
                             <li>
@@ -360,6 +364,26 @@
     </div>
   </div>
 
+  <!-- Description Modal -->
+  <div class="modal fade" id="modalProductDescription" role="dialog" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-center">{{ data.name }}</h5>
+        </div>
+        <div class="modal-body">
+          <p>{{ data.description }}</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+            <mdicon name="window-close" class="text-white" :size="18" />
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Delete Modal -->
   <div class="modal fade" id="modalProductDelete" role="dialog" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -423,7 +447,9 @@ const errors = reactive({
 const wasValidated = ref(false)
 
 let modal
+let modalDescription
 let modalDelete
+
 const main_loading = ref(true)
 const loading = ref(false)
 const units = ['piece', 'kg', 'litre', 'dozen']
@@ -464,6 +490,10 @@ const refresh = async () => {
 
 onMounted(async () => {
   modal = new Modal(document.getElementById('modalProduct'), {
+    keyboard: false
+  })
+
+  modalDescription = new Modal(document.getElementById('modalProductDescription'), {
     keyboard: false
   })
 
@@ -552,6 +582,13 @@ function handleProductAdd(product, isEdit) {
   wasValidated.value = false
 
   modal.show()
+}
+
+const handleViewDescription = (product) => {
+  console.log('View Product Description')
+  data.name = product.name
+  data.description = product.description
+  modalDescription.show()
 }
 
 const handleProductDelete = async (product) => {
