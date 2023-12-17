@@ -192,3 +192,8 @@ def search():
         data = jsonify([category_product.to_dict() for category_product in category_products],
                        [product.to_dict() for product in products])
         return make_response(data, 200)
+        
+# @routes.route("/dummy")
+# def dummy():
+#     tasks.send_monthly_report.delay()
+#     return "monthly report sent", 200
