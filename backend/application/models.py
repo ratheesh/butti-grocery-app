@@ -25,10 +25,7 @@ class User(db.Model):
     updated_timestamp = db.Column(
         db.DateTime, nullable=False, default=datetime.now())
 
-    # bookmarks = db.relationship("Bookmark", backref="user", cascade="all, delete-orphan")
     orders = db.relationship("Order", backref="user", cascade="all, delete-orphan")
-    bookmarks = db.relationship("Bookmark", backref="user", cascade="all, delete-orphan")
-    # token = db.relationship("Token",backref=backref("user", uselist=False), cascade="all, delete-orphan")
 
     def to_dict(self):
         self.image=None
@@ -50,7 +47,6 @@ class User(db.Model):
             "created_timestamp": self.created_timestamp,
             "updated_timestamp": self.updated_timestamp,
             # "orders": [order.to_dict() for order in self.orders],
-            # "bookmarks": [bookmark.to_dict() for bookmark in self.bookmarks],
         }
 
     def __repr__(self) -> str:
@@ -104,7 +100,6 @@ class Product(db.Model):
         db.DateTime, nullable=False, default=datetime.now())
 
     items = db.relationship("Item", backref="product", cascade="all, delete-orphan")
-    bookmarks = db.relationship("Bookmark", backref="product", cascade="all, delete-orphan")
     category_id = db.Column(db.Integer, db.ForeignKey("category.id"), nullable=False)
 
     def to_dict(self):
@@ -163,22 +158,6 @@ class Item(db.Model):
             "updated_timestamp": self.updated_timestamp,
             "product_id": self.product_id,
             "order_id": self.order_id,
-        }
-
-
-class Bookmark(db.Model):
-    '''Bookmark Model'''
-    __tablename__ = "bookmark"
-    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    product_id = db.Column(db.Integer, db.ForeignKey("product.id"), nullable=False)
-
-    def to_dict(self):
-        '''to_dict'''
-        return {
-            "id": self.id,
-            "user_id": self.user_id,
-            "product_id": self.product_id,
         }
 
 class Order(db.Model):
