@@ -90,34 +90,37 @@
                         class="btn btn-link dropdown-toggle px-0"
                         data-bs-toggle="dropdown"
                         aria-expanded="false"
+                        :disabled="user.role === 'user' || user.role === 'admin'"
                       >
                         <mdicon name="dots-horizontal" :width="24" :height="24" />
                       </button>
                       <ul class="dropdown-menu">
-                        <li v-if="!user.approved">
-                          <b
-                            ><a
-                              class="dropdown-item d-flex align-items-center"
-                              href="javascript:void(0)"
-                              @click="approveUser(user, true)"
+                        <div v-if="user.role === 'manager'">
+                          <li v-if="!user.approved">
+                            <b
+                              ><a
+                                class="dropdown-item d-flex align-items-center"
+                                href="javascript:void(0)"
+                                @click="approveUser(user, true)"
+                              >
+                                <mdicon name="check-circle" class="text-success me-2" :size="20" />
+                                Approve
+                              </a></b
                             >
-                              <mdicon name="check-circle" class="text-success me-2" :size="20" />
-                              Approve
-                            </a></b
-                          >
-                        </li>
-                        <li v-else>
-                          <b
-                            ><a
-                              class="dropdown-item d-flex align-items-center"
-                              href="javascript:void(0)"
-                              @click="approveUser(user, false)"
+                          </li>
+                          <li v-else>
+                            <b
+                              ><a
+                                class="dropdown-item d-flex align-items-center"
+                                href="javascript:void(0)"
+                                @click="approveUser(user, false)"
+                              >
+                                <mdicon name="cancel" class="fw-bold text-danger me-2" :size="20" />
+                                Revoke
+                              </a></b
                             >
-                              <mdicon name="cancel" class="fw-bold text-danger me-2" :size="20" />
-                              Revoke
-                            </a></b
-                          >
-                        </li>
+                          </li>
+                        </div>
                       </ul>
                       <button class="btn btn-link text-decoration-none px-0" aria-expanded="false">
                         <mdicon
@@ -246,12 +249,16 @@ function formatDate(timestamp) {
 const approveUser = async (user, approved) => {
   console.log('approve user')
   const formData = new FormData()
-  formData.append('user_id', user.id)
-  formData.append('approved', !!approved)
+  // formData.append('user_id', user.id)
+  // formData.append('approved', !!approved)
+  formData.append('name', user.name)
+  formData.append('username', user.username)
+  formData.append('email', user.email)
+  formData.append('approved', approved)
 
   try {
     main_loading.value = true
-    await axiosClient.post(`/approve`, formData)
+    await axiosClient.put(`/api/user/${user.username}`, formData)
   } catch (err) {
     console.log(err)
   } finally {

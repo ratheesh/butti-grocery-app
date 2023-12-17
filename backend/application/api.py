@@ -197,6 +197,7 @@ class UserAPI(Resource):
             name = args.get("name", None)
             password = args.get("password", None)
             email = args.get("email", None)
+            approved = args.get("approved", None)
             image = args.get("image",None)
             image_name = args.get("image_name", None)
             
@@ -210,6 +211,14 @@ class UserAPI(Resource):
                 password = generate_password_hash(password)
             else:
                 password = user.password
+                
+            if approved is not None:
+                if user.role == 'admin':
+                    raise BadRequest('admin user can not be approved')
+                if approved is True:
+                    user.approved = True
+                else:
+                    user.approved = False
             
             if image is not None:
                 try:
