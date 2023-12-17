@@ -159,7 +159,7 @@ class UserAPI(Resource):
                 #     f.write(file_data)
                 
                 img = Image.open(BytesIO(file_data))
-                img.resize((500, 500))
+                img.resize((200, 200))
                 img.save(filename, format='PNG')
 
             except:
@@ -591,7 +591,7 @@ class ProductAPI(Resource):
                 #     f.write(file_data)
                 
                 img = Image.open(BytesIO(file_data))
-                img.resize((500, 500))
+                img.resize((360, 360))
                 img.save(filename, format='PNG')
 
             except:
@@ -660,7 +660,7 @@ class ProductAPI(Resource):
                         #     os.sync()
 
                         img = Image.open(BytesIO(file_data))
-                        img = img.resize((500, 500))
+                        img = img.resize((360, 360))
                         img.save(filename, format='PNG')
                     except:
                         raise InternalError(message="Error in saving image")
