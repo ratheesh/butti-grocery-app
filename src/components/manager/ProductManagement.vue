@@ -283,6 +283,7 @@
               </div>
             </div>
             <div class="form-group mb-3">
+              <label for="productExpireyDate">Expiry Date</label>
               <div class="input-group">
                 <span class="input-group-text" id="expiry_date">
                   <mdicon name="calendar-today" :size="20" />
