@@ -1,4 +1,5 @@
 from datetime import datetime
+from zoneinfo import ZoneInfo
 import os
 import base64
 import secrets
@@ -20,7 +21,6 @@ from flask import current_app as app
 from .cache import cache
 
 api = Blueprint("api", __name__)
-
 
 class BadRequest(HTTPException):
     def __init__(self, message):
@@ -133,8 +133,8 @@ class UserAPI(Resource):
             role=role,
             approved=isapproved,
             image_name=image_name,
-            created_timestamp=datetime.now(),
-            updated_timestamp=datetime.now(),
+            created_timestamp=datetime.now(ZoneInfo('Asia/Kolkata')),
+            updated_timestamp=datetime.now(ZoneInfo('Asia/Kolkata')),
         )
         if user is None:
             raise InternalError(message="error in creating User")
@@ -242,7 +242,7 @@ class UserAPI(Resource):
             user.password = password
             user.email = email
             user.image_name = image_name
-            user.updated_timestamp = datetime.now()
+            user.updated_timestamp = datetime.now(ZoneInfo('Asia/Kolkata'))
 
             try:
                 db.session.add(user)
@@ -338,8 +338,8 @@ class CategoryAPI(Resource):
             request_type="add",
             request_data=name,
             approved=approved,
-            created_timestamp=datetime.now(),
-            updated_timestamp=datetime.now(),
+            created_timestamp=datetime.now(ZoneInfo('Asia/Kolkata')),
+            updated_timestamp=datetime.now(ZoneInfo('Asia/Kolkata')),
         )
 
         if category is None:
@@ -421,7 +421,7 @@ class CategoryAPI(Resource):
             else:
                 raise AuthorizationError(message="only admin can approve categories")
 
-            category.updated_timestamp = datetime.now()
+            category.updated_timestamp = datetime.now(ZoneInfo('Asia/Kolkata'))
 
             try:
                 db.session.add(category)
@@ -681,7 +681,7 @@ class ProductAPI(Resource):
                 product.expiry_date = expiry_date
                 product.image_name = image_name
                 product.category_id = category_id
-                product.updated_timestamp=datetime.now()
+                product.updated_timestamp=datetime.now(ZoneInfo('Asia/Kolkata'))
 
                 try:
                     db.session.add(product)
@@ -799,7 +799,7 @@ class OrderAPI(Resource):
                 total_amount=total_amount,
                 delivery_date=delivery_date,
                 user_id=user.id,
-                created_timestamp=datetime.now(),
+                created_timestamp=datetime.now(ZoneInfo('Asia/Kolkata')),
             )
             
             db.session.add(order)
@@ -818,8 +818,8 @@ class OrderAPI(Resource):
                     quantity=item['quantity'],
                     product_id=item['id'],
                     order_id=order.id,
-                    created_timestamp=datetime.now(),
-                    updated_timestamp=datetime.now(),
+                    created_timestamp=datetime.now(ZoneInfo('Asia/Kolkata')),
+                    updated_timestamp=datetime.now(ZoneInfo('Asia/Kolkata')),
                 )
                 product.stock_available = product.stock_available - item['quantity']
                 product.stock_sold = product.stock_sold + item['quantity']

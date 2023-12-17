@@ -670,7 +670,7 @@ async function handleProductModalEdit() {
   formData.append('unit', data.unit)
   formData.append('price', data.price)
   formData.append('stock', data.stock)
-  const expiry_date = data.expiry_date + ' 23:59'
+  const expiry_date = data.expiry_date + ' 18:29'
   formData.append('expiry_date', expiry_date)
   if (data.image_name !== null) formData.append('image_name', data.image_name)
   if (data.image !== null) formData.append('image', data.image)

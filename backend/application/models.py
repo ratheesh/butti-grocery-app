@@ -21,9 +21,9 @@ class User(db.Model):
     role = db.Column(db.String(32), nullable=False, default="user")
     image_name = db.Column(db.String(32), default="default.png")
     created_timestamp = db.Column(
-        db.DateTime, nullable=False, default=datetime.now())
+        db.DateTime(timezone=True), nullable=False, default=datetime.now())
     updated_timestamp = db.Column(
-        db.DateTime, nullable=False, default=datetime.now())
+        db.DateTime(timezone=True), nullable=False, default=datetime.now())
 
     orders = db.relationship("Order", backref="user", cascade="all, delete-orphan")
 
@@ -62,9 +62,9 @@ class Category(db.Model):
     request_data = db.Column(db.String(64))
     approved = db.Column(db.Boolean, nullable=False, default=False)
     created_timestamp = db.Column(
-        db.DateTime, nullable=False, default=datetime.now())
+        db.DateTime(timezone=True), nullable=False, default=datetime.now())
     updated_timestamp = db.Column(
-        db.DateTime, nullable=False, default=datetime.now())
+        db.DateTime(timezone=True), nullable=False, default=datetime.now())
 
     products = db.relationship("Product", backref="category", cascade="all, delete-orphan")
 
@@ -92,12 +92,12 @@ class Product(db.Model):
     stock = db.Column(db.Integer, nullable=False)
     stock_sold = db.Column(db.Integer, nullable=False)
     stock_available = db.Column(db.Integer, nullable=False)
-    expiry_date = db.Column(db.DateTime, nullable=False, default=datetime.now())
+    expiry_date = db.Column(db.DateTime(timezone=True), nullable=False, default=datetime.now())
     image_name = db.Column(db.String(64), default="default.png")
     created_timestamp = db.Column(
-        db.DateTime, nullable=False, default=datetime.now())
+        db.DateTime(timezone=True), nullable=False, default=datetime.now())
     updated_timestamp = db.Column(
-        db.DateTime, nullable=False, default=datetime.now())
+        db.DateTime(timezone=True), nullable=False, default=datetime.now())
 
     items = db.relationship("Item", backref="product", cascade="all, delete-orphan")
     category_id = db.Column(db.Integer, db.ForeignKey("category.id"), nullable=False)
@@ -136,9 +136,9 @@ class Item(db.Model):
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     quantity = db.Column(db.Integer, nullable=False)
     created_timestamp = db.Column(
-        db.DateTime, nullable=False, default=datetime.now())
+        db.DateTime(timezone=True), nullable=False, default=datetime.now())
     updated_timestamp = db.Column(
-        db.DateTime, nullable=False, default=datetime.now())
+        db.DateTime(timezone=True), nullable=False, default=datetime.now())
 
     product_id = db.Column(db.Integer, db.ForeignKey("product.id"), nullable=False)
     order_id = db.Column(db.Integer, db.ForeignKey("order.id"), nullable=False)
@@ -167,14 +167,14 @@ class Order(db.Model):
     total_amount = db.Column(db.Float, nullable=False)
     items = db.relationship("Item", backref="order",  cascade="all,delete-orphan")
     created_timestamp = db.Column(
-        db.DateTime, nullable=False, default=datetime.now())
+        db.DateTime(timezone=True), nullable=False, default=datetime.now())
     
     name = db.Column(db.String(32), nullable=False)
     address = db.Column(db.String(128), nullable=False)
     phone = db.Column(db.Integer, nullable=False)
     email = db.Column(db.String(64), nullable=False)
     payment_mode=db.Column(db.String(16), nullable=False)
-    delivery_date = db.Column(db.DateTime, nullable=False, default=datetime.now())
+    delivery_date = db.Column(db.DateTime(timezone=True), nullable=False, default=datetime.now())
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 
     def to_dict(self):
