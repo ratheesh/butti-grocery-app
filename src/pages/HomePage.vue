@@ -104,7 +104,7 @@ async function fetchData() {
 
     // sort based on the updated timestamp
     show_products.value.sort(
-      (a, b) => new Date(a.updated_timestamp).getDate() < new Date(b.updated_timestamp).getDate()
+      (a, b) => new Date(a.updated_timestamp) < new Date(b.updated_timestamp)
     )
     // products.value = products.value.filter((x) => new Date(x.expiry_date) > Date.now());
   } catch (err) {
@@ -121,9 +121,7 @@ const onCategoryChange = (event) => {
   } else {
     show_products.value = products.value.filter((x) => x.category_name === event.target.value)
   }
-  show_products.value.sort(
-    (a, b) => new Date(a.updated_timestamp).getDate() < new Date(b.updated_timestamp).getDate()
-  )
+  show_products.value.sort((a, b) => new Date(a.updated_timestamp) < new Date(b.updated_timestamp))
 }
 
 fetchData()
