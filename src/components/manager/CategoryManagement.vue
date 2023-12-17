@@ -376,8 +376,17 @@ async function handleCategoryApprove(category, approve) {
       const resp = await axiosClient.put(`/api/category/${category.id}`, formData)
       console.log(resp)
     } else {
-      const resp = await axiosClient.delete(`/api/category/${category.id}`)
-      console.log(resp)
+      if (!approve) {
+        const formData = new FormData()
+        formData.append('name', category.name)
+        formData.append('approved', false)
+        console.log(formData)
+        const resp = await axiosClient.put(`/api/category/${category.id}`, formData)
+        console.log(resp)
+      } else {
+        const resp = await axiosClient.delete(`/api/category/${category.id}`)
+        console.log(resp)
+      }
     }
     refreshCategories()
   } catch (err) {
