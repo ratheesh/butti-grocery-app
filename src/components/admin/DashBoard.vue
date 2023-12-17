@@ -142,7 +142,7 @@ const fetchData = async () => {
     categories.count = data.value.category
     products.count = data.value.products
     orders_total.count = data.value.orders_total
-    revenue_total.count = '₹' + data.value.revenue_total
+    revenue_total.count = '₹' + (data.value.revenue_total ? data.value.revenue_total : '0') + '/-'
 
     // pie chart data for categories
     categoryPieChartTitle.value = 'Categories'
