@@ -555,6 +555,7 @@ function handleProductAdd(product, isEdit) {
     for (const category of categories.value) {
       data.categories.push(category)
     }
+    category_id.value=product.category_id
   } else {
     data.id = 0
     data.name = ''
