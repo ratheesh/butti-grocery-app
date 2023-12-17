@@ -62,7 +62,7 @@ class UserAPI(Resource):
     User Object for managing users
     """
     @jwt_required()
-    @cache.memoize()
+    @cache.memoize(timeout=50)
     def get(self, username=None):
         if username:
             user = User.query.filter_by(username=username).first()
@@ -293,7 +293,7 @@ category_request_parse.add_argument("request_data", type=str)
 class CategoryAPI(Resource):
     '''Category Object for managing categories'''
     @jwt_required()
-    @cache.memoize()
+    @cache.memoize(timeout=50)
     def get(self, category_id=None):
         if category_id is None:
             categories = Category.query.all()
@@ -492,7 +492,7 @@ product_request_parse.add_argument("image", type=str)
 class ProductAPI(Resource):
     '''Product Object for managing products'''
 
-    @cache.memoize()
+    @cache.memoize(timeout=50)
     def get(self, category_id=None, product_id=None):
         if category_id is None:
             products = Product.query.all()
@@ -737,7 +737,7 @@ class OrderAPI(Resource):
     '''Order Object for managing orders'''
     # @marshal_with(order_response_fields)
     @jwt_required()
-    @cache.memoize()
+    @cache.memoize(timeout=50)
     def get(self, id=None):
         user_id = get_jwt_identity()
         if user_id is None:
