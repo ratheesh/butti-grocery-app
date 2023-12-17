@@ -61,10 +61,14 @@ def send_daily_reminder():
     for user in users:
         user_dict = user.to_dict()
         if user_dict["role"] == "user":
-            address = user_dict["email"]
-            subject = "We miss you " + user_dict["name"].capitalize() + "!"
-            rendered_template = template.render(name=user_dict["name"])
-            send_email(address, subject, rendered_template)
+            orders_today = Order.query.filter(Order.user_id==user_dict["id"]).filter(func.date(Order.created_timestamp) == datetime.now().date()).count()
+            if orders_today == 0:
+                address = user_dict["email"]
+                subject = "We miss you " + user_dict["name"].capitalize() + "!"
+                rendered_template = template.render(name=user_dict["name"])
+                send_email(address, subject, rendered_template)
+            else:
+                print(f"User {user_dict['name']} has already ordered today")
 
     return 200
 
