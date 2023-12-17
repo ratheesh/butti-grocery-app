@@ -196,7 +196,8 @@ def search():
                        [product.to_dict() for product in products])
         return make_response(data, 200)
         
+# from application.tasks import send_daily_reminder
 # @routes.route("/dummy")
 # def dummy():
-#     tasks.send_monthly_report.delay()
+#     tasks.send_daily_reminder.delay()
 #     return "monthly report sent", 200
