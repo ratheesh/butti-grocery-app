@@ -16,7 +16,7 @@ class Config():
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=30)
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=10)
     CELERY_BROKER_URL = "redis://localhost:6379/0"
-    CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
+    CELERY_RESULT_BACKEND = "redis://localhost:6379/1"
     CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
     CACHE_TYPE='RedisCache'
     CACHE_REDIS_URL='redis://localhost:6379/2'
