@@ -1,35 +1,55 @@
-# butti-grocery-app
+# About
 
-This template should help get you started developing with Vue 3 in Vite.
+This is the readme file of MAD2 Project of Sep-23 Term
 
-## Recommended IDE Setup
+# Testing Application
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+## Requirements
 
-## Customize configuration
+- Application zip file
+- Python 3.10
+- OS: Windows with WSL running on Ubuntu 22.04
+- Browser Firefox/Chrome
+- Terminal
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+- WSL Setup
+- Installation of redis-server and redis service should be running
+  $ sudo install redis-server
+  $ sudo system start redis-server
+  $ sudo status redis-server   -> make sure that redis-server is running and online
+- MailHog
+  $ sudo apt-get -y install golang-go
+  $ go get github.com/mailhog/MailHog
+  $ ~/go/bin/MailHog
+
+- Host PC Setup
+- Open browser and run http://localhost:8025
+- This should bring up the mail interface
 
 ## Project Setup
 
-```sh
-npm install
-```
+- Unzip Project file
+- Open the terminal to the unziped folder
+- python -m venv env
+- $ source ./env/source/bin
+- $ pip install -r requirements.txt
+- $ node ci
+- Open 3 terminal windows
+- Terminal 1
+  - $ cd backend
+  - $ python main.py
+- Terminal 2
+  - $ cd backend
+  - $ celery -A main.celery worker -E -B --loglevel INFO
+- Terminal 3
+  - $ npm run dev
 
-### Compile and Hot-Reload for Development
+## Run the Application
+- Open Firefox
+- Run with http://localhost:3000
+- Follow onscreen instructions
+- By default only admin user is crated(pass:admin)
+- Signup to create regular user and manager
 
-```sh
-npm run dev
-```
 
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+--- END OF FILE ---
