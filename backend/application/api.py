@@ -14,7 +14,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from .db import db
 from .config import UPLOAD_FOLDER
-from .models import User, Category, Product, Item, Bookmark, Order
+from .models import User, Category, Product, Item, Order
 from .jwt import access
 from flask import current_app as app
 from .cache import cache
