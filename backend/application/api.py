@@ -809,10 +809,10 @@ class OrderAPI(Resource):
             product_list = []
             for item in json.loads(items[0]):
                 product = Product.query.filter_by(id=item['id']).first()
-                # cache.clear()
+                cache.clear()
                 # print('name:',product.name, 'stock:', product.stock, 'stock available:', product.stock_available, 'stock sold:', product.stock_sold)
                 if product.stock_available < item['quantity']:
-                    raise BadRequest("quantity requested is more than stock")
+                    raise BadRequest(f"quantity requested  for product {product.name} is more than stock available(available: {product.stock_available})")
 
                 new_item = Item(
                     quantity=item['quantity'],

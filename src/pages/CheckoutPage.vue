@@ -256,12 +256,12 @@ const placeOrder = async () => {
   } catch (err) {
     console.log(err)
     errorinfo.isErr = true
-    errorinfo.msg = err.response.data.message
+    errorinfo.msg = err.response.data
   } finally {
     loading.value = false
     wasValidated.value = false
-    errorinfo.isErr = false
-    errorinfo.msg = ''
+    // errorinfo.isErr = false
+    // errorinfo.msg = ''
     errors.name = false
     errors.address = false
     errors.phone = false
