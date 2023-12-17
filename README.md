@@ -33,7 +33,7 @@ This is the readme file of MAD2 Project of Sep-23 Term
 - python -m venv env
 - $ source ./env/source/bin
 - $ pip install -r requirements.txt
-- $ node ci
+- $ npm install ci
 - Open 3 terminal windows
 - Terminal 1
   - $ cd backend
