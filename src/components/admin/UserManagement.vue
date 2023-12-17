@@ -10,7 +10,7 @@
             <div class="col-6 d-inline-flex justify-content-end m-auto me-0">
               <div class="col-auto mx-2">
                 <button class="btn btn-sm btn-secondary mx-2" @click="refresh">
-                  <mdicon name="refresh" class="text-dark" :size="18" />
+                  <mdicon name="refresh" class="text-white" :size="18" />
                   Refresh
                 </button>
               </div>
