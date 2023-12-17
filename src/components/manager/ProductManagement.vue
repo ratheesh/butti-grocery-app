@@ -690,7 +690,7 @@ async function handleProductModalEdit() {
   } catch (err) {
     console.log(err)
     errordata.isError = true
-    errordata.msg = err.response.data.message
+    errordata.msg = err.response.data
     errors.name = errordata.msg.includes('name')
     errors.description = errordata.msg.includes('description')
     errors.price = errordata.msg.includes('price')
@@ -716,7 +716,7 @@ async function handleProductModalDelete() {
   } catch (err) {
     console.log(err)
     errordata.isError = true
-    errordata.msg = err.response.data.message
+    errordata.msg = err.response.data
   } finally {
     loading.value = false
     errordata.isError = false

@@ -212,7 +212,7 @@ const fetchData = async () => {
     errorinfo.show = true
     if (err.response) {
       errorinfo.error = true
-      errorinfo.msg = err.response.data.message
+      errorinfo.msg = err.response.data
     } else {
       errorinfo.error = true
       errorinfo.msg = err.message
