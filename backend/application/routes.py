@@ -42,6 +42,7 @@ def logout():
     return "logged out",200
     
 @routes.route("/home", methods=["GET"])
+@cache.memoize(timeout=50)
 def home():
     '''home route'''
     try:
@@ -56,6 +57,7 @@ def home():
 @routes.route("/admin", methods=["GET"])
 @jwt_required()
 @access(["admin"])
+@cache.memoize(timeout=50)
 def admin():
     data = {}
     data["users"] = User.query.count()
@@ -101,6 +103,7 @@ def admin():
 @routes.route("/manager", methods=["GET"])
 @jwt_required()
 @access(["manager"])
+@cache.memoize(timeout=50)
 def manager():
     data = {}
     data["category"] = Category.query.count()
