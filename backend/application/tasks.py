@@ -19,7 +19,7 @@ from email.mime.multipart import MIMEMultipart
 @celery.on_after_finalize.connect
 def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(
-        crontab(minute='0', hour='1' ), 
+        crontab(minute='0', hour='18' ), 
         send_daily_reminder.s(), 
         name='send daily reminder email'
     )
