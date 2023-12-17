@@ -6,7 +6,6 @@ import ManagerPage from '@/pages/ManagerPage.vue'
 import HomePage from '@/pages/HomePage.vue'
 import SignupPage from '@/pages/SignupPage.vue'
 import LoginPage from '@/pages/LoginPage.vue'
-import LogoutPage from '@/pages/LogoutPage.vue'
 import ProfilePage from '@/pages/ProfilePage.vue'
 import CartPage from '@/pages/CartPage.vue'
 import CheckoutPage from '@/pages/CheckoutPage.vue'
@@ -38,15 +37,6 @@ const routes = [
     path: '/login',
     name: 'login',
     component: LoginPage
-  },
-  {
-    path: '/logout',
-    name: 'logout',
-    component: LogoutPage,
-    meta: {
-      title: 'Logout',
-      requiresAuth: true
-    }
   },
   {
     path: '/profile',
