@@ -375,6 +375,18 @@ async function handleCategoryApprove(category, approve) {
       console.log(formData)
       const resp = await axiosClient.put(`/api/category/${category.id}`, formData)
       console.log(resp)
+    } else if (category.request_type == 'add') {
+      if (approve) {
+        const formData = new FormData()
+        formData.append('name', category.name)
+        formData.append('approved', approve)
+        console.log(formData)
+        const resp = await axiosClient.put(`/api/category/${category.id}`, formData)
+        console.log(resp)
+      } else {
+        const resp = await axiosClient.delete(`/api/category/${category.id}`)
+        console.log(resp)
+      }
     } else {
       if (!approve) {
         const formData = new FormData()
