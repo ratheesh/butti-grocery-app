@@ -797,7 +797,7 @@ class OrderAPI(Resource):
                 email='test@test.com',
                 payment_mode='cod',
                 total_amount=total_amount,
-                delivery_date=datetime.now(),
+                delivery_date=delivery_date,
                 user_id=user.id,
                 created_timestamp=datetime.now(),
             )
