@@ -29,6 +29,7 @@ celery=celery_worker.celery
 celery.conf.update(
         broker_url=app.config["CELERY_BROKER_URL"],
         result_backend=app.config["CELERY_RESULT_BACKEND"],
+        timezone="Asia/Kolkata",
         broker_connection_retry_on_startup=app.config["CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP"]
         )
 celery.Task = celery_worker.FlaskTask
