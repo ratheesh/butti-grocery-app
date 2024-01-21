@@ -62,7 +62,7 @@ class UserAPI(Resource):
     User Object for managing users
     """
     @jwt_required()
-    @cache.memoize(timeout=50)
+    @cache.cached(timeout=50)
     def get(self, username=None):
         if username:
             user = User.query.filter_by(username=username).first()
@@ -115,12 +115,12 @@ class UserAPI(Resource):
             print("=== user already exists === ")
             # raise BadRequest("user already exists")
             abort(Response("username already exists", 400))
-            
+
         user = User.query.filter_by(email=email).first()
         if user is not None:
             print("==== email already registered ====")
             abort(Response("email already registered", 400))
-        
+
         isapproved=True
         if role == 'manager':
             isapproved=False
@@ -157,7 +157,7 @@ class UserAPI(Resource):
 
                 # with open(filename, 'wb') as f:
                 #     f.write(file_data)
-                
+
                 img = Image.open(BytesIO(file_data))
                 img.resize((200, 200))
                 img.save(filename, format='PNG')
@@ -200,18 +200,18 @@ class UserAPI(Resource):
             approved = args.get("approved", None)
             image = args.get("image",None)
             image_name = args.get("image_name", None)
-            
+
             if email is None:
                 email = user.email
-            
+
             if image_name is None:
                 image_name = user.image_name
-            
+
             if password is not None:
                 password = generate_password_hash(password)
             else:
                 password = user.password
-                
+
             if approved is not None:
                 if user.role == 'admin':
                     raise BadRequest('admin user can not be approved')
@@ -219,18 +219,18 @@ class UserAPI(Resource):
                     user.approved = True
                 else:
                     user.approved = False
-            
+
             if image is not None:
                 try:
                     if user.image_name == 'default.png':
                         image_name = secrets.token_hex(4) + '.png'
                     else:
                         image_name = user.image_name
-                    
+
                     file_data = base64.b64decode(image)
                     filename = UPLOAD_FOLDER + '/images/users/' + image_name
                     # print('user image file to be saved:', filename)
-                    
+
                     img = Image.open(BytesIO(file_data))
                     img.resize((200, 200))
                     img.save(filename, format='PNG')
@@ -251,7 +251,7 @@ class UserAPI(Resource):
                 cache.clear()
             except:
                 raise InternalError(message="error in updating User")
-            
+
             data = jsonify(user.to_dict())
             return make_response(data, 200)
 
@@ -271,7 +271,7 @@ class UserAPI(Resource):
                 cache.clear()
                 db.session.commit()
                 cache.clear()
-                
+
                 if user.image_name != 'default.png':
                     filename = UPLOAD_FOLDER + '/images/users/' + user.image_name
                     if os.path.isfile(filename):
@@ -293,7 +293,7 @@ category_request_parse.add_argument("request_data", type=str)
 class CategoryAPI(Resource):
     '''Category Object for managing categories'''
     @jwt_required()
-    @cache.memoize(timeout=50)
+    @cache.cached(timeout=50)
     def get(self, category_id=None):
         if category_id is None:
             categories = Category.query.all()
@@ -312,11 +312,11 @@ class CategoryAPI(Resource):
         user_id = get_jwt_identity()
         if user_id is None:
             raise NotFound("user id is missing in token")
-        
+
         user = User.query.filter_by(id=user_id).first()
         if user is None:
             raise NotFound("user not found")
-            
+
         if user.role == 'admin':
             approved = True
         else:
@@ -354,7 +354,7 @@ class CategoryAPI(Resource):
             raise InternalError(message="error creating category")
 
         return make_response(category.to_dict(), 201)
-    
+
     @jwt_required()
     def put(self, category_id):
         user_id = get_jwt_identity()
@@ -379,16 +379,16 @@ class CategoryAPI(Resource):
                 raise BadRequest("name is not provided")
             else:
                 name = name.capitalize()
-            
+
             request_type = args.get("request_type", None)
             request_data = args.get("request_data", None)
             approved = args.get("approved", None)
-            
+
             if approved is True and user.role != 'admin':
                 raise BadRequest('only admin can approve categories')
 
             # category.name = name
-            
+
             if user.role == 'admin':
                 if approved is not None:
                     if category.approved is False:
@@ -432,12 +432,12 @@ class CategoryAPI(Resource):
                 raise InternalError(message="error in updating category")
 
             return make_response(jsonify(category.to_dict()), 200)
-    
+
     @jwt_required()
     def delete(self, category_id):
         if id is None:
             raise BadRequest("category id is missing")
-        
+
         user_id = get_jwt_identity()
         if user_id is None:
             raise NotFound("user id is missing in token")
@@ -475,7 +475,7 @@ class CategoryAPI(Resource):
 
         return f'category {category.name} deleted successfully', 200
 
-            
+
 def valid_date(s):
     return datetime.strptime(s, "%Y-%m-%d %H:%M")
 
@@ -492,7 +492,7 @@ product_request_parse.add_argument("image", type=str)
 class ProductAPI(Resource):
     '''Product Object for managing products'''
 
-    @cache.memoize(timeout=50)
+    @cache.cached(timeout=50)
     def get(self, category_id=None, product_id=None):
         if category_id is None:
             products = Product.query.all()
@@ -512,7 +512,7 @@ class ProductAPI(Resource):
             if product is None:
                 raise NotFound("Product not found")
             else:
-                data = jsonify(product.to_dict()) 
+                data = jsonify(product.to_dict())
                 return make_response(data, 200)
 
     @jwt_required()
@@ -570,12 +570,12 @@ class ProductAPI(Resource):
         )
         if product is None:
             raise InternalError(message="error creating product")
-        
+
         db.session.add(product)
         db.session.flush()
 
         # print(image_name, image)
-        if image_name is not None and image is not None: 
+        if image_name is not None and image is not None:
             try:
                 if image_name == "":
                     raise BadRequest("image_name is empty")
@@ -589,7 +589,7 @@ class ProductAPI(Resource):
 
                 # with open(filename, 'wb') as f:
                 #     f.write(file_data)
-                
+
                 img = Image.open(BytesIO(file_data))
                 img.resize((360, 360))
                 img.save(filename, format='PNG')
@@ -608,9 +608,9 @@ class ProductAPI(Resource):
         except:
             raise InternalError(message="error creating product")
 
-        data = jsonify(product.to_dict()) 
+        data = jsonify(product.to_dict())
         return make_response(data, 201)
-        
+
     @jwt_required()
     def put(self, category_id, product_id):
         if category_id is None:
@@ -637,12 +637,12 @@ class ProductAPI(Resource):
                 expiry_date = args.get("expiry_date", None)
                 image = args.get("image", None)
                 image_name = args.get("image_name", None)
-                
+
                 print('image_name: ', image_name, 'product imagename:', product.image_name)
                 if image_name is None:
                     image_name = product.image_name
-                
-                if image is not None: 
+
+                if image is not None:
                     try:
                         # image_name = image_name.split('.')[0] + '_' + str(user.id) + '.png'
 
@@ -664,7 +664,7 @@ class ProductAPI(Resource):
                         img.save(filename, format='PNG')
                     except:
                         raise InternalError(message="Error in saving image")
-                        
+
                 if (stock < product.stock_sold):
                     raise BadRequest("new stock can not be less than stock sold")
 
@@ -691,9 +691,9 @@ class ProductAPI(Resource):
                 except:
                     raise InternalError(message="Error in updating product")
 
-                data = jsonify(product.to_dict()) 
+                data = jsonify(product.to_dict())
                 return make_response(data, 200)
-    
+
     @jwt_required()
     def delete(self, category_id, product_id):
         if category_id is None:
@@ -710,7 +710,7 @@ class ProductAPI(Resource):
                 cache.clear()
                 db.session.commit()
                 cache.clear()
-                
+
                 if image_name != 'default.png':
                     filename= UPLOAD_FOLDER + '/images/products/' + image_name
                     if os.path.isfile(filename):
@@ -737,7 +737,7 @@ class OrderAPI(Resource):
     '''Order Object for managing orders'''
     # @marshal_with(order_response_fields)
     @jwt_required()
-    @cache.memoize(timeout=50)
+    @cache.cached(timeout=50)
     def get(self, id=None):
         user_id = get_jwt_identity()
         if user_id is None:
@@ -752,7 +752,7 @@ class OrderAPI(Resource):
                 raise NotFound("order not found")
             else:
                 return make_response(order.to_dict(), 200)
-    
+
     # @marshal_with(order_response_fields)
     @jwt_required()
     def post(self):
@@ -765,7 +765,7 @@ class OrderAPI(Resource):
             print(user)
             if user is None:
                 raise NotFound("user not found")
-            
+
             args = order_request_parse.parse_args()
             # print(args)
             name=args.get('name', None)
@@ -774,7 +774,7 @@ class OrderAPI(Resource):
             items=args.get('items', None)
             total_amount=args.get('total_amount', None)
             delivery_date=args.get('delivery_date', None)
-            
+
             if name is None:
                 raise BadRequest('name not provided')
             if address is None:
@@ -789,7 +789,7 @@ class OrderAPI(Resource):
                 raise BadRequest('total amount not provided')
             if delivery_date is None:
                 raise BadRequest('delivery date not provided')
-            
+
             order = Order(
                 name = name,
                 address=address,
@@ -801,7 +801,7 @@ class OrderAPI(Resource):
                 user_id=user.id,
                 created_timestamp=datetime.now(ZoneInfo('Asia/Kolkata')),
             )
-            
+
             db.session.add(order)
             db.session.flush()
 
@@ -830,7 +830,7 @@ class OrderAPI(Resource):
                 # print('name:', product.name, 'stock:', product.stock, 'stock available:', product.stock_available, 'stock sold:', product.stock_sold)
                 items_list.append(new_item)
                 product_list.append(product)
-            
+
             try:
                 db.session.add_all(items_list)
                 db.session.add_all(product_list)
@@ -841,16 +841,16 @@ class OrderAPI(Resource):
             except:
                 raise InternalError(message="error creating order")
             return make_response(order.to_dict(), 201)
-    
+
     @jwt_required()
     def put(self,id, user_id, items):
         return "put method not implemented", 501
-    
+
     @jwt_required()
     def delete(self, id):
         if id is None:
             raise BadRequest("Order id is missing")
-        
+
         order=Order.query.filter_by(id=id).first()
         try:
             db.session.delete(order)
@@ -860,6 +860,6 @@ class OrderAPI(Resource):
         except:
             raise InternalError(message="Error deleting order")
         return "Order deleted successfully", 200
-        
+
 
 # End of File
