@@ -19,14 +19,14 @@ from email.mime.multipart import MIMEMultipart
 @celery.on_after_finalize.connect
 def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(
-        crontab(minute='0', hour='18' ), 
-        send_daily_reminder.s(), 
+        crontab(minute='0', hour='18' ),
+        send_daily_reminder.s(),
         name='send daily reminder email'
     )
 
     sender.add_periodic_task(
-        crontab(minute='0', hour='1', day_of_month='1'), 
-        send_monthly_report.s(), 
+        crontab(minute='0', hour='1', day_of_month='1'),
+        send_monthly_report.s(),
         name='send monthly reminder email'
     )
 
@@ -79,7 +79,7 @@ def send_monthly_report():
 
     for user in users:
         user = user.to_dict()
-        
+
         orders = Order.query.filter(Order.user_id==user["id"]).filter(func.date(Order.created_timestamp) > datetime.now().date() - timedelta(days=30)).all()
         # total_amount = orders.with_entities(func.sum(Order.total_amount)).scalar()
         orders = [order.to_dict() for order in orders]
@@ -121,7 +121,7 @@ def send_csv_report(username):
 
     user = user.to_dict()
     products = Product.query.all()
-    
+
     report_filename = f"{username}_product_report.csv"
     date = datetime.now().date()
     timestamp = datetime.now().strftime("%a %b %d %Y %I:%M:%S %p")
@@ -136,6 +136,8 @@ def send_csv_report(username):
             product_dict = product.to_dict()
             f.writerow([product.name, product.description,product_dict['category_name'], product.price, product.stock, product.stock_available, product.stock_sold])
         f.writerow(["", "Generated at",timestamp, "", "Butti Admin", "", ""])
+
+    # return report_filename
 
     template_str = """
         <p>

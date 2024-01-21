@@ -7,7 +7,9 @@ import json
 from sqlalchemy import desc, func, or_, and_
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_required, get_jwt_identity)
+from celery.result import AsyncResult
 
+from application.celery_worker import celery
 from application.models import User,Product, Category, Order
 from application.jwt import access
 from application.db import db
@@ -28,7 +30,7 @@ def login():
         return make_response('user not found', 404)
     if not check_password_hash(user.password, password):
         return make_response('invalid password', 400)
-    
+
     access_token = create_access_token(identity=user)
     refresh_token = create_refresh_token(identity=user)
     if not access_token or  not refresh_token:
@@ -40,7 +42,7 @@ def login():
 @jwt_required()
 def logout():
     return "logged out",200
-    
+
 @routes.route("/home", methods=["GET"])
 @cache.memoize(timeout=50)
 def home():
@@ -53,7 +55,7 @@ def home():
 
     data = jsonify([category.to_dict() for category in categories], [product.to_dict() for product in products])
     return make_response(data, 200)
-    
+
 @routes.route("/admin", methods=["GET"])
 @jwt_required()
 @access(["admin"])
@@ -67,9 +69,9 @@ def admin():
     data["managers"] = User.query.filter_by(role='manager').count()
     data["users"] = User.query.filter_by(role='user').count()
     data["revenue_total"] = Order.query.filter().with_entities(func.sum(Order.total_amount)).scalar()
-    
+
     # data["orders_today"] = Order.query.filter(func.date(Order.created_timestamp) == datetime.today().date()).count()
-    
+
     # orders from past 7 days
     orders_data = []
     for i in range(7):
@@ -86,7 +88,7 @@ def admin():
         category_data.append({'name':category_dict['name'], 'count': len(category.products)})
         # category_data.append(([category.to_dict(), len(category.products)]))
     data["categories"] = category_data
-    
+
     #Revenue from past 7 days
     revenue_data = []
     for i in range(7):
@@ -111,7 +113,7 @@ def manager():
     # data["revenue_today"] = 0
     data["revenue_today"] = Order.query.filter(func.date(Order.created_timestamp) == datetime.today().date()).with_entities(func.sum(Order.total_amount)).scalar()
     data["orders_today"] = Order.query.filter(func.date(Order.created_timestamp) == datetime.today().date()).count()
-    
+
     # orders from past 7 days
     orders_data = []
     for i in range(7):
@@ -128,7 +130,7 @@ def manager():
         category_data.append({'name':category_dict['name'], 'count': len(category.products)})
         # category_data.append(([category.to_dict(), len(category.products)]))
     data["categories"] = category_data
-    
+
     #Revenue from past 7 days
     revenue_data = []
     for i in range(7):
@@ -140,11 +142,11 @@ def manager():
     data["revenue"] = revenue_data
 
     return jsonify(data), 200
-    
+
 
 @routes.route("/sendreport", methods=["POST"])
-# @jwt_required()
-# @access(["manager"])
+@jwt_required()
+@access(["manager"])
 def send_report():
     print("In the generatecsv method")
     username = request.json.get('username')
@@ -155,8 +157,20 @@ def send_report():
     if user.role != "manager":
         return "user not authorized",403
 
-    tasks.send_csv_report.delay(username)
-    return "Report request sent", 200
+    task = tasks.send_csv_report.delay(username)
+    return jsonify({"taskid": task.id}), 200
+
+@routes.route("/download-csv/<taskid>", methods=["GET"])
+@jwt_required()
+@access(["manager"])
+def send_csv_report(taskid):
+    pass
+    result = celery.AsyncResult(taskid)
+    if result.ready():
+        file = result.result
+        return send_file(file, as_attachment=True)
+    else:
+        return jsonify({"message":"task is pending"}), 200
 
 @routes.route("/search", methods=["GET"])
 @jwt_required()
@@ -191,11 +205,11 @@ def search():
             Product.expiry_date.ilike("%" + query + "%") ,
             Product.price.ilike("%" + query + "%")))
             ).all()
-        
+
         data = jsonify([category_product.to_dict() for category_product in category_products],
                        [product.to_dict() for product in products])
         return make_response(data, 200)
-        
+
 # from application.tasks import send_daily_reminder
 # @routes.route("/dummy")
 # def dummy():
