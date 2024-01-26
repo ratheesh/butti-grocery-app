@@ -18,17 +18,20 @@ Product image for testing are placed in testing/images/products
 - Terminal
 
 - WSL Setup
-- Installation of redis-server and redis service should be running
+- `redis-server` installation and setup
+``` bash
   $ sudo install redis-server
   $ sudo system start redis-server
-  $ sudo status redis-server   -> make sure that redis-server is running and online
-- MailHog
+  $ sudo status redis-server   # make sure that redis-server is running and online
+```
+- MailHog service setup and execution
+``` bash
   $ sudo apt-get -y install golang-go
   $ go get github.com/mailhog/MailHog
   $ ~/go/bin/MailHog
-
+```
 - Host PC Setup
-- Open browser and run http://localhost:8025
+- Open browser and goto `http://localhost:8025`
 - This should bring up the mail interface
 
 ## Project Setup
