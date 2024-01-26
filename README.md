@@ -2,8 +2,13 @@
 
 This is the readme file of MAD2 Project of Sep-23 Term
 
-# Testing Application
+# Screenshots
+Screenshots of the application features is available in the [Wiki](https://github.com/ratheesh/butti-grocery-app/wiki/Application-Screenshots) Section.
 
+# Images for testing
+Product image for testing are placed in testing/images/products
+
+# Testing Application
 ## Requirements
 
 - Application zip file
@@ -27,7 +32,6 @@ This is the readme file of MAD2 Project of Sep-23 Term
 - This should bring up the mail interface
 
 ## Project Setup
-
 - Unzip Project file
 - Open the terminal to the unziped folder
 - python -m venv env
@@ -45,11 +49,9 @@ This is the readme file of MAD2 Project of Sep-23 Term
   - $ npm run dev
 
 ## Run the Application
-- Open Firefox
-- Run with http://localhost:3000
-- Follow onscreen instructions
-- By default only admin user is crated(pass:admin)
-- Signup to create regular user and manager
-
+- Open Firefox and launch the applicaiton with URL http://localhost:3000
+- Follow onscreen instructions for using application
+- By default only admin user is created(username: admin pass:admin)
+- Signup to create manager and regular user
 
 --- END OF FILE ---
