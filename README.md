@@ -1,6 +1,6 @@
 # About
 
-This is the readme file of MAD2 Project of Sep-23 Term
+This is the Readme File of MAD2 Project of Sep-23 Term that I submitted as a part of Diploma in Programming course pursued at IIT Madras
 
 # Screenshots
 Screenshots of the application features is available in the [Wiki](https://github.com/ratheesh/butti-grocery-app/wiki/Application-Screenshots) Section.
