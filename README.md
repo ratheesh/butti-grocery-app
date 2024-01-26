@@ -54,4 +54,5 @@ Product image for testing are placed in testing/images/products
 - By default only admin user is created(username: admin pass:admin)
 - Signup to create manager and regular user
 
---- END OF FILE ---
+# License
+MIT
